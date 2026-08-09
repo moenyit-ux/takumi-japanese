@@ -60,7 +60,10 @@ export default async function AdminPage({ searchParams }: { searchParams: Promis
     <main className={styles.adminShell}>
       <div className={styles.topbar}>
         <Link href="/portal/dashboard">← Dashboard siswa</Link>
-        <div className={styles.roleBadge}>{role === 'super_admin' ? 'SUPER ADMIN' : 'CONTENT ADMIN'}</div>
+        <div>
+          {role === 'super_admin' && <Link href="/portal/admin/payments">Pembayaran →</Link>}
+          <span className={styles.roleBadge}>{role === 'super_admin' ? 'SUPER ADMIN' : 'CONTENT ADMIN'}</span>
+        </div>
       </div>
 
       <header className={styles.hero}>
