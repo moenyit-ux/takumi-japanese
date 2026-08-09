@@ -95,6 +95,7 @@ export default function Login() {
           )}
           <label>Email<input name="email" type="email" required autoComplete="email" placeholder="nama@email.com" /></label>
           <label>Kata sandi<input name="password" type="password" minLength={8} required autoComplete={mode === 'login' ? 'current-password' : 'new-password'} placeholder="Minimal 8 karakter" /></label>
+          {mode === 'login' && <Link href="/forgot-password">Lupa kata sandi?</Link>}
           <button disabled={busy} className="btn primary full">{busy ? 'Memproses...' : mode === 'login' ? 'Masuk' : 'Daftar & verifikasi email'}</button>
         </form>
 
