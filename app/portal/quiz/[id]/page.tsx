@@ -1,6 +1,7 @@
 import Link from 'next/link'
 import { notFound, redirect } from 'next/navigation'
 import { createClient } from '../../../../lib/supabase/server'
+import { resolveLearningAsset } from '../../../../lib/supabase/assets'
 import QuizForm from './quiz-form'
 
 type QuestionRow = {
@@ -43,7 +44,11 @@ export default async function QuizPage({ params }: { params: Promise<{ id: strin
     .order('position')
 
   if (questionError) notFound()
-  const questions = (questionData || []) as QuestionRow[]
+  const rawQuestions = (questionData || []) as QuestionRow[]
+  const questions = await Promise.all(rawQuestions.map(async (question) => ({
+    ...question,
+    audio_url: await resolveLearningAsset(supabase, question.audio_url),
+  })))
   const ids = questions.map((question) => question.id)
 
   let options: OptionRow[] = []

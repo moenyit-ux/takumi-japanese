@@ -1,6 +1,7 @@
 import Link from 'next/link'
 import { notFound, redirect } from 'next/navigation'
 import { createClient } from '../../../../lib/supabase/server'
+import { resolveLearningAsset } from '../../../../lib/supabase/assets'
 import ProgressTracker from './progress-tracker'
 
 type ContentBlock = {
@@ -111,7 +112,12 @@ export default async function SessionPage({ params }: { params: Promise<{ id: st
     )
   }
 
-  const blocks = (blocksResult.data || []) as ContentBlock[]
+  const rawBlocks = (blocksResult.data || []) as ContentBlock[]
+  const blocks = await Promise.all(rawBlocks.map(async (block) => ({
+    ...block,
+    audio_url: await resolveLearningAsset(supabase, block.audio_url),
+    image_url: await resolveLearningAsset(supabase, block.image_url),
+  })))
   const progress = progressResult.data
   const initialReadPercent = progress?.read_percent || 0
 
