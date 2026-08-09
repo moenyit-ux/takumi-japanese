@@ -24,6 +24,7 @@ type LearningSession = {
 
 type Progress = {
   session_id: string
+  read_percent: number
   status: string
   highest_score: number | null
   updated_at: string
@@ -111,16 +112,21 @@ function Dashboard({ data }: { data: PortalData }) {
   const needsReview = data.bookmarks.filter((item) => item.category === 'review').length
 
   const sessionsById = new Map(data.sessions.map((item) => [item.id, item]))
-  const nextSession = data.sessions.find((session) => !completed.some((item) => item.session_id === session.id))
+  const nextSession = data.sessions.find((session) => {
+    const done = completed.some((item) => item.session_id === session.id)
+    const access = session.access_tier === 'free' || hasActiveAccess(data.entitlements, session.level_id)
+    return !done && session.content_status === 'published' && access
+  })
+  const nextProgress = nextSession ? data.progress.find((item) => item.session_id === nextSession.id) : undefined
 
   return (
     <>
-      <div className="head"><div><div className="eyebrow">DASHBOARD</div><h1>Selamat datang, {data.userName}</h1><p>Data di halaman ini sekarang dibaca langsung dari akun dan database Takumi.</p></div></div>
+      <div className="head"><div><div className="eyebrow">DASHBOARD</div><h1>Selamat datang, {data.userName}</h1><p>Lanjutkan dari posisi terakhir. Progres dan nilai diambil langsung dari akun Takumi Anda.</p></div></div>
 
       <section className="resume">
         <div>
           <div className="eyebrow">LANJUTKAN BELAJAR</div>
-          {nextSession ? <><h2>{nextSession.title}</h2><p>±{nextSession.estimated_minutes} menit · {nextSession.access_tier === 'free' ? 'Akses gratis' : 'Akses premium'}</p><Link className="btn primary" href={`/portal/materi?level=${data.levels.find((l) => l.id === nextSession.level_id)?.code || 'N4'}`}>Buka daftar sesi →</Link></> : <><h2>Belum ada sesi berikutnya</h2><p>Materi baru akan muncul setelah dipublikasikan atau akses Anda diaktifkan.</p><Link className="btn primary" href="/portal/materi">Lihat materi →</Link></>}
+          {nextSession ? <><h2>{nextSession.title}</h2><p>±{nextSession.estimated_minutes} menit · progres membaca {nextProgress?.read_percent || 0}%</p><Link className="btn primary" href={`/portal/session/${nextSession.id}`}>Lanjutkan sesi →</Link></> : <><h2>Belum ada sesi yang siap dilanjutkan</h2><p>Materi akan muncul di sini setelah dipublikasikan dan dapat diakses oleh akun Anda.</p><Link className="btn primary" href="/portal/materi">Lihat materi →</Link></>}
         </div>
         <div>匠</div>
       </section>
@@ -164,11 +170,22 @@ function Materi({ data, selectedCode }: { data: PortalData; selectedCode: string
           const session = recordByNo.get(sessionNo)
           const progress = session ? progressBySession.get(session.id) : undefined
           const isFree = sessionNo <= selectedLevel.free_sessions
-          const canOpen = Boolean(session && (isFree || premium))
+          const isPublished = session?.content_status === 'published'
+          const canOpen = Boolean(session && isPublished && (isFree || premium))
+          const status = progress?.status === 'completed'
+            ? 'Selesai'
+            : !session || !isPublished
+              ? 'Segera hadir'
+              : isFree
+                ? 'Gratis'
+                : premium
+                  ? 'Premium'
+                  : 'Terkunci'
+
           return <article key={sessionNo} className={!canOpen ? 'locked' : ''}>
             <b className="num">{String(sessionNo).padStart(2, '0')}</b>
-            <div><small>SESI {sessionNo}</small><h3>{session?.title || `Sesi ${selectedLevel.code} ${String(sessionNo).padStart(2, '0')}`}</h3><p>±{session?.estimated_minutes || selectedLevel.target_minutes_per_session} menit · minimal 70 · {progress?.status === 'completed' ? 'Selesai' : isFree ? 'Gratis' : premium ? 'Premium' : 'Terkunci'}</p></div>
-            <strong>{progress?.status === 'completed' ? '✓' : canOpen ? '▶' : '🔒'}</strong>
+            <div><small>SESI {sessionNo}</small><h3>{session?.title || `Sesi ${selectedLevel.code} ${String(sessionNo).padStart(2, '0')}`}</h3><p>±{session?.estimated_minutes || selectedLevel.target_minutes_per_session} menit · minimal 70 · {status}{progress ? ` · baca ${progress.read_percent}%` : ''}</p></div>
+            <strong>{progress?.status === 'completed' ? '✓' : canOpen && session ? <Link aria-label={`Buka sesi ${sessionNo}`} href={`/portal/session/${session.id}`}>▶</Link> : '🔒'}</strong>
           </article>
         })}
       </div>
@@ -185,9 +202,9 @@ function Bookmark({ data }: { data: PortalData }) {
 
   return (
     <>
-      <div className="head"><div><div className="eyebrow">BOOKMARK</div><h1>Dipelajari Lagi</h1><p>Soal salah akan masuk otomatis setelah bank soal dipublikasikan.</p></div></div>
+      <div className="head"><div><div className="eyebrow">BOOKMARK</div><h1>Dipelajari Lagi</h1><p>Soal salah masuk otomatis ke sini setelah latihan dinilai.</p></div></div>
       <div className="stats">{groups.map(([key, label]) => <article key={key}><span>{label}</span><b>{data.bookmarks.filter((item) => item.category === key).length}</b></article>)}</div>
-      {data.bookmarks.length === 0 && <section className="panel empty"><h2>Belum ada bookmark</h2><p>Setelah Anda mengerjakan latihan, soal yang salah dapat muncul di sini secara otomatis.</p></section>}
+      {data.bookmarks.length === 0 && <section className="panel empty"><h2>Belum ada bookmark</h2><p>Setelah Anda mengerjakan latihan, soal yang salah akan muncul di sini secara otomatis.</p></section>}
     </>
   )
 }
@@ -222,7 +239,7 @@ function Admin({ data }: { data: PortalData }) {
     <>
       <div className="head"><div><div className="eyebrow">ADMIN</div><h1>Panel Operasional</h1><p>Akses halaman ini hanya ditampilkan untuk role admin.</p></div></div>
       <div className="four"><article><span>Program</span><b>{data.levels.length}</b></article><article><span>Total sesi</span><b>{totalSessions}</b></article><article><span>Sesi terlihat</span><b>{data.sessions.length}</b></article><article><span>Konten publik</span><b>{data.sessions.filter((s) => s.content_status === 'published').length}</b></article></div>
-      <section className="panel"><h2>Alur konten</h2><div className="flow"><span>Draft</span>→<span>Review</span>→<span>Perlu diperbaiki</span>→<span>Disetujui</span>→<span>Published</span></div><p>Editor materi lengkap akan dibangun setelah fondasi autentikasi ini stabil.</p></section>
+      <section className="panel"><h2>Alur konten</h2><div className="flow"><span>Draft</span>→<span>Review</span>→<span>Perlu diperbaiki</span>→<span>Disetujui</span>→<span>Published</span></div><p>Editor materi lengkap akan dibangun setelah mesin belajar inti stabil.</p></section>
     </>
   )
 }
@@ -236,7 +253,7 @@ async function loadData(): Promise<PortalData> {
     supabase.from('profiles').select('full_name, role').eq('id', user.id).maybeSingle(),
     supabase.from('levels').select('id, code, name, total_sessions, free_sessions, target_minutes_per_session'),
     supabase.from('learning_sessions').select('id, level_id, session_no, title, slug, access_tier, content_status, estimated_minutes').order('session_no'),
-    supabase.from('session_progress').select('session_id, status, highest_score, updated_at').order('updated_at', { ascending: false }),
+    supabase.from('session_progress').select('session_id, read_percent, status, highest_score, updated_at').order('updated_at', { ascending: false }),
     supabase.from('quiz_attempts').select('score, result_status, submitted_at').order('started_at', { ascending: false }).limit(100),
     supabase.from('bookmarks').select('id, category, source, created_at').order('created_at', { ascending: false }).limit(100),
     supabase.from('entitlements').select('level_id, active, starts_at, ends_at'),
