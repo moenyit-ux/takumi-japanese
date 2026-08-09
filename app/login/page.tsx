@@ -1,57 +1,70 @@
 'use client'
 
 import Link from 'next/link'
+import { useRouter } from 'next/navigation'
 import { useState } from 'react'
-
-const SUPABASE_URL = process.env.NEXT_PUBLIC_SUPABASE_URL || 'https://tckqxueaytwalbfgqyya.supabase.co'
-const SUPABASE_KEY = process.env.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY || 'sb_publishable_xLGNC9gxqvhTnZI5jtOfuA_99JSyv5N'
+import { createClient } from '../../lib/supabase/client'
 
 export default function Login() {
+  const router = useRouter()
   const [mode, setMode] = useState<'login' | 'signup'>('login')
   const [message, setMessage] = useState('')
+  const [busy, setBusy] = useState(false)
 
   async function submit(event: React.FormEvent<HTMLFormElement>) {
     event.preventDefault()
+    if (busy) return
+
+    setBusy(true)
     setMessage('Memproses...')
 
     const form = new FormData(event.currentTarget)
-    const email = String(form.get('email'))
-    const password = String(form.get('password'))
-    const path = mode === 'signup' ? '/auth/v1/signup' : '/auth/v1/token?grant_type=password'
-    const body = mode === 'signup'
-      ? {
-          email,
-          password,
-          data: {
-            full_name: String(form.get('name') || ''),
-            birth_year: String(form.get('birth_year') || ''),
-          },
-        }
-      : { email, password }
-
-    const response = await fetch(SUPABASE_URL + path, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        apikey: SUPABASE_KEY,
-      },
-      body: JSON.stringify(body),
-    })
-
-    const data = await response.json()
-
-    if (!response.ok) {
-      setMessage(data.msg || data.error_description || data.message || 'Terjadi kesalahan.')
-      return
-    }
+    const email = String(form.get('email') || '').trim()
+    const password = String(form.get('password') || '')
+    const supabase = createClient()
 
     if (mode === 'signup') {
-      setMessage('Email verifikasi telah dikirim. Silakan cek inbox Anda.')
+      const { data, error } = await supabase.auth.signUp({
+        email,
+        password,
+        options: {
+          emailRedirectTo: `${window.location.origin}/auth/callback`,
+          data: {
+            full_name: String(form.get('name') || '').trim(),
+            birth_year: String(form.get('birth_year') || '').trim(),
+          },
+        },
+      })
+
+      if (error) {
+        setMessage(error.message)
+        setBusy(false)
+        return
+      }
+
+      if (data.session) {
+        router.replace('/portal/dashboard')
+        router.refresh()
+        return
+      }
+
+      setMessage('Email verifikasi telah dikirim. Buka email Takumi lalu klik tautan verifikasi untuk mengaktifkan akun.')
+      setBusy(false)
       return
     }
 
-    localStorage.setItem('takumi-session', JSON.stringify(data))
-    location.href = '/portal/dashboard'
+    const { error } = await supabase.auth.signInWithPassword({ email, password })
+
+    if (error) {
+      setMessage(error.message === 'Email not confirmed'
+        ? 'Email belum diverifikasi. Silakan buka email verifikasi Takumi terlebih dahulu.'
+        : error.message)
+      setBusy(false)
+      return
+    }
+
+    router.replace('/portal/dashboard')
+    router.refresh()
   }
 
   return (
@@ -67,8 +80,8 @@ export default function Login() {
 
       <section>
         <div className="switch">
-          <button type="button" className={mode === 'login' ? 'on' : ''} onClick={() => setMode('login')}>Masuk</button>
-          <button type="button" className={mode === 'signup' ? 'on' : ''} onClick={() => setMode('signup')}>Daftar</button>
+          <button type="button" className={mode === 'login' ? 'on' : ''} onClick={() => { setMode('login'); setMessage('') }}>Masuk</button>
+          <button type="button" className={mode === 'signup' ? 'on' : ''} onClick={() => { setMode('signup'); setMessage('') }}>Daftar</button>
         </div>
 
         <h2>{mode === 'login' ? 'Selamat datang kembali' : 'Buat akun Takumi'}</h2>
@@ -76,16 +89,16 @@ export default function Login() {
         <form onSubmit={submit}>
           {mode === 'signup' && (
             <>
-              <label>Nama<input name="name" required placeholder="Nama Anda" /></label>
-              <label>Tahun lahir<input name="birth_year" pattern="[0-9]{4}" placeholder="1992" /></label>
+              <label>Nama<input name="name" required autoComplete="name" placeholder="Nama Anda" /></label>
+              <label>Tahun lahir<input name="birth_year" inputMode="numeric" pattern="[0-9]{4}" required placeholder="1992" /></label>
             </>
           )}
-          <label>Email<input name="email" type="email" required placeholder="nama@email.com" /></label>
-          <label>Kata sandi<input name="password" type="password" minLength={8} required placeholder="Minimal 8 karakter" /></label>
-          <button className="btn primary full">{mode === 'login' ? 'Masuk' : 'Daftar & verifikasi email'}</button>
+          <label>Email<input name="email" type="email" required autoComplete="email" placeholder="nama@email.com" /></label>
+          <label>Kata sandi<input name="password" type="password" minLength={8} required autoComplete={mode === 'login' ? 'current-password' : 'new-password'} placeholder="Minimal 8 karakter" /></label>
+          <button disabled={busy} className="btn primary full">{busy ? 'Memproses...' : mode === 'login' ? 'Masuk' : 'Daftar & verifikasi email'}</button>
         </form>
 
-        <p className="message">{message}</p>
+        <p className="message" aria-live="polite">{message}</p>
         <Link href="/">← Kembali ke beranda</Link>
       </section>
     </main>
