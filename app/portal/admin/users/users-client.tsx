@@ -48,6 +48,13 @@ export default function UsersClient({ users }: { users: AdminUser[] }) {
     }
   }
 
+  async function finalizeDeletion(user: AdminUser) {
+    if (!user.deletion_request) return
+    const confirmed = window.confirm(`Hapus akun ${user.full_name || user.email} secara permanen? Profil, progres, perangkat, bookmark, dan identitas Auth akan dihapus. Catatan transaksi akan dianonimkan.`)
+    if (!confirmed) return
+    await run({ action: 'finalize_deletion', requestId: user.deletion_request.id, userId: user.id }, 'Akun telah dihapus dan transaksi yang wajib dipertahankan sudah dianonimkan.')
+  }
+
   return (
     <>
       <div className={styles.message}>{message}</div>
@@ -92,14 +99,13 @@ export default function UsersClient({ users }: { users: AdminUser[] }) {
                   <h3>Permintaan penghapusan akun</h3>
                   <p>Status: <b>{user.deletion_request.status}</b> · {new Date(user.deletion_request.requested_at).toLocaleString('id-ID')}</p>
                   {user.deletion_request.reason && <p className={styles.note}>{user.deletion_request.reason}</p>}
-                  {!['completed'].includes(user.deletion_request.status) && (
-                    <div className={styles.actions}>
-                      <button className={styles.secondary} disabled={busy} onClick={() => run({ action: 'deletion_status', requestId: user.deletion_request?.id, status: 'confirmed' }, 'Permintaan dikonfirmasi.')}>Konfirmasi</button>
-                      <button className={styles.secondary} disabled={busy} onClick={() => run({ action: 'deletion_status', requestId: user.deletion_request?.id, status: 'processing' }, 'Permintaan ditandai sedang diproses.')}>Proses</button>
-                      <button className={styles.danger} disabled={busy} onClick={() => run({ action: 'deletion_status', requestId: user.deletion_request?.id, status: 'cancelled' }, 'Permintaan dibatalkan.')}>Batalkan</button>
-                    </div>
-                  )}
-                  <p className={styles.note}>Status “Selesai” tidak tersedia di sini sebelum penghapusan Auth dan data benar-benar dijalankan. Ini mencegah admin menandai akun terhapus padahal identitas Auth masih ada.</p>
+                  <div className={styles.actions}>
+                    <button className={styles.secondary} disabled={busy} onClick={() => run({ action: 'deletion_status', requestId: user.deletion_request?.id, status: 'confirmed' }, 'Permintaan dikonfirmasi.')}>Konfirmasi</button>
+                    <button className={styles.secondary} disabled={busy} onClick={() => run({ action: 'deletion_status', requestId: user.deletion_request?.id, status: 'processing' }, 'Permintaan ditandai sedang diproses.')}>Proses</button>
+                    <button className={styles.danger} disabled={busy} onClick={() => run({ action: 'deletion_status', requestId: user.deletion_request?.id, status: 'cancelled' }, 'Permintaan dibatalkan.')}>Batalkan</button>
+                    {user.role === 'student' && ['confirmed', 'processing'].includes(user.deletion_request.status) && <button className={styles.danger} disabled={busy} onClick={() => finalizeDeletion(user)}>Hapus akun permanen</button>}
+                  </div>
+                  <p className={styles.note}>Penghapusan permanen menghapus identitas Auth dan data belajar. Bukti pembayaran di Storage dihapus lebih dulu; catatan transaksi yang perlu dipertahankan dibuat anonim. Akun admin harus memindahkan tanggung jawab/aset sebelum dapat dihapus.</p>
                 </>
               )}
             </section>
