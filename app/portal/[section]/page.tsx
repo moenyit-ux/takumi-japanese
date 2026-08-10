@@ -67,6 +67,7 @@ const baseNav = [
   ['bookmark', 'Bookmark', '☆'],
   ['hasil', 'Hasil', '↗'],
   ['pembayaran', 'Premium', '¥'],
+  ['settings', 'Pengaturan', '⚙'],
 ]
 
 function hasActiveAccess(entitlements: Entitlement[], levelId: string) {
@@ -79,7 +80,7 @@ function hasActiveAccess(entitlements: Entitlement[], levelId: string) {
 }
 
 function Shell({ section, children, isAdmin, userName }: { section: string; children: React.ReactNode; isAdmin: boolean; userName: string }) {
-  const nav = isAdmin ? [...baseNav, ['admin', 'Admin', '⚙']] : baseNav
+  const nav = isAdmin ? [...baseNav, ['admin', 'Admin', '▦']] : baseNav
 
   return (
     <div className="portal">
