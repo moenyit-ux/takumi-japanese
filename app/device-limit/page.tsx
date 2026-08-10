@@ -1,4 +1,3 @@
-import Link from 'next/link'
 import { redirect } from 'next/navigation'
 import { createClient } from '../../lib/supabase/server'
 import DeviceManager from './device-manager'
@@ -22,7 +21,7 @@ export default async function DeviceLimitPage({ searchParams }: { searchParams: 
         <p>Takumi membatasi satu akun pada maksimal dua perangkat aktif pada saat yang sama.</p>
       </header>
       <DeviceManager devices={devices || []} reason={query.reason} />
-      <section className="panel"><Link href="/auth/signout">Keluar dari akun</Link></section>
+      <section className="panel"><form action="/auth/signout" method="post"><button className="btn ghost" type="submit">Keluar dari akun</button></form></section>
     </main>
   )
 }
