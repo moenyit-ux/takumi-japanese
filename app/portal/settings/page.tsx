@@ -23,6 +23,11 @@ export default async function SettingsPage() {
         <p>{user.email} · {profileResult.data?.birth_year ? `lahir ${profileResult.data.birth_year}` : 'tahun lahir belum diisi'} · {profileResult.data?.role || 'student'}</p>
       </header>
       <section className="panel">
+        <h2>Bantuan</h2>
+        <p>Jika ada kendala akun, pembayaran, akses premium, materi, atau masalah teknis, buat tiket agar permintaan tercatat.</p>
+        <p><Link href="/portal/support">Buka Support Center →</Link></p>
+      </section>
+      <section className="panel">
         <h2>Keamanan</h2>
         <p><Link href="/forgot-password">Ganti kata sandi melalui email →</Link></p>
         <p>Untuk keamanan akun dan mencegah penggunaan bersama tanpa izin, maksimal dua perangkat aktif dapat digunakan bersamaan.</p>
