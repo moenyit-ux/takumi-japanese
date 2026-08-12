@@ -3,6 +3,7 @@ import { notFound, redirect } from 'next/navigation'
 import { createClient } from '../../../../../lib/supabase/server'
 import Editor from './editor'
 import AssetUploader from './asset-uploader'
+import StructuredMaterialStudio from './structured-material-studio'
 import styles from '../../admin.module.css'
 
 type EditorData = {
@@ -88,6 +89,7 @@ export default async function AdminSessionPage({ params }: { params: Promise<{ i
         <Link href={`/portal/admin?level=${editorData.session.level_code}`}>← Kembali ke daftar {editorData.session.level_code}</Link>
         <Link href="/portal/dashboard">Dashboard siswa</Link>
       </div>
+      <StructuredMaterialStudio sessionId={editorData.session.id} blocks={editorData.blocks} />
       <AssetUploader sessionId={editorData.session.id} nextPosition={nextPosition} />
       <Editor initialData={editorData} />
     </main>
