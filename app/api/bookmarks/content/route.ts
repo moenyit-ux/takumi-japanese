@@ -33,15 +33,24 @@ export async function POST(request: Request) {
 
   if (!block) return json({ error: 'content_not_available' }, 403)
 
-  const { error } = await supabase.from('bookmarks').upsert({
+  const { data: existing } = await supabase
+    .from('bookmarks')
+    .select('id')
+    .eq('user_id', user.id)
+    .eq('content_block_id', body.blockId)
+    .maybeSingle()
+
+  if (existing) return json({ ok: true, bookmarked: true })
+
+  const { error } = await supabase.from('bookmarks').insert({
     user_id: user.id,
     question_id: null,
     content_block_id: body.blockId,
     source: 'manual',
     category: 'review',
-  }, { onConflict: 'user_id,content_block_id' })
+  })
 
-  if (error) return json({ error: 'bookmark_save_failed' }, 400)
+  if (error && error.code !== '23505') return json({ error: 'bookmark_save_failed' }, 400)
   return json({ ok: true, bookmarked: true })
 }
 
