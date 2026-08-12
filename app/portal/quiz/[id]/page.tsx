@@ -86,6 +86,7 @@ export default async function QuizPage({ params }: { params: Promise<{ id: strin
       ) : (
         <QuizForm
           quizId={quiz.id}
+          quizKind={quiz.kind}
           sessionId={quiz.session_id}
           title={quiz.title}
           passScore={quiz.pass_score}
