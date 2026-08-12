@@ -1,6 +1,7 @@
 import type { Metadata } from 'next'
 import './globals.css'
 import './learning.css'
+import './takumi-material.css'
 
 export const metadata: Metadata = {
   title: 'Takumi Japanese',
