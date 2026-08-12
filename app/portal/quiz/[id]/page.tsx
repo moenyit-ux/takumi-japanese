@@ -1,5 +1,5 @@
-import Link from 'next/link'
 import { notFound, redirect } from 'next/navigation'
+import TakumiStudyHeader from '../../../components/takumi-study-header'
 import { createClient } from '../../../../lib/supabase/server'
 import { resolveLearningAsset } from '../../../../lib/supabase/assets'
 import QuizForm from './quiz-form'
@@ -31,7 +31,7 @@ export default async function QuizPage({ params }: { params: Promise<{ id: strin
 
   const { data: quiz, error: quizError } = await supabase
     .from('quizzes')
-    .select('id, session_id, title, pass_score, time_limit_minutes, kind')
+    .select('id, level_id, session_id, title, pass_score, time_limit_minutes, kind')
     .eq('id', id)
     .eq('published', true)
     .maybeSingle()
@@ -53,15 +53,23 @@ export default async function QuizPage({ params }: { params: Promise<{ id: strin
   const ids = questions.map((question) => question.id)
 
   let options: OptionRow[] = []
+  let bookmarkedQuestionIds: string[] = []
   if (ids.length > 0) {
-    const { data: optionData, error: optionError } = await supabase
-      .from('question_options')
-      .select('id, question_id, position, label, option_text')
-      .in('question_id', ids)
-      .order('position')
+    const [optionResult, bookmarkResult] = await Promise.all([
+      supabase
+        .from('question_options')
+        .select('id, question_id, position, label, option_text')
+        .in('question_id', ids)
+        .order('position'),
+      supabase
+        .from('bookmarks')
+        .select('question_id')
+        .in('question_id', ids),
+    ])
 
-    if (optionError) notFound()
-    options = (optionData || []) as OptionRow[]
+    if (optionResult.error) notFound()
+    options = (optionResult.data || []) as OptionRow[]
+    bookmarkedQuestionIds = (bookmarkResult.data || []).map((item) => item.question_id).filter((value): value is string => Boolean(value))
   }
 
   const prepared = questions.map((question) => ({
@@ -69,17 +77,31 @@ export default async function QuizPage({ params }: { params: Promise<{ id: strin
     options: options.filter((option) => option.question_id === question.id),
   }))
 
+  const [levelResult, sessionResult] = await Promise.all([
+    supabase.from('levels').select('code, total_sessions').eq('id', quiz.level_id).maybeSingle(),
+    quiz.session_id
+      ? supabase.from('learning_sessions').select('id, session_no').eq('id', quiz.session_id).maybeSingle()
+      : Promise.resolve({ data: null, error: null }),
+  ])
+
+  const levelCode = levelResult.data?.code || 'N4'
+  const sessionNo = sessionResult.data?.session_no || null
+  const backHref = quiz.session_id ? `/portal/session/${quiz.session_id}` : `/portal/materi?level=${levelCode}`
+  const nextHref = `/portal/materi?level=${levelCode}`
+
   return (
-    <main className="learning-shell quiz-shell">
-      <div className="learning-topbar">
-        {quiz.session_id
-          ? <Link className="back-link" href={`/portal/session/${quiz.session_id}`}>← Kembali ke sesi</Link>
-          : <Link className="back-link" href="/portal/dashboard">← Dashboard</Link>}
-        <span>{quiz.kind === 'simulation' ? 'Simulasi' : quiz.kind === 'checkpoint' ? 'Evaluasi' : 'Latihan sesi'}</span>
-      </div>
+    <main className="tm-material-page">
+      <TakumiStudyHeader
+        backHref={backHref}
+        active="quiz"
+        sessionNo={sessionNo}
+        totalSessions={levelResult.data?.total_sessions || null}
+        quizHref={`/portal/quiz/${quiz.id}`}
+        compact={quiz.kind === 'simulation'}
+      />
 
       {prepared.length === 0 ? (
-        <section className="panel empty learning-empty">
+        <section className="tm-material-card tm-empty-card">
           <h1>{quiz.title}</h1>
           <h2>Bank soal belum diisi</h2>
           <p>Kerangka latihan sudah tersedia, tetapi belum ada soal yang dipublikasikan.</p>
@@ -100,6 +122,8 @@ export default async function QuizPage({ params }: { params: Promise<{ id: strin
           passScore={quiz.pass_score}
           timeLimitMinutes={quiz.time_limit_minutes}
           questions={prepared}
+          initialBookmarkedQuestionIds={bookmarkedQuestionIds}
+          nextHref={nextHref}
         />
       )}
     </main>

@@ -82,7 +82,7 @@ export default function ProgressTracker({ sessionId, blockIds, initialReadPercen
   if (blockIds.length === 0) return null
 
   return (
-    <div className="save-state" aria-live="polite">
+    <div className="tm-save-state" aria-live="polite">
       <span>Progres materi tersimpan</span>
       <b>{savedPercent}%</b>
     </div>
