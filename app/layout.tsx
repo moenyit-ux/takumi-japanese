@@ -1,4 +1,5 @@
 import type { Metadata } from 'next'
+import MaterialNavigationGuard from './components/material-navigation-guard'
 import './globals.css'
 import './learning.css'
 import './takumi-material.css'
@@ -12,7 +13,7 @@ export const metadata: Metadata = {
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
     <html lang="id">
-      <body>{children}</body>
+      <body><MaterialNavigationGuard />{children}</body>
     </html>
   )
 }
