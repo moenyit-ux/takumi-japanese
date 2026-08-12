@@ -26,6 +26,7 @@ export default function SimulationForm({ quizId, title, passScore, timeLimitMinu
   const stateRef = useRef<SimulationState | null>(null)
   const syncingRef = useRef(false)
   const finishingRef = useRef(false)
+  const completedRef = useRef(false)
   const baseRemainingRef = useRef<number | null>(null)
   const baseAtRef = useRef(Date.now())
 
@@ -60,6 +61,17 @@ export default function SimulationForm({ quizId, title, passScore, timeLimitMinu
     baseRemainingRef.current = current
     baseAtRef.current = Date.now()
     setRemaining(current)
+  }
+
+  function markIntentionalLeave() {
+    const current = stateRef.current
+    if (!current || completedRef.current || finishingRef.current || !navigator.onLine) return
+    void fetch('/api/quiz/simulation', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ action: 'leave', attemptId: current.attempt_id, answers: answersRef.current }),
+      keepalive: true,
+    }).catch(() => undefined)
   }
 
   async function start() {
@@ -143,6 +155,7 @@ export default function SimulationForm({ quizId, title, passScore, timeLimitMinu
         setMessage(payload?.error === 'quiz_has_no_questions' ? 'Bank soal simulasi masih kosong.' : 'Simulasi belum dapat dinilai. Progres tetap tersimpan.')
         return
       }
+      completedRef.current = true
       setResult(payload.result)
       setConnected(true)
       setMessage('')
@@ -169,20 +182,28 @@ export default function SimulationForm({ quizId, title, passScore, timeLimitMinu
       setStatus('Koneksi kembali. Menyinkronkan...')
       if (stateRef.current) void sync(); else void start()
     }
-    const visible = () => {
-      if (document.visibilityState === 'visible' && navigator.onLine && stateRef.current) {
+    const visibility = () => {
+      if (document.visibilityState === 'hidden') {
+        markIntentionalLeave()
+        return
+      }
+      if (navigator.onLine && stateRef.current) {
         setConnected(false)
         setStatus('Memeriksa waktu dan progres...')
         void sync()
       }
     }
+    const pageHide = () => markIntentionalLeave()
+
     window.addEventListener('offline', offline)
     window.addEventListener('online', online)
-    document.addEventListener('visibilitychange', visible)
+    window.addEventListener('pagehide', pageHide)
+    document.addEventListener('visibilitychange', visibility)
     return () => {
       window.removeEventListener('offline', offline)
       window.removeEventListener('online', online)
-      document.removeEventListener('visibilitychange', visible)
+      window.removeEventListener('pagehide', pageHide)
+      document.removeEventListener('visibilitychange', visibility)
     }
   }, []) // eslint-disable-line react-hooks/exhaustive-deps
 
