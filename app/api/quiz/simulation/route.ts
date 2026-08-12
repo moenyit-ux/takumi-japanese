@@ -2,7 +2,7 @@ import { NextResponse } from 'next/server'
 import { createClient } from '../../../../lib/supabase/server'
 
 type Body = {
-  action?: 'start' | 'sync' | 'finish'
+  action?: 'start' | 'sync' | 'finish' | 'leave'
   quizId?: string
   attemptId?: string
   answers?: Record<string, string>
@@ -53,6 +53,24 @@ export async function POST(request: Request) {
     })
     if (error) return mapError(error.message, error.code)
     return response({ ok: true, state: data })
+  }
+
+  if (body.action === 'leave') {
+    if (!body.attemptId) return response({ error: 'attempt_id_required' }, 400)
+
+    if (body.answers && typeof body.answers === 'object' && !Array.isArray(body.answers)) {
+      const { error: saveError } = await supabase.rpc('save_simulation_progress', {
+        p_attempt_id: body.attemptId,
+        p_answers: body.answers,
+      })
+      if (saveError && !saveError.message.includes('simulation_already_submitted')) {
+        return mapError(saveError.message, saveError.code)
+      }
+    }
+
+    const { data, error } = await supabase.rpc('mark_simulation_page_left', { p_attempt_id: body.attemptId })
+    if (error) return mapError(error.message, error.code)
+    return response({ ok: true, marked: Boolean(data) })
   }
 
   if (body.action === 'finish') {
