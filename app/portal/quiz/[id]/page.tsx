@@ -3,6 +3,7 @@ import { notFound, redirect } from 'next/navigation'
 import { createClient } from '../../../../lib/supabase/server'
 import { resolveLearningAsset } from '../../../../lib/supabase/assets'
 import QuizForm from './quiz-form'
+import SimulationForm from './simulation-form'
 
 type QuestionRow = {
   id: string
@@ -83,6 +84,14 @@ export default async function QuizPage({ params }: { params: Promise<{ id: strin
           <h2>Bank soal belum diisi</h2>
           <p>Kerangka latihan sudah tersedia, tetapi belum ada soal yang dipublikasikan.</p>
         </section>
+      ) : quiz.kind === 'simulation' ? (
+        <SimulationForm
+          quizId={quiz.id}
+          title={quiz.title}
+          passScore={quiz.pass_score}
+          timeLimitMinutes={quiz.time_limit_minutes}
+          questions={prepared}
+        />
       ) : (
         <QuizForm
           quizId={quiz.id}
