@@ -4,6 +4,7 @@ import { createClient } from '../../../../../lib/supabase/server'
 import Editor from './editor'
 import AssetUploader from './asset-uploader'
 import StructuredMaterialStudio from './structured-material-studio'
+import BulkImport from './bulk-import'
 import styles from '../../admin.module.css'
 
 type EditorData = {
@@ -87,9 +88,13 @@ export default async function AdminSessionPage({ params }: { params: Promise<{ i
     <main className={styles.editorShell}>
       <div className={styles.editorTop}>
         <Link href={`/portal/admin?level=${editorData.session.level_code}`}>← Kembali ke daftar {editorData.session.level_code}</Link>
-        <Link href="/portal/dashboard">Dashboard siswa</Link>
+        <div className={styles.actions} style={{ marginTop: 0 }}>
+          <Link className={styles.secondary} href={`/portal/admin/session/${editorData.session.id}/preview`}>Preview siswa</Link>
+          <Link href="/portal/dashboard">Dashboard siswa</Link>
+        </div>
       </div>
       <StructuredMaterialStudio sessionId={editorData.session.id} blocks={editorData.blocks} />
+      <BulkImport sessionId={editorData.session.id} />
       <AssetUploader sessionId={editorData.session.id} nextPosition={nextPosition} />
       <Editor initialData={editorData} />
     </main>
