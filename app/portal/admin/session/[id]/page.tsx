@@ -3,7 +3,7 @@ import { notFound, redirect } from 'next/navigation'
 import { createClient } from '../../../../../lib/supabase/server'
 import Editor from './editor'
 import AssetUploader from './asset-uploader'
-import StructuredMaterialStudio from './structured-material-studio'
+import SimpleMaterialStudio from './simple-material-studio'
 import QuizTabPortal from './quiz-tab-portal'
 import BulkImport from './bulk-import'
 import styles from '../../admin.module.css'
@@ -95,7 +95,7 @@ export default async function AdminSessionPage({ params }: { params: Promise<{ i
         </div>
       </div>
 
-      <StructuredMaterialStudio sessionId={editorData.session.id} blocks={editorData.blocks} />
+      <SimpleMaterialStudio sessionId={editorData.session.id} blocks={editorData.blocks} />
       <QuizTabPortal
         sessionId={editorData.session.id}
         quizId={editorData.quiz.id}
