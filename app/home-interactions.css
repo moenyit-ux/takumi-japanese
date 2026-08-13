@@ -1,0 +1,99 @@
+/* Interactive states for the public homepage */
+header .btn,
+.hero .btn,
+.price .btn,
+header nav a {
+  transition:
+    transform 160ms ease,
+    background-color 160ms ease,
+    border-color 160ms ease,
+    color 160ms ease,
+    box-shadow 160ms ease;
+}
+
+header .btn:hover,
+.hero .btn:hover,
+.price .btn:hover {
+  transform: translateY(-2px);
+}
+
+header .primary:hover,
+.hero .primary:hover,
+.price .primary:hover {
+  background: #0f628d;
+  box-shadow: 0 14px 30px rgba(20, 111, 159, 0.24);
+}
+
+header .ghost:hover,
+.hero .ghost:hover,
+.price .ghost:hover {
+  background: var(--soft);
+  border-color: #abdced;
+  color: var(--deep);
+  box-shadow: 0 10px 22px rgba(37, 84, 110, 0.09);
+}
+
+header .btn:active,
+.hero .btn:active,
+.price .btn:active {
+  transform: translateY(0) scale(0.97);
+  box-shadow: 0 4px 12px rgba(37, 84, 110, 0.12);
+}
+
+header nav a {
+  position: relative;
+  padding: 10px 2px;
+  font-weight: 600;
+}
+
+header nav a::after {
+  content: '';
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 4px;
+  height: 2px;
+  border-radius: 999px;
+  background: var(--deep);
+  transform: scaleX(0);
+  transform-origin: center;
+  transition: transform 160ms ease;
+}
+
+header nav a:hover {
+  color: var(--deep);
+}
+
+header nav a:hover::after {
+  transform: scaleX(1);
+}
+
+header nav a:active {
+  transform: scale(0.96);
+}
+
+header .btn:focus-visible,
+.hero .btn:focus-visible,
+.price .btn:focus-visible,
+header nav a:focus-visible {
+  outline: 3px solid rgba(100, 190, 233, 0.48);
+  outline-offset: 3px;
+}
+
+@media (hover: none) {
+  header .btn:hover,
+  .hero .btn:hover,
+  .price .btn:hover {
+    transform: none;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  header .btn,
+  .hero .btn,
+  .price .btn,
+  header nav a,
+  header nav a::after {
+    transition: none;
+  }
+}
