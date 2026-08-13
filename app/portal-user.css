@@ -13,3 +13,71 @@
   line-height: 1.25;
   overflow-wrap: anywhere;
 }
+
+/* Make portal controls feel responsive when clicked/tapped. */
+.side nav a,
+.bottom a,
+.btn,
+.tabs a,
+.sessiongrid a {
+  -webkit-tap-highlight-color: transparent;
+  transition:
+    transform 120ms ease,
+    background-color 120ms ease,
+    border-color 120ms ease,
+    box-shadow 120ms ease,
+    color 120ms ease;
+}
+
+.side nav a:active,
+.bottom a:active,
+.tabs a:active,
+.sessiongrid a:active {
+  transform: translateY(1px) scale(0.985);
+}
+
+.side nav a:active {
+  background: #dceff8;
+  color: var(--deep);
+}
+
+.btn:active {
+  transform: translateY(1px) scale(0.985);
+  box-shadow: 0 4px 12px rgba(20, 111, 159, 0.14);
+}
+
+.bottom a:active {
+  background: var(--soft);
+  border-radius: 10px;
+  color: var(--deep);
+}
+
+.tabs a {
+  padding: 10px 13px;
+  border: 1px solid var(--line);
+  border-radius: 10px;
+  background: #fff;
+  color: var(--muted);
+  font-weight: 800;
+}
+
+.tabs a.on {
+  border-color: var(--deep);
+  background: var(--deep);
+  color: #fff;
+}
+
+.side nav a:focus-visible,
+.bottom a:focus-visible,
+.btn:focus-visible,
+.tabs a:focus-visible,
+.sessiongrid a:focus-visible {
+  outline: 3px solid rgba(100, 190, 233, 0.35);
+  outline-offset: 2px;
+}
+
+/* Keep the quote, but remove the blue card background. */
+.quote {
+  background: transparent;
+  border-radius: 0;
+}
