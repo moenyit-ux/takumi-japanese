@@ -2,6 +2,7 @@ import Link from 'next/link'
 import { redirect } from 'next/navigation'
 import { createClient } from '../../../lib/supabase/server'
 import styles from './admin.module.css'
+import overview from './admin-overview.module.css'
 
 type Level = {
   id: string
@@ -70,14 +71,14 @@ export default async function AdminPage({ searchParams }: { searchParams: Promis
     <main className={styles.adminShell}>
       <div className={styles.topbar}>
         <Link href="/portal/dashboard">← Dashboard siswa</Link>
-        <div>
+        <div className={overview.topbarLinks}>
           <Link href="/portal/admin/support">Support →</Link>
           {role === 'super_admin' && <><Link href="/portal/admin/users">Pengguna →</Link><Link href="/portal/admin/payments">Pembayaran →</Link></>}
           <span className={styles.roleBadge}>{role === 'super_admin' ? 'SUPER ADMIN' : 'CONTENT ADMIN'}</span>
         </div>
       </div>
 
-      <header className={styles.hero}>
+      <header className={`${styles.hero} ${overview.heroFix}`}>
         <div>
           <div className={styles.eyebrow}>TAKUMI CONTENT STUDIO</div>
           <h1>Panel Admin Materi</h1>
@@ -94,7 +95,7 @@ export default async function AdminPage({ searchParams }: { searchParams: Promis
       </section>
 
       <section className={styles.workflow}>
-        <div className={draftsInProgress > 0 ? styles.workflowActive : ''}><b>1</b><span>{draftsInProgress > 0 ? `Draft · ${draftsInProgress} aktif` : 'Draft'}</span></div>
+        <div className={draftsInProgress > 0 ? overview.workflowActive : ''}><b>1</b><span>{draftsInProgress > 0 ? `Draft · ${draftsInProgress} aktif` : 'Draft'}</span></div>
         <i>→</i>
         <div><b>2</b><span>Review</span></div>
         <i>→</i>
@@ -127,7 +128,7 @@ export default async function AdminPage({ searchParams }: { searchParams: Promis
                 <h3>{session.title}</h3>
                 <p>Terakhir diperbarui {new Date(session.updated_at).toLocaleDateString('id-ID')}{blockCount > 0 ? ` · ${blockCount} blok materi` : ''}</p>
               </div>
-              <span className={`${styles.status} ${styles[session.content_status] || ''} ${isDraftActive ? styles.draftActive : ''}`}>{isDraftActive ? 'Draft aktif' : (statusLabel[session.content_status] || session.content_status)}</span>
+              <span className={`${styles.status} ${styles[session.content_status] || ''} ${isDraftActive ? overview.draftActive : ''}`}>{isDraftActive ? 'Draft aktif' : (statusLabel[session.content_status] || session.content_status)}</span>
               <Link className={styles.editButton} href={`/portal/admin/session/${session.id}`}>Edit →</Link>
             </article>
           )
