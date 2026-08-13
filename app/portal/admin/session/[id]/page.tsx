@@ -114,6 +114,8 @@ export default async function AdminSessionPage({ params }: { params: Promise<{ i
         </div>
       </div>
 
+      <Editor initialData={editorData} section="session" />
+
       <SimpleMaterialStudio sessionId={editorData.session.id} blocks={editorData.blocks} />
       <QuizTabPortal
         sessionId={editorData.session.id}
@@ -148,7 +150,7 @@ export default async function AdminSessionPage({ params }: { params: Promise<{ i
           </div>
         </details>
 
-        <Editor initialData={editorData} />
+        <Editor initialData={editorData} section="workflow" />
       </div>
     </main>
   )
