@@ -1,0 +1,15 @@
+.side-user {
+  min-width: 0;
+}
+
+.side-user small,
+.side-user b {
+  display: block;
+  min-width: 0;
+}
+
+.side-user b {
+  margin-top: 2px;
+  line-height: 1.25;
+  overflow-wrap: anywhere;
+}
