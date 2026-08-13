@@ -89,7 +89,7 @@ export default async function AdminSessionPage({ params }: { params: Promise<{ i
     <main className={styles.editorShell}>
       <div className={styles.editorTop}>
         <Link href={`/portal/admin?level=${editorData.session.level_code}`}>← Kembali ke daftar {editorData.session.level_code}</Link>
-        <div className={styles.actions} style={{ marginTop: 0 }}>
+        <div className={styles.editorTopActions}>
           <Link className={styles.secondary} href={`/portal/admin/session/${editorData.session.id}/preview`}>Preview siswa</Link>
           <Link href="/portal/dashboard">Dashboard siswa</Link>
         </div>
