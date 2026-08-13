@@ -95,7 +95,7 @@ export default async function AdminSessionPage({ params }: { params: Promise<{ i
         </div>
       </div>
       <StructuredMaterialStudio sessionId={editorData.session.id} blocks={editorData.blocks} />
-      <QuizTabPortal questionCount={editorData.quiz?.questions?.length || 0} />
+      <QuizTabPortal sessionId={editorData.session.id} questionCount={editorData.quiz?.questions?.length || 0} />
       <BulkImport sessionId={editorData.session.id} />
       <AssetUploader sessionId={editorData.session.id} nextPosition={nextPosition} />
       <Editor initialData={editorData} />
