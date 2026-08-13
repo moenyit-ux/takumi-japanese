@@ -102,7 +102,7 @@ export default async function AdminSessionPage({ params }: { params: Promise<{ i
         questions={editorData.quiz.questions || []}
       />
 
-      <div id="session-material-extras">
+      <div id="session-material-extras" style={{ display: 'contents' }}>
         <BulkImport sessionId={editorData.session.id} />
         <AssetUploader sessionId={editorData.session.id} nextPosition={nextPosition} />
         <Editor initialData={editorData} />
