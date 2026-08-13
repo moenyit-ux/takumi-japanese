@@ -70,6 +70,25 @@ type EditorData = {
   }>
 }
 
+const compactToolStyle = {
+  marginTop: 14,
+  border: '1px solid #d9eaf2',
+  borderRadius: 18,
+  background: '#fff',
+  overflow: 'hidden',
+} as const
+
+const compactSummaryStyle = {
+  display: 'flex',
+  alignItems: 'center',
+  justifyContent: 'space-between',
+  gap: 16,
+  padding: '16px 18px',
+  cursor: 'pointer',
+  color: '#17324d',
+  fontWeight: 800,
+} as const
+
 export default async function AdminSessionPage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = await params
   const supabase = await createClient()
@@ -103,8 +122,32 @@ export default async function AdminSessionPage({ params }: { params: Promise<{ i
       />
 
       <div id="session-material-extras" style={{ display: 'contents' }}>
-        <BulkImport sessionId={editorData.session.id} />
-        <AssetUploader sessionId={editorData.session.id} nextPosition={nextPosition} />
+        <details style={compactToolStyle}>
+          <summary style={compactSummaryStyle}>
+            <span>
+              <span style={{ display: 'block', color: '#146f9f', fontSize: 10, letterSpacing: '.12em', marginBottom: 3 }}>ALAT TAMBAHAN</span>
+              Bulk import materi / soal
+            </span>
+            <span style={{ color: '#71889a', fontSize: 12, fontWeight: 700 }}>Buka bila diperlukan</span>
+          </summary>
+          <div style={{ padding: '0 12px 12px' }}>
+            <BulkImport sessionId={editorData.session.id} />
+          </div>
+        </details>
+
+        <details style={compactToolStyle}>
+          <summary style={compactSummaryStyle}>
+            <span>
+              <span style={{ display: 'block', color: '#146f9f', fontSize: 10, letterSpacing: '.12em', marginBottom: 3 }}>ALAT TAMBAHAN</span>
+              Upload gambar atau audio
+            </span>
+            <span style={{ color: '#71889a', fontSize: 12, fontWeight: 700 }}>Buka bila diperlukan</span>
+          </summary>
+          <div style={{ padding: '0 12px 12px' }}>
+            <AssetUploader sessionId={editorData.session.id} nextPosition={nextPosition} />
+          </div>
+        </details>
+
         <Editor initialData={editorData} />
       </div>
     </main>
