@@ -1,1 +1,24 @@
-.banner{position:sticky;top:0;z-index:20;display:flex;justify-content:space-between;align-items:center;gap:12px;padding:10px 14px;margin:-18px auto 14px;max-width:980px;border:1px solid #f0d79b;border-radius:14px;background:#fff9e8;color:#765514;box-shadow:0 8px 24px rgba(72,55,20,.08)}.banner b{font-size:12px;letter-spacing:.05em}.banner span{font-size:11px}.back{font-weight:900;color:#356b88;white-space:nowrap}.previewWrap :global(.tm-material-actions button){display:none!important}.quizPreview{margin-top:18px}.quizHead{display:flex;justify-content:space-between;gap:14px;align-items:center;margin-bottom:12px}.quizHead h2{margin:0}.quizHead span{font-size:11px;color:#71889a}.answerKey{margin-top:10px;border-top:1px dashed #d9eaf2;padding-top:9px;font-size:11px;color:#567287}.answerKey summary{cursor:pointer;font-weight:900}.answerKey b{color:#26724a}.muted{opacity:.65}.empty{padding:20px;border:1px dashed #cfe3ed;border-radius:14px;text-align:center;color:#71889a}@media(max-width:640px){.banner{margin-top:-10px;align-items:flex-start;flex-direction:column}.quizHead{align-items:flex-start;flex-direction:column}}
+.banner{position:sticky;top:0;z-index:20;display:flex;justify-content:space-between;align-items:center;gap:12px;padding:10px 14px;margin:-18px auto 14px;max-width:980px;border:1px solid #f0d79b;border-radius:14px;background:#fff9e8;color:#765514;box-shadow:0 8px 24px rgba(72,55,20,.08)}
+.banner b{font-size:12px;letter-spacing:.05em}
+.banner span{font-size:11px}
+.back{font-weight:900;color:#356b88;white-space:nowrap}
+
+/* Preview keeps the student CTA shape, but removes the live bookmark control. */
+.previewWrap :global(.tm-material-actions>div){display:none!important}
+.previewWrap :global(.tm-material-actions){grid-template-columns:1fr}
+.previewWrap :global(.tm-material-actions>a){pointer-events:none}
+
+.quizPreview{margin-top:18px}
+.quizHead{display:flex;justify-content:space-between;gap:14px;align-items:center;margin-bottom:12px}
+.quizHead h2{margin:0}
+.quizHead span{font-size:11px;color:#71889a}
+.answerKey{margin-top:10px;border-top:1px dashed #d9eaf2;padding-top:9px;font-size:11px;color:#567287}
+.answerKey summary{cursor:pointer;font-weight:900}
+.answerKey b{color:#26724a}
+.muted{opacity:.65}
+.empty{padding:20px;border:1px dashed #cfe3ed;border-radius:14px;text-align:center;color:#71889a}
+
+@media(max-width:640px){
+  .banner{margin-top:-10px;align-items:flex-start;flex-direction:column}
+  .quizHead{align-items:flex-start;flex-direction:column}
+}
