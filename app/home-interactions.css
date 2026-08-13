@@ -80,6 +80,109 @@ header nav a:focus-visible {
   outline-offset: 3px;
 }
 
+/* Homepage one-time pricing */
+.price > h2 {
+  margin: 10px 0 6px;
+}
+
+.priceLead {
+  max-width: 560px;
+  margin: 0 auto 32px;
+  font-size: 16px;
+}
+
+.priceGrid {
+  width: min(100%, 780px);
+  margin: 0 auto;
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 18px;
+  text-align: left;
+}
+
+.priceCard {
+  display: flex;
+  flex-direction: column;
+  min-height: 360px;
+  padding: 26px;
+  border: 1px solid var(--line);
+  border-radius: 22px;
+  background: linear-gradient(155deg, #ffffff, #f7fcfe);
+  box-shadow: 0 10px 28px rgba(37, 84, 110, 0.07);
+}
+
+.priceCardHead {
+  display: flex;
+  align-items: center;
+  gap: 13px;
+  margin-bottom: 24px;
+}
+
+.priceCardHead > span {
+  width: 48px;
+  height: 48px;
+  flex: 0 0 48px;
+  display: grid;
+  place-items: center;
+  border-radius: 14px;
+  background: var(--deep);
+  color: #fff;
+  font-size: 17px;
+  font-weight: 900;
+}
+
+.priceCardHead h3 {
+  margin: 0;
+  font-size: 20px;
+  letter-spacing: -0.02em;
+}
+
+.priceCardHead p {
+  margin: 4px 0 0;
+  font-size: 13px;
+}
+
+.priceAmount {
+  font-size: clamp(32px, 4vw, 42px);
+  line-height: 1;
+  letter-spacing: -0.04em;
+  font-weight: 900;
+  color: var(--ink);
+}
+
+.priceOnce {
+  margin-top: 8px;
+  color: var(--deep);
+  font-size: 13px;
+  font-weight: 900;
+}
+
+.priceDesc {
+  flex: 1;
+  margin: 22px 0 24px;
+  font-size: 14px;
+}
+
+.priceNote {
+  margin: 24px 0 0;
+  font-size: 13px;
+}
+
+@media (max-width: 700px) {
+  .priceGrid {
+    grid-template-columns: 1fr;
+  }
+
+  .priceCard {
+    min-height: 0;
+    padding: 22px;
+  }
+
+  .priceLead {
+    margin-bottom: 24px;
+  }
+}
+
 @media (hover: none) {
   header .btn:hover,
   .hero .btn:hover,
