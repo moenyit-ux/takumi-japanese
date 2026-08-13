@@ -130,3 +130,91 @@
   background: transparent;
   border-radius: 0;
 }
+
+/* Account settings: make links, buttons, cards and fields visibly interactive. */
+.learning-shell.narrow .back-link,
+.learning-shell.narrow .panel a,
+.learning-shell.narrow .panel .btn,
+.learning-shell.narrow .stats article,
+.learning-shell.narrow input,
+.learning-shell.narrow textarea {
+  transition:
+    transform 120ms ease,
+    background-color 120ms ease,
+    border-color 120ms ease,
+    box-shadow 120ms ease,
+    color 120ms ease;
+}
+
+.learning-shell.narrow .back-link:hover,
+.learning-shell.narrow .panel a:hover {
+  color: var(--deep);
+  background: var(--soft);
+  border-radius: 9px;
+}
+
+.learning-shell.narrow .back-link {
+  padding: 7px 9px;
+  margin-left: -9px;
+}
+
+.learning-shell.narrow .panel a {
+  display: inline-block;
+  padding: 7px 9px;
+  margin-left: -9px;
+  font-weight: 800;
+}
+
+.learning-shell.narrow .back-link:active,
+.learning-shell.narrow .panel a:active {
+  transform: translateY(1px) scale(0.985);
+  background: #dceff8;
+  color: #0f638e;
+}
+
+.learning-shell.narrow .panel .btn:not(:disabled):hover {
+  background: var(--soft);
+  border-color: var(--blue);
+  color: var(--deep);
+  box-shadow: 0 6px 16px rgba(20, 111, 159, 0.08);
+}
+
+.learning-shell.narrow .panel .btn:not(:disabled):active {
+  background: var(--deep);
+  border-color: var(--deep);
+  color: #fff;
+  transform: translateY(1px) scale(0.985);
+  box-shadow: 0 4px 12px rgba(20, 111, 159, 0.14);
+}
+
+.learning-shell.narrow .stats article {
+  cursor: pointer;
+  user-select: none;
+}
+
+.learning-shell.narrow .stats article:hover {
+  background: #f3faff;
+  border-color: #bfe2f2;
+  box-shadow: 0 6px 18px rgba(20, 111, 159, 0.07);
+}
+
+.learning-shell.narrow .stats article:active {
+  background: var(--soft);
+  border-color: var(--blue);
+  transform: translateY(1px) scale(0.985);
+}
+
+.learning-shell.narrow input:focus,
+.learning-shell.narrow textarea:focus {
+  outline: none;
+  border-color: var(--blue);
+  box-shadow: 0 0 0 3px rgba(100, 190, 233, 0.18);
+  background: #fbfeff;
+}
+
+.learning-shell.narrow .back-link:focus-visible,
+.learning-shell.narrow .panel a:focus-visible,
+.learning-shell.narrow .panel .btn:focus-visible {
+  outline: 3px solid rgba(100, 190, 233, 0.35);
+  outline-offset: 2px;
+}
