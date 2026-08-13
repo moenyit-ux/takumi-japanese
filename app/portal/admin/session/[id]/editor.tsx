@@ -4,6 +4,7 @@ import { useRouter } from 'next/navigation'
 import { useState } from 'react'
 import styles from '../../admin.module.css'
 import layout from './workflow-layout.module.css'
+import sessionStyles from './session-details.module.css'
 
 type EditorData = {
   role: 'content_admin' | 'super_admin'
@@ -86,6 +87,83 @@ async function callAdmin(payload: Record<string, unknown>) {
   if (!response.ok || data.error) throw new Error(data.error || 'Perubahan gagal disimpan.')
 }
 
+function SessionDetails({ data }: { data: EditorData }) {
+  const router = useRouter()
+  const [title, setTitle] = useState(data.session.title)
+  const [summary, setSummary] = useState(data.session.summary || '')
+  const [minutes, setMinutes] = useState(data.session.estimated_minutes)
+  const [accessTier, setAccessTier] = useState(data.session.access_tier)
+  const [message, setMessage] = useState('')
+  const [busy, setBusy] = useState(false)
+
+  async function save() {
+    setBusy(true)
+    setMessage('Menyimpan...')
+    try {
+      await callAdmin({
+        action: 'save_session',
+        sessionId: data.session.id,
+        title,
+        summary,
+        estimatedMinutes: minutes,
+        accessTier,
+      })
+      setMessage('Informasi sesi tersimpan.')
+      router.refresh()
+    } catch (error) {
+      setMessage(error instanceof Error ? error.message : 'Gagal menyimpan informasi sesi.')
+    } finally {
+      setBusy(false)
+    }
+  }
+
+  return (
+    <details className={`${styles.panel} ${sessionStyles.details}`}>
+      <summary className={sessionStyles.summary}>
+        <div className={sessionStyles.summaryMain}>
+          <div className={sessionStyles.summaryTop}>
+            <span className={sessionStyles.eyebrow}>{data.session.level_code} · SESI {data.session.session_no}</span>
+          </div>
+          <h1 className={sessionStyles.title}>{data.session.title}</h1>
+          <p className={sessionStyles.meta}>{data.session.level_name} · {data.session.access_tier === 'free' ? 'Akses gratis' : 'Akses premium'}</p>
+        </div>
+        <div className={sessionStyles.summaryRight}>
+          <span className={`${styles.status} ${styles[data.session.content_status] || ''}`}>{statusLabel[data.session.content_status] || data.session.content_status}</span>
+          <span className={sessionStyles.toggle} aria-hidden="true" />
+        </div>
+      </summary>
+
+      <div className={sessionStyles.body}>
+        <div className={sessionStyles.bodyHead}>
+          <h2>Informasi sesi</h2>
+          <p>Bagian ini hanya perlu dibuka jika judul, ringkasan, durasi, atau akses sesi ingin diubah.</p>
+        </div>
+        <div className={styles.formGrid}>
+          <label className={`${styles.label} ${styles.full}`}>Judul sesi
+            <input className={styles.input} value={title} onChange={(event) => setTitle(event.target.value)} />
+          </label>
+          <label className={`${styles.label} ${styles.full}`}>Ringkasan
+            <textarea className={styles.textarea} value={summary} onChange={(event) => setSummary(event.target.value)} placeholder="Ringkasan singkat yang akan dilihat siswa." />
+          </label>
+          <label className={styles.label}>Estimasi menit
+            <input className={styles.input} type="number" min={10} max={240} value={minutes} onChange={(event) => setMinutes(Number(event.target.value))} />
+          </label>
+          <label className={styles.label}>Akses
+            <select className={styles.select} value={accessTier} onChange={(event) => setAccessTier(event.target.value as 'free' | 'paid')}>
+              <option value="free">Gratis</option>
+              <option value="paid">Premium</option>
+            </select>
+          </label>
+        </div>
+        <div className={styles.actions}>
+          <button className={styles.primary} type="button" disabled={busy} onClick={save}>{busy ? 'Menyimpan…' : 'Simpan informasi sesi'}</button>
+        </div>
+        <div className={styles.message}>{message}</div>
+      </div>
+    </details>
+  )
+}
+
 function Workflow({ data }: { data: EditorData }) {
   const router = useRouter()
   const [note, setNote] = useState('')
@@ -159,15 +237,7 @@ function Workflow({ data }: { data: EditorData }) {
 export default function Editor({ initialData }: { initialData: EditorData }) {
   return (
     <>
-      <header className={styles.editorHeader}>
-        <div>
-          <div className={styles.eyebrow}>{initialData.session.level_code} · SESI {initialData.session.session_no}</div>
-          <h1>{initialData.session.title}</h1>
-          <p>{initialData.session.level_name} · {initialData.session.access_tier === 'free' ? 'Akses gratis' : 'Akses premium'}</p>
-        </div>
-        <span className={`${styles.status} ${styles[initialData.session.content_status] || ''}`}>{statusLabel[initialData.session.content_status] || initialData.session.content_status}</span>
-      </header>
-
+      <SessionDetails data={initialData} />
       <div style={{ marginTop: 18 }}>
         <Workflow data={initialData} />
       </div>
