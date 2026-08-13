@@ -5,6 +5,7 @@ import './home-interactions.css'
 import './learning.css'
 import './takumi-material.css'
 import './takumi-material-fixes.css'
+import './portal-user.css'
 
 export const metadata: Metadata = {
   title: 'Takumi Japanese',
