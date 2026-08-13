@@ -68,9 +68,35 @@ function examplesOf(body: RecordValue) {
   })
 }
 
+function meaningfulSegmentsOf(value: RecordValue) {
+  return listOf(value, 'segments').filter((segmentRaw) => {
+    const segment = recordOf(segmentRaw)
+    return Boolean(textOf(segment, 'text', 'word'))
+  })
+}
+
+function usesSegmentColors(body: RecordValue) {
+  return examplesOf(body).some((exampleRaw) => {
+    const example = recordOf(exampleRaw)
+    return meaningfulSegmentsOf(example).some((segmentRaw) => {
+      const segment = recordOf(segmentRaw)
+      const type = textOf(segment, 'type', 'kind')
+      return Boolean(type && type !== 'neutral')
+    })
+  })
+}
+
+function posBadgeClass(pos: string) {
+  const value = pos.toLowerCase()
+  if (value.includes('動詞') || value.includes('kata kerja')) return 'tm-badge-blue'
+  if (value.includes('形容詞') || value.includes('kata sifat')) return 'tm-badge-yellow'
+  if (value.includes('時間') || value.includes('waktu')) return 'tm-badge-purple'
+  return 'tm-badge-green'
+}
+
 function SegmentLine({ raw }: { raw: unknown }) {
   const value = recordOf(raw)
-  const segments = listOf(value, 'segments')
+  const segments = meaningfulSegmentsOf(value)
   const sentence = textOf(value, 'example', 'sentence', 'japanese')
   const translation = textOf(value, 'example_translation', 'translation', 'indonesian')
 
@@ -137,14 +163,15 @@ function VocabularyCard({ block }: { block: ContentBlock }) {
         <span className="tm-count-pill">{total || String(block.position).padStart(2, '0')}</span>
         <div>
           <div className="tm-word-hero">
-            {pos && <span className="tm-inline-badge tm-badge-green">{pos}</span>}
             <div><div className="tm-word-main">{term}</div>{reading && <div className="tm-word-reading">{reading}</div>}</div>
+            {pos && <span className={`tm-inline-badge ${posBadgeClass(pos)}`}>{pos}</span>}
           </div>
           {meaning && <div className="tm-meaning">{meaning}</div>}
           {description && <p className="tm-description">{description}</p>}
+          {block.audio_url && <div className="tm-audio-panel tm-audio-compact"><audio controls preload="none" src={block.audio_url}>Browser Anda tidak mendukung audio.</audio></div>}
         </div>
       </div>
-      <TagStrip />
+      {usesSegmentColors(body) && <TagStrip />}
       <Examples body={body} />
     </>
   )
@@ -162,13 +189,13 @@ function KanjiCard({ block }: { block: ContentBlock }) {
     <>
       <div className="tm-kanji-hero">
         <div className="tm-kanji-character">{kanji}</div>
-        <div>{meaning && <div className="tm-meaning">{meaning}</div>}{description && <p className="tm-description">{description}</p>}</div>
+        <div>{meaning && <div className="tm-meaning">{meaning}</div>}{description && <p className="tm-description">{description}</p>}{block.audio_url && <div className="tm-audio-panel tm-audio-compact"><audio controls preload="none" src={block.audio_url}>Browser Anda tidak mendukung audio.</audio></div>}</div>
       </div>
       {(onyomi.length > 0 || kunyomi.length > 0) && <div className="tm-reading-grid">
         <div className="tm-reading-box"><small>Onyomi</small><b>{onyomi.length ? onyomi.join('\n') : '—'}</b></div>
         <div className="tm-reading-box"><small>Kunyomi</small><b>{kunyomi.length ? kunyomi.join('\n') : '—'}</b></div>
       </div>}
-      <TagStrip />
+      {usesSegmentColors(body) && <TagStrip />}
       <Examples body={body} />
     </>
   )
@@ -193,7 +220,7 @@ function GrammarCard({ block }: { block: ContentBlock }) {
       {(core || explanation) && <div className="tm-callout" style={{ marginTop: 12 }}><div className="tm-callout-head"><div className="tm-icon-box">☼</div><b>Penjelasan Inti</b></div>{core && <div className="tm-meaning">{core}</div>}{explanation && <p>{explanation}</p>}</div>}
       {important && <div className="tm-callout" style={{ marginTop: 12 }}><div className="tm-callout-head"><div className="tm-icon-box">☆</div><b>Penting</b></div><p>{important}</p></div>}
       {(pattern || groups.length > 0) && <div className="tm-grammar-pattern"><h3>{pattern || 'Pola Kalimat'}</h3>{groups.map((raw, index) => { const group = recordOf(raw); const label = textOf(group, 'label', 'group') || `Grup ${index + 1}`; const from = textOf(group, 'from', 'base', 'example'); const to = textOf(group, 'to', 'result'); return <div className="tm-pattern-row" key={index}><span>{label}</span><b>{from || '—'}{to ? ` → ${to}` : ''}</b></div> })}</div>}
-      <TagStrip />
+      {usesSegmentColors(body) && <TagStrip />}
       <Examples body={body} />
     </>
   )
