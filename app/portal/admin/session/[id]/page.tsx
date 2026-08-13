@@ -4,6 +4,7 @@ import { createClient } from '../../../../../lib/supabase/server'
 import Editor from './editor'
 import AssetUploader from './asset-uploader'
 import StructuredMaterialStudio from './structured-material-studio'
+import QuizTabPortal from './quiz-tab-portal'
 import BulkImport from './bulk-import'
 import styles from '../../admin.module.css'
 
@@ -94,6 +95,7 @@ export default async function AdminSessionPage({ params }: { params: Promise<{ i
         </div>
       </div>
       <StructuredMaterialStudio sessionId={editorData.session.id} blocks={editorData.blocks} />
+      <QuizTabPortal questionCount={editorData.quiz?.questions?.length || 0} />
       <BulkImport sessionId={editorData.session.id} />
       <AssetUploader sessionId={editorData.session.id} nextPosition={nextPosition} />
       <Editor initialData={editorData} />
