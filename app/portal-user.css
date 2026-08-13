@@ -19,7 +19,9 @@
 .bottom a,
 .btn,
 .tabs a,
-.sessiongrid a {
+.sessiongrid a,
+.resume + .stats article,
+.twocol .course {
   -webkit-tap-highlight-color: transparent;
   transition:
     transform 120ms ease,
@@ -32,7 +34,9 @@
 .side nav a:active,
 .bottom a:active,
 .tabs a:active,
-.sessiongrid a:active {
+.sessiongrid a:active,
+.resume + .stats article:active,
+.twocol .course:active {
   transform: translateY(1px) scale(0.985);
 }
 
@@ -44,6 +48,51 @@
 .btn:active {
   transform: translateY(1px) scale(0.985);
   box-shadow: 0 4px 12px rgba(20, 111, 159, 0.14);
+}
+
+/* Give the logout action a clear pressed state. */
+.side form .btn:active {
+  background: var(--deep);
+  border-color: var(--deep);
+  color: #fff;
+}
+
+/* Dashboard summary cards: visible feedback when pressed. */
+.resume + .stats article {
+  cursor: pointer;
+  user-select: none;
+}
+
+.resume + .stats article:active {
+  background: var(--soft);
+  border-color: var(--blue);
+  box-shadow: 0 6px 18px rgba(20, 111, 159, 0.1);
+}
+
+.resume + .stats article:active span,
+.resume + .stats article:active b {
+  color: var(--deep);
+}
+
+/* N4/N3 program cards also react when pressed. */
+.twocol .course {
+  cursor: pointer;
+  user-select: none;
+}
+
+.twocol .course:active {
+  background: var(--soft);
+  border-color: var(--blue);
+  box-shadow: 0 6px 18px rgba(20, 111, 159, 0.1);
+}
+
+.twocol .course:active > b {
+  background: #0f638e;
+}
+
+.twocol .course:active h3,
+.twocol .course:active strong {
+  color: var(--deep);
 }
 
 .bottom a:active {
