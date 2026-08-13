@@ -24,7 +24,6 @@ export default async function PaymentPage() {
     <main className={styles.shell}>
       <div className={styles.topbar}>
         <Link href="/portal/dashboard">← Dashboard</Link>
-        <span>PEMBAYARAN MANUAL</span>
       </div>
       <section className={styles.hero}>
         <div><small>TAKUMI PREMIUM</small><h1>Aktifkan akses N4 / N3</h1><p>Pilih level dan paket, transfer sesuai metode yang tersedia, lalu kirim bukti pembayaran. Target verifikasi maksimal 1×24 jam setelah pembayaran diperiksa admin.</p></div>
