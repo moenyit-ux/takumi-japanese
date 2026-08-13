@@ -67,7 +67,7 @@ export default function QuizTabPortal({ sessionId, quizId, questions }: Props) {
     return () => {
       tablist.removeEventListener('click', handleMaterialTab)
       const extras = document.getElementById('session-material-extras')
-      if (extras) extras.style.removeProperty('display')
+      if (extras) extras.style.display = 'contents'
       Array.from(section.children).forEach((child) => {
         if (child instanceof HTMLElement) child.style.removeProperty('display')
       })
@@ -104,7 +104,7 @@ export default function QuizTabPortal({ sessionId, quizId, questions }: Props) {
     })
 
     const extras = document.getElementById('session-material-extras')
-    if (extras) extras.style.display = quizActive ? 'none' : ''
+    if (extras) extras.style.display = quizActive ? 'none' : 'contents'
   }, [quizActive, slot, target])
 
   if (!target || !slot) return null
