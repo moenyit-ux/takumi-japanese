@@ -114,7 +114,7 @@ function Workflow({ data }: { data: EditorData }) {
   )
 
   return (
-    <div className={styles.stack}>
+    <div className={styles.workflowGrid}>
       <section className={styles.panel}>
         <h2>Kesiapan publish</h2>
         <div className={styles.readiness}>
@@ -141,7 +141,7 @@ function Workflow({ data }: { data: EditorData }) {
         <div className={styles.message}>{message}</div>
       </section>
 
-      <section className={styles.panel}>
+      <section className={`${styles.panel} ${styles.reviewPanel}`}>
         <h2>Catatan review</h2>
         {data.review_notes.length === 0 ? <div className={styles.empty}>Belum ada catatan review.</div> : data.review_notes.map((review) => (
           <div className={styles.reviewNote} key={review.id}>
