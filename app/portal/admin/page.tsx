@@ -21,6 +21,11 @@ type Session = {
   updated_at: string
 }
 
+type ContentProgress = {
+  session_id: string
+  block_count: number | string
+}
+
 const statusLabel: Record<string, string> = {
   draft: 'Draft',
   review: 'Review',
@@ -40,14 +45,18 @@ export default async function AdminPage({ searchParams }: { searchParams: Promis
   const role = profile?.role || 'student'
   if (role !== 'super_admin' && role !== 'content_admin') redirect('/portal/dashboard')
 
-  const [levelsResult, sessionsResult] = await Promise.all([
+  const [levelsResult, sessionsResult, progressResult] = await Promise.all([
     supabase.from('levels').select('id, code, name, total_sessions, free_sessions'),
     supabase.from('learning_sessions').select('id, level_id, session_no, title, access_tier, content_status, updated_at').order('session_no'),
+    supabase.rpc('admin_content_progress'),
   ])
 
   const levels = (levelsResult.data || []) as Level[]
   levels.sort((a, b) => a.code === 'N4' ? -1 : b.code === 'N4' ? 1 : a.code.localeCompare(b.code))
   const sessions = (sessionsResult.data || []) as Session[]
+  const progressRows = (progressResult.data || []) as ContentProgress[]
+  const progressBySession = new Map(progressRows.map((item) => [item.session_id, Number(item.block_count) || 0]))
+
   const selectedCode = query.level === 'N3' ? 'N3' : 'N4'
   const selectedLevel = levels.find((level) => level.code === selectedCode) || levels[0]
   const selectedSessions = selectedLevel ? sessions.filter((session) => session.level_id === selectedLevel.id) : []
@@ -55,6 +64,7 @@ export default async function AdminPage({ searchParams }: { searchParams: Promis
   const published = sessions.filter((session) => session.content_status === 'published').length
   const review = sessions.filter((session) => session.content_status === 'review').length
   const needsChanges = sessions.filter((session) => session.content_status === 'changes_requested').length
+  const draftsInProgress = sessions.filter((session) => session.content_status === 'draft' && (progressBySession.get(session.id) || 0) > 0).length
 
   return (
     <main className={styles.adminShell}>
@@ -84,7 +94,7 @@ export default async function AdminPage({ searchParams }: { searchParams: Promis
       </section>
 
       <section className={styles.workflow}>
-        <div><b>1</b><span>Draft</span></div>
+        <div className={draftsInProgress > 0 ? styles.workflowActive : ''}><b>1</b><span>{draftsInProgress > 0 ? `Draft · ${draftsInProgress} aktif` : 'Draft'}</span></div>
         <i>→</i>
         <div><b>2</b><span>Review</span></div>
         <i>→</i>
@@ -106,18 +116,22 @@ export default async function AdminPage({ searchParams }: { searchParams: Promis
       </div>
 
       <div className={styles.sessionList}>
-        {selectedSessions.map((session) => (
-          <article className={styles.sessionRow} key={session.id}>
-            <div className={styles.sessionNo}>{String(session.session_no).padStart(2, '0')}</div>
-            <div className={styles.sessionInfo}>
-              <small>SESI {session.session_no} · {session.access_tier === 'free' ? 'GRATIS' : 'PREMIUM'}</small>
-              <h3>{session.title}</h3>
-              <p>Terakhir diperbarui {new Date(session.updated_at).toLocaleDateString('id-ID')}</p>
-            </div>
-            <span className={`${styles.status} ${styles[session.content_status] || ''}`}>{statusLabel[session.content_status] || session.content_status}</span>
-            <Link className={styles.editButton} href={`/portal/admin/session/${session.id}`}>Edit →</Link>
-          </article>
-        ))}
+        {selectedSessions.map((session) => {
+          const blockCount = progressBySession.get(session.id) || 0
+          const isDraftActive = session.content_status === 'draft' && blockCount > 0
+          return (
+            <article className={styles.sessionRow} key={session.id}>
+              <div className={styles.sessionNo}>{String(session.session_no).padStart(2, '0')}</div>
+              <div className={styles.sessionInfo}>
+                <small>SESI {session.session_no} · {session.access_tier === 'free' ? 'GRATIS' : 'PREMIUM'}</small>
+                <h3>{session.title}</h3>
+                <p>Terakhir diperbarui {new Date(session.updated_at).toLocaleDateString('id-ID')}{blockCount > 0 ? ` · ${blockCount} blok materi` : ''}</p>
+              </div>
+              <span className={`${styles.status} ${styles[session.content_status] || ''} ${isDraftActive ? styles.draftActive : ''}`}>{isDraftActive ? 'Draft aktif' : (statusLabel[session.content_status] || session.content_status)}</span>
+              <Link className={styles.editButton} href={`/portal/admin/session/${session.id}`}>Edit →</Link>
+            </article>
+          )
+        })}
       </div>
     </main>
   )
