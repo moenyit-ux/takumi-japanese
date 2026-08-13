@@ -94,11 +94,19 @@ export default async function AdminSessionPage({ params }: { params: Promise<{ i
           <Link href="/portal/dashboard">Dashboard siswa</Link>
         </div>
       </div>
+
       <StructuredMaterialStudio sessionId={editorData.session.id} blocks={editorData.blocks} />
-      <QuizTabPortal sessionId={editorData.session.id} questionCount={editorData.quiz?.questions?.length || 0} />
-      <BulkImport sessionId={editorData.session.id} />
-      <AssetUploader sessionId={editorData.session.id} nextPosition={nextPosition} />
-      <Editor initialData={editorData} />
+      <QuizTabPortal
+        sessionId={editorData.session.id}
+        quizId={editorData.quiz.id}
+        questions={editorData.quiz.questions || []}
+      />
+
+      <div id="session-material-extras">
+        <BulkImport sessionId={editorData.session.id} />
+        <AssetUploader sessionId={editorData.session.id} nextPosition={nextPosition} />
+        <Editor initialData={editorData} />
+      </div>
     </main>
   )
 }
