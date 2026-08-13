@@ -20,6 +20,7 @@ type Props = {
   blocks: ContentBlock[]
 }
 
+type StructuredKind = 'vocabulary' | 'kanji' | 'grammar' | 'reading' | 'listening'
 type RecordValue = Record<string, unknown>
 type SegmentType = 'verb' | 'noun' | 'adjective' | 'time' | 'grammar' | 'neutral'
 type Segment = { text: string; reading: string; type: SegmentType }
@@ -271,11 +272,11 @@ function StructuredFields({ kind, body, setBody }: { kind: string; body: RecordV
   return null
 }
 
-function MaterialCard({ sessionId, block, defaultPosition }: { sessionId: string; block?: ContentBlock; defaultPosition: number }) {
+function MaterialCard({ sessionId, block, defaultPosition, initialKind = 'vocabulary' }: { sessionId: string; block?: ContentBlock; defaultPosition: number; initialKind?: StructuredKind }) {
   const router = useRouter()
   const initialBody = useMemo(() => asRecord(block?.body), [block?.body])
   const [position, setPosition] = useState(block?.position || defaultPosition)
-  const [kind, setKind] = useState(block?.kind && kindLabel[block.kind] ? block.kind : 'vocabulary')
+  const [kind, setKind] = useState<StructuredKind>(block?.kind && kindLabel[block.kind] ? block.kind as StructuredKind : initialKind)
   const [title, setTitle] = useState(block?.title || '')
   const [body, setBody] = useState<RecordValue>(initialBody)
   const [audioUrl, setAudioUrl] = useState(block?.audio_url || '')
@@ -284,15 +285,23 @@ function MaterialCard({ sessionId, block, defaultPosition }: { sessionId: string
   const [busy, setBusy] = useState(false)
 
   async function save() {
-    if (!title.trim()) {
-      setMessage('Isi judul materi terlebih dahulu.')
+    const fallbackTitle = kind === 'vocabulary'
+      ? stringField(body, 'term')
+      : kind === 'kanji'
+        ? stringField(body, 'kanji')
+        : kind === 'grammar'
+          ? stringField(body, 'pattern')
+          : ''
+    const finalTitle = title.trim() || fallbackTitle.trim()
+    if (!finalTitle) {
+      setMessage(kind === 'kanji' ? 'Isi kanji terlebih dahulu.' : kind === 'vocabulary' ? 'Isi kosakata terlebih dahulu.' : 'Isi judul materi terlebih dahulu.')
       return
     }
     setBusy(true)
     setMessage('Menyimpan materi...')
     try {
-      await callAdmin({ action: 'upsert_block', sessionId, blockId: block?.id || null, position, kind, title: title.trim(), contentBody: body, audioUrl, imageUrl })
-      setMessage(block ? 'Materi diperbarui.' : 'Materi baru berhasil ditambahkan.')
+      await callAdmin({ action: 'upsert_block', sessionId, blockId: block?.id || null, position, kind, title: finalTitle, contentBody: body, audioUrl, imageUrl })
+      setMessage(block ? 'Materi diperbarui.' : `${kindLabel[kind]} baru berhasil ditambahkan.`)
       router.refresh()
       if (!block) {
         setTitle('')
@@ -336,6 +345,7 @@ function MaterialCard({ sessionId, block, defaultPosition }: { sessionId: string
   }
 
   const bodyLabel = kindLabel[kind] || 'Materi'
+  const titleMayBeAutomatic = kind === 'vocabulary' || kind === 'kanji' || kind === 'grammar'
 
   return (
     <details className={styles.materialCard} open={!block}>
@@ -347,8 +357,8 @@ function MaterialCard({ sessionId, block, defaultPosition }: { sessionId: string
       <div className={styles.cardBody}>
         <div className={admin.formGrid}>
           <label className={admin.label}>Urutan<input className={admin.input} type="number" min={1} value={position} onChange={(e) => setPosition(Math.max(1, Number(e.target.value) || 1))} /></label>
-          <label className={admin.label}>Jenis materi<select className={admin.select} value={kind} onChange={(e) => setKind(e.target.value)}>{structuredKinds.map(([value, label]) => <option value={value} key={value}>{label}</option>)}</select></label>
-          <label className={`${admin.label} ${admin.full}`}>Judul materi<input className={admin.input} value={title} onChange={(e) => setTitle(e.target.value)} placeholder={kind === 'vocabulary' ? 'Contoh: 予定「よてい」' : kind === 'kanji' ? 'Contoh: 家' : kind === 'grammar' ? 'Contoh: Bunpou N4 〜なさい' : 'Judul materi'} /></label>
+          <label className={admin.label}>Jenis materi<select className={admin.select} value={kind} onChange={(e) => setKind(e.target.value as StructuredKind)}>{structuredKinds.map(([value, label]) => <option value={value} key={value}>{label}</option>)}</select></label>
+          <label className={`${admin.label} ${admin.full}`}>{titleMayBeAutomatic ? 'Judul materi (opsional)' : 'Judul materi'}<input className={admin.input} value={title} onChange={(e) => setTitle(e.target.value)} placeholder={kind === 'vocabulary' ? 'Kosongkan untuk memakai kosakata sebagai judul' : kind === 'kanji' ? 'Kosongkan untuk memakai kanji sebagai judul' : kind === 'grammar' ? 'Kosongkan untuk memakai pola sebagai judul' : 'Judul materi'} /></label>
         </div>
 
         <StructuredFields kind={kind} body={body} setBody={setBody} />
@@ -368,7 +378,7 @@ function MaterialCard({ sessionId, block, defaultPosition }: { sessionId: string
         </div>
 
         <div className={admin.actions}>
-          <button className={admin.primary} type="button" disabled={busy} onClick={save}>{busy ? 'Memproses…' : block ? 'Simpan perubahan' : 'Tambah materi'}</button>
+          <button className={admin.primary} type="button" disabled={busy} onClick={save}>{busy ? 'Memproses…' : block ? 'Simpan perubahan' : `Tambah ${bodyLabel}`}</button>
           {block && <button className={admin.danger} type="button" disabled={busy} onClick={remove}>Hapus materi</button>}
         </div>
         <div className={admin.message}>{message}</div>
@@ -379,29 +389,50 @@ function MaterialCard({ sessionId, block, defaultPosition }: { sessionId: string
 
 export default function StructuredMaterialStudio({ sessionId, blocks }: Props) {
   const structured = blocks.filter((block) => kindLabel[block.kind])
+  const [activeKind, setActiveKind] = useState<StructuredKind>('vocabulary')
   const nextPosition = blocks.reduce((max, block) => Math.max(max, block.position), 0) + 1
   const counts = structuredKinds.map(([kind, label]) => ({ kind, label, count: structured.filter((block) => block.kind === kind).length }))
+  const activeBlocks = structured.filter((block) => block.kind === activeKind)
+  const activeLabel = kindLabel[activeKind]
 
   return (
     <section className={`${admin.panel} ${styles.studio}`}>
       <div className={styles.studioHead}>
-        <div><div className={admin.eyebrow}>EDITOR MATERI TERSTRUKTUR</div><h2>Isi materi tanpa JSON</h2><p>Form mengikuti desain Takumi. Data disimpan ke blok materi yang sama dan langsung dapat dirender oleh halaman siswa setelah sesi dipublikasikan.</p></div>
+        <div><div className={admin.eyebrow}>EDITOR MATERI TERSTRUKTUR</div><h2>Isi materi tanpa JSON</h2><p>Pilih tab Kosakata, Kanji, Bunpou, Dokkai, atau Choukai. Form di bawah akan langsung berubah sesuai materi yang ingin diisi.</p></div>
         <div className={styles.total}>{structured.length}<small>materi terstruktur</small></div>
       </div>
 
-      <div className={styles.counts}>{counts.map((item) => <div key={item.kind}><b>{item.count}</b><span>{item.label}</span></div>)}</div>
+      <div className={styles.counts} role="tablist" aria-label="Jenis materi">
+        {counts.map((item) => (
+          <button
+            className={activeKind === item.kind ? styles.activeTab : ''}
+            type="button"
+            role="tab"
+            aria-selected={activeKind === item.kind}
+            onClick={() => setActiveKind(item.kind)}
+            key={item.kind}
+          >
+            <b>{item.count}</b><span>{item.label}</span><small>Klik untuk isi</small>
+          </button>
+        ))}
+      </div>
 
       <div className={styles.guide}>
-        <b>Alur kerja yang disarankan</b>
-        <span>1. Pilih jenis materi</span><span>2. Isi field yang muncul</span><span>3. Tambahkan contoh/media</span><span>4. Simpan</span><span>5. Review & publish dari workflow di bawah</span>
+        <b>Sedang mengisi: {activeLabel}</b>
+        <span>1. Isi field utama</span><span>2. Tambahkan contoh/media</span><span>3. Simpan</span><span>4. Cek Preview siswa</span>
+      </div>
+
+      <div className={styles.activeKindHead}>
+        <div><small>{activeLabel.toUpperCase()}</small><h3>{activeBlocks.length > 0 ? `${activeBlocks.length} materi tersimpan` : `Belum ada ${activeLabel}`}</h3><p>Form “Tambah {activeLabel}” selalu tersedia di bawah. Materi yang sudah tersimpan dapat dibuka untuk diedit.</p></div>
+        <span>+ Tambah {activeLabel}</span>
       </div>
 
       <div className={styles.list}>
-        {structured.map((block) => <MaterialCard key={block.id} sessionId={sessionId} block={block} defaultPosition={block.position} />)}
-        <MaterialCard key={`new-${nextPosition}`} sessionId={sessionId} defaultPosition={nextPosition} />
+        {activeBlocks.map((block) => <MaterialCard key={block.id} sessionId={sessionId} block={block} defaultPosition={block.position} initialKind={activeKind} />)}
+        <MaterialCard key={`new-${activeKind}-${nextPosition}`} sessionId={sessionId} defaultPosition={nextPosition} initialKind={activeKind} />
       </div>
 
-      <p className={styles.legacyNote}>Editor blok generik di bagian bawah tetap tersedia sebagai mode lanjutan untuk catatan, gambar/audio standalone, atau struktur lama. Untuk Kosakata, Kanji, Bunpou, Dokkai, dan Choukai gunakan editor terstruktur ini.</p>
+      <p className={styles.legacyNote}>Editor blok generik di bagian bawah tetap tersedia sebagai mode lanjutan untuk catatan, gambar/audio standalone, atau struktur lama. Untuk Kosakata, Kanji, Bunpou, Dokkai, dan Choukai gunakan tab editor di atas.</p>
     </section>
   )
 }
