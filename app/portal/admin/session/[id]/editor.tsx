@@ -234,13 +234,15 @@ function Workflow({ data }: { data: EditorData }) {
   )
 }
 
-export default function Editor({ initialData }: { initialData: EditorData }) {
+export default function Editor({ initialData, section = 'all' }: { initialData: EditorData; section?: 'session' | 'workflow' | 'all' }) {
   return (
     <>
-      <SessionDetails data={initialData} />
-      <div style={{ marginTop: 18 }}>
-        <Workflow data={initialData} />
-      </div>
+      {(section === 'session' || section === 'all') && <SessionDetails data={initialData} />}
+      {(section === 'workflow' || section === 'all') && (
+        <div style={section === 'all' ? { marginTop: 18 } : undefined}>
+          <Workflow data={initialData} />
+        </div>
+      )}
     </>
   )
 }
