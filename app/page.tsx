@@ -69,9 +69,40 @@ export default function Home() {
       <section id="harga" className="section">
         <div className="price">
           <div className="eyebrow">HARGA PELUNCURAN</div>
-          <h2>¥980 / bulan</h2>
-          <p>Akses penuh N4 & N3, evaluasi, bookmark, statistik, dan simulasi JLPT.</p>
-          <Link className="btn primary" href="/login">Coba 15% materi gratis</Link>
+          <h2>Pilih level yang kamu butuhkan</h2>
+          <p className="priceLead">Sekali bayar untuk satu level. Tidak ada biaya bulanan.</p>
+
+          <div className="priceGrid">
+            <article className="priceCard">
+              <div className="priceCardHead">
+                <span>N4</span>
+                <div>
+                  <h3>JLPT N4</h3>
+                  <p>48 sesi</p>
+                </div>
+              </div>
+              <div className="priceAmount">Rp299.000</div>
+              <div className="priceOnce">Sekali bayar</div>
+              <p className="priceDesc">Materi lengkap N4, latihan, evaluasi, bookmark, statistik, dan 5 simulasi JLPT.</p>
+              <Link className="btn primary full" href="/login">Mulai N4</Link>
+            </article>
+
+            <article className="priceCard">
+              <div className="priceCardHead">
+                <span>N3</span>
+                <div>
+                  <h3>JLPT N3</h3>
+                  <p>60 sesi</p>
+                </div>
+              </div>
+              <div className="priceAmount">Rp399.000</div>
+              <div className="priceOnce">Sekali bayar</div>
+              <p className="priceDesc">Materi lengkap N3, latihan, evaluasi, bookmark, statistik, dan 5 simulasi JLPT.</p>
+              <Link className="btn primary full" href="/login">Mulai N3</Link>
+            </article>
+          </div>
+
+          <p className="priceNote">15% materi dapat dicoba gratis sebelum membeli.</p>
         </div>
       </section>
 
