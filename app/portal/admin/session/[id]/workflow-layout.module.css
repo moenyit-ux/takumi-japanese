@@ -1,0 +1,1 @@
+.grid{display:grid;grid-template-columns:minmax(0,.8fr) minmax(0,1.2fr);gap:18px;align-items:start}.reviewPanel{grid-column:1/-1}@media(max-width:900px){.grid{grid-template-columns:1fr}.reviewPanel{grid-column:auto}}
