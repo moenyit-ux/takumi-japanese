@@ -8,8 +8,27 @@ import ProgressTracker from './progress-tracker'
 
 type StudyKind = 'vocabulary' | 'kanji' | 'grammar' | 'reading' | 'listening'
 
-export default async function SessionPage({ params }: { params: Promise<{ id: string }> }) {
+const studyKinds: StudyKind[] = ['vocabulary', 'kanji', 'grammar', 'reading', 'listening']
+
+function isStudyKind(value: string | undefined): value is StudyKind {
+  return Boolean(value && studyKinds.includes(value as StudyKind))
+}
+
+type SearchParams = {
+  section?: string | string[]
+}
+
+export default async function SessionPage({
+  params,
+  searchParams,
+}: {
+  params: Promise<{ id: string }>
+  searchParams: Promise<SearchParams>
+}) {
   const { id } = await params
+  const query = await searchParams
+  const requestedSection = Array.isArray(query.section) ? query.section[0] : query.section
+
   const supabase = await createClient()
   const { data: { user } } = await supabase.auth.getUser()
   if (!user) redirect('/login')
@@ -61,19 +80,46 @@ export default async function SessionPage({ params }: { params: Promise<{ id: st
     audio_url: await resolveLearningAsset(supabase, block.audio_url),
     image_url: await resolveLearningAsset(supabase, block.image_url),
   })))
+
+  const firstStructured = studyKinds.find((kind) => blocks.some((block) => block.kind === kind)) || 'vocabulary'
+  let carryKind: StudyKind = firstStructured
+  const categorizedBlocks = blocks.map((block) => {
+    if (isStudyKind(block.kind)) carryKind = block.kind
+    return { block, pageKind: carryKind }
+  })
+  const availableKinds = studyKinds.filter((kind) => categorizedBlocks.some((entry) => entry.pageKind === kind))
+  const firstAvailable = availableKinds[0] || firstStructured
+
+  const progressBlocks = availableKinds.flatMap((kind) =>
+    categorizedBlocks
+      .filter((entry) => entry.pageKind === kind)
+      .map((entry) => entry.block)
+      .sort((a, b) => a.position - b.position),
+  )
+
   const progress = progressResult.data
   const initialReadPercent = progress?.read_percent || 0
   const quizHref = quizResult.data ? `/portal/quiz/${quizResult.data.id}` : null
   const bookmarkedIds = new Set((bookmarkResult.data || []).map((item) => item.content_block_id).filter((value): value is string => Boolean(value)))
 
+  const active: StudyKind = isStudyKind(requestedSection) && availableKinds.includes(requestedSection)
+    ? requestedSection
+    : firstAvailable
+
+  const sessionBase = `/portal/session/${session.id}`
   const anchors: Partial<Record<StudyKind, string>> = {}
-  for (const block of blocks) {
-    if ((block.kind === 'vocabulary' || block.kind === 'kanji' || block.kind === 'grammar' || block.kind === 'reading' || block.kind === 'listening') && !anchors[block.kind]) {
-      anchors[block.kind] = `#${block.kind}`
-    }
-  }
-  const activeBlock = blocks.find((block) => block.kind === 'vocabulary' || block.kind === 'kanji' || block.kind === 'grammar' || block.kind === 'reading' || block.kind === 'listening')
-  const active = (activeBlock?.kind || 'vocabulary') as StudyKind
+  availableKinds.forEach((kind) => {
+    anchors[kind] = `${sessionBase}?section=${kind}`
+  })
+
+  const visibleBlocks = categorizedBlocks
+    .filter((entry) => entry.pageKind === active)
+    .map((entry) => entry.block)
+    .sort((a, b) => a.position - b.position)
+
+  const currentIndex = availableKinds.indexOf(active)
+  const nextKind = currentIndex >= 0 ? availableKinds[currentIndex + 1] : undefined
+  const nextHref = nextKind ? `${sessionBase}?section=${nextKind}` : quizHref
 
   return (
     <main className="tm-material-page">
@@ -86,18 +132,28 @@ export default async function SessionPage({ params }: { params: Promise<{ id: st
         quizHref={quizHref}
       />
 
-      {session.summary && <section className="tm-callout" style={{ marginBottom: 14 }}><div className="tm-callout-head"><div className="tm-icon-box">✦</div><b>{session.title}</b></div><p>{session.summary}</p></section>}
+      {session.summary && (
+        <section className="tm-callout" style={{ marginBottom: 14 }}>
+          <div className="tm-callout-head"><div className="tm-icon-box">✦</div><b>{session.title}</b></div>
+          <p>{session.summary}</p>
+        </section>
+      )}
 
       {blocks.length === 0 ? (
         <section className="tm-material-card tm-empty-card">
           <h2>Materi sesi belum diisi</h2>
           <p>Struktur sesi sudah aktif, tetapi isi kosakata, kanji, bunpou, dokkai, atau choukai belum dimasukkan oleh Tim Takumi.</p>
         </section>
+      ) : visibleBlocks.length === 0 ? (
+        <section className="tm-material-card tm-empty-card">
+          <h2>Materi belum tersedia</h2>
+          <p>Pilih kategori lain pada navigasi di atas.</p>
+        </section>
       ) : (
-        <MaterialView blocks={blocks} bookmarkedIds={bookmarkedIds} quizHref={quizHref} />
+        <MaterialView blocks={visibleBlocks} bookmarkedIds={bookmarkedIds} quizHref={nextHref} />
       )}
 
-      <ProgressTracker sessionId={session.id} blockIds={blocks.map((block) => block.id)} initialReadPercent={initialReadPercent} />
+      <ProgressTracker sessionId={session.id} blockIds={progressBlocks.map((block) => block.id)} initialReadPercent={initialReadPercent} />
 
       <section className="tm-callout" style={{ marginTop: 16 }}>
         <div className="tm-callout-head"><div className="tm-icon-box">✓</div><b>Target selesai sesi</b></div>

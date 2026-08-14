@@ -41,18 +41,29 @@ export default function ProgressTracker({ sessionId, blockIds, initialReadPercen
     }
 
     function measure() {
-      let highest = -1
+      const completedCount = Math.min(
+        blockIds.length,
+        Math.round((savedRef.current / 100) * blockIds.length),
+      )
 
-      blockIds.forEach((id, index) => {
+      let highest = completedCount - 1
+
+      for (let index = completedCount; index < blockIds.length; index += 1) {
+        const id = blockIds[index]
         const element = document.querySelector<HTMLElement>(`[data-block-id="${id}"]`)
-        if (!element) return
-        const rect = element.getBoundingClientRect()
-        if (rect.top <= window.innerHeight * 0.78) highest = index
-      })
 
-      const nearBottom = window.innerHeight + window.scrollY >= document.documentElement.scrollHeight - 80
-      if (nearBottom) highest = blockIds.length - 1
-      if (highest < 0) return
+        // Materi sekarang dipisah per halaman. Jangan lompat progres jika
+        // blok berikutnya berada di kategori/halaman yang belum dibuka.
+        if (!element) break
+
+        const rect = element.getBoundingClientRect()
+        const hasBeenRead = rect.bottom <= window.innerHeight * 0.9
+        if (!hasBeenRead) break
+
+        highest = index
+      }
+
+      if (highest < completedCount) return
 
       const percent = Math.min(100, Math.round(((highest + 1) / blockIds.length) * 100))
       const lastBlockId = blockIds[highest] || null

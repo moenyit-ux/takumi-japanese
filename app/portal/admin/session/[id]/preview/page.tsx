@@ -6,7 +6,14 @@ import { createClient } from '../../../../../../lib/supabase/server'
 import { resolveLearningAsset } from '../../../../../../lib/supabase/assets'
 import styles from './preview.module.css'
 
-type StudyKind = 'vocabulary' | 'kanji' | 'grammar' | 'reading' | 'listening'
+type MaterialKind = 'vocabulary' | 'kanji' | 'grammar' | 'reading' | 'listening'
+type StudyKind = MaterialKind | 'quiz'
+
+const materialKinds: MaterialKind[] = ['vocabulary', 'kanji', 'grammar', 'reading', 'listening']
+
+function isMaterialKind(value: string | undefined): value is MaterialKind {
+  return Boolean(value && materialKinds.includes(value as MaterialKind))
+}
 
 type Option = {
   id: string
@@ -54,8 +61,21 @@ type EditorData = {
   }
 }
 
-export default async function AdminSessionPreviewPage({ params }: { params: Promise<{ id: string }> }) {
+type SearchParams = {
+  section?: string | string[]
+}
+
+export default async function AdminSessionPreviewPage({
+  params,
+  searchParams,
+}: {
+  params: Promise<{ id: string }>
+  searchParams: Promise<SearchParams>
+}) {
   const { id } = await params
+  const query = await searchParams
+  const requestedSection = Array.isArray(query.section) ? query.section[0] : query.section
+
   const supabase = await createClient()
   const { data: { user } } = await supabase.auth.getUser()
   if (!user) redirect('/login')
@@ -78,15 +98,33 @@ export default async function AdminSessionPreviewPage({ params }: { params: Prom
     audio_url: await resolveLearningAsset(supabase, question.audio_url),
   })))
 
-  const anchors: Partial<Record<StudyKind, string>> = {}
-  for (const block of blocks) {
-    if ((block.kind === 'vocabulary' || block.kind === 'kanji' || block.kind === 'grammar' || block.kind === 'reading' || block.kind === 'listening') && !anchors[block.kind]) {
-      anchors[block.kind] = `#${block.kind}`
-    }
-  }
-  const first = blocks.find((block) => block.kind === 'vocabulary' || block.kind === 'kanji' || block.kind === 'grammar' || block.kind === 'reading' || block.kind === 'listening')
-  const active = (first?.kind || 'vocabulary') as StudyKind
-  const quizHref = questions.length > 0 ? '#preview-quiz' : null
+  const firstStructured = materialKinds.find((kind) => blocks.some((block) => block.kind === kind)) || 'vocabulary'
+  let carryKind: MaterialKind = firstStructured
+  const categorizedBlocks = blocks.map((block) => {
+    if (isMaterialKind(block.kind)) carryKind = block.kind
+    return { block, pageKind: carryKind }
+  })
+  const availableKinds = materialKinds.filter((kind) => categorizedBlocks.some((entry) => entry.pageKind === kind))
+  const firstAvailable = availableKinds[0] || firstStructured
+  const active: StudyKind = requestedSection === 'quiz' && questions.length > 0
+    ? 'quiz'
+    : isMaterialKind(requestedSection) && availableKinds.includes(requestedSection)
+      ? requestedSection
+      : firstAvailable
+
+  const previewBase = `/portal/admin/session/${editor.session.id}/preview`
+  const anchors: Partial<Record<MaterialKind, string>> = {}
+  availableKinds.forEach((kind) => {
+    anchors[kind] = `${previewBase}?section=${kind}`
+  })
+  const quizHref = questions.length > 0 ? `${previewBase}?section=quiz` : null
+
+  const visibleBlocks = active === 'quiz'
+    ? []
+    : categorizedBlocks.filter((entry) => entry.pageKind === active).map((entry) => entry.block)
+  const currentIndex = active === 'quiz' ? -1 : availableKinds.indexOf(active)
+  const nextKind = currentIndex >= 0 ? availableKinds[currentIndex + 1] : undefined
+  const nextHref = nextKind ? `${previewBase}?section=${nextKind}` : quizHref
 
   return (
     <main className={`tm-material-page ${styles.previewWrap}`}>
@@ -104,46 +142,54 @@ export default async function AdminSessionPreviewPage({ params }: { params: Prom
         quizHref={quizHref}
       />
 
-      {editor.session.summary && <section className="tm-callout" style={{ marginBottom: 14 }}><div className="tm-callout-head"><div className="tm-icon-box">✦</div><b>{editor.session.title}</b></div><p>{editor.session.summary}</p></section>}
-
-      {blocks.length === 0 ? (
-        <section className="tm-material-card tm-empty-card"><h2>Materi sesi belum diisi</h2><p>Preview akan mengikuti tampilan siswa begitu materi ditambahkan.</p></section>
-      ) : (
-        <MaterialView blocks={blocks} bookmarkedIds={new Set<string>()} quizHref={quizHref} />
+      {active !== 'quiz' && editor.session.summary && (
+        <section className="tm-callout" style={{ marginBottom: 14 }}>
+          <div className="tm-callout-head"><div className="tm-icon-box">✦</div><b>{editor.session.title}</b></div>
+          <p>{editor.session.summary}</p>
+        </section>
       )}
 
-      <section className={`panel ${styles.quizPreview}`} id="preview-quiz">
-        <div className={styles.quizHead}>
-          <div><div className="eyebrow">PREVIEW LATIHAN SESI</div><h2>{editor.quiz?.title || 'Latihan sesi'}</h2></div>
-          <span>{questions.length} soal · Lulus ≥ {editor.quiz?.pass_score ?? 70}</span>
-        </div>
+      {active === 'quiz' ? (
+        <section className={`panel ${styles.quizPreview}`}>
+          <div className={styles.quizHead}>
+            <div><div className="eyebrow">PREVIEW LATIHAN SESI</div><h2>{editor.quiz?.title || 'Latihan sesi'}</h2></div>
+            <span>{questions.length} soal · Lulus ≥ {editor.quiz?.pass_score ?? 70}</span>
+          </div>
 
-        {questions.length === 0 ? <div className={styles.empty}>Belum ada soal pada latihan sesi.</div> : questions.map((question) => {
-          const correct = question.options.find((option) => option.is_correct)
-          return (
-            <article className="question-card" key={question.id}>
-              <div className="question-number">{String(question.position).padStart(2, '0')}</div>
-              {question.passage && <div className="reading-passage">{question.passage}</div>}
-              {question.audio_url && <audio controls preload="none" src={question.audio_url}>Browser Anda tidak mendukung audio.</audio>}
-              <h2>{question.prompt}</h2>
-              <div className="option-list">
-                {question.options.map((option) => (
-                  <label className={styles.muted} key={option.id}>
-                    <input type="radio" disabled />
-                    <span>{option.label || String(option.position)}</span>
-                    <b>{option.option_text}</b>
-                  </label>
-                ))}
-              </div>
-              <details className={styles.answerKey}>
-                <summary>Kunci & penjelasan admin</summary>
-                <p>Jawaban benar: <b>{correct?.label || correct?.option_text || 'Belum ditentukan'}</b></p>
-                {question.explanation_text && <p>{question.explanation_text}</p>}
-              </details>
-            </article>
-          )
-        })}
-      </section>
+          {questions.length === 0 ? <div className={styles.empty}>Belum ada soal pada latihan sesi.</div> : questions.map((question) => {
+            const correct = question.options.find((option) => option.is_correct)
+            return (
+              <article className="question-card" key={question.id}>
+                <div className="question-number">{String(question.position).padStart(2, '0')}</div>
+                {question.passage && <div className="reading-passage">{question.passage}</div>}
+                {question.audio_url && <audio controls preload="none" src={question.audio_url}>Browser Anda tidak mendukung audio.</audio>}
+                <h2>{question.prompt}</h2>
+                <div className="option-list">
+                  {question.options.map((option) => (
+                    <label className={styles.muted} key={option.id}>
+                      <input type="radio" disabled />
+                      <span>{option.label || String(option.position)}</span>
+                      <b>{option.option_text}</b>
+                    </label>
+                  ))}
+                </div>
+                <details className={styles.answerKey}>
+                  <summary>Kunci & penjelasan admin</summary>
+                  <p>Jawaban benar: <b>{correct?.label || correct?.option_text || 'Belum ditentukan'}</b></p>
+                  {question.explanation_text && <p>{question.explanation_text}</p>}
+                </details>
+              </article>
+            )
+          })}
+        </section>
+      ) : visibleBlocks.length === 0 ? (
+        <section className="tm-material-card tm-empty-card">
+          <h2>Materi {active} belum diisi</h2>
+          <p>Pilih kategori lain di atas atau kembali ke editor untuk menambahkan materi.</p>
+        </section>
+      ) : (
+        <MaterialView blocks={visibleBlocks} bookmarkedIds={new Set<string>()} quizHref={nextHref} />
+      )}
     </main>
   )
 }
