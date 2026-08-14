@@ -1,6 +1,7 @@
 'use client'
 
 import { useState } from 'react'
+import { useRouter } from 'next/navigation'
 
 type LearningStatus = 'not_started' | 'review' | 'learned'
 
@@ -16,6 +17,7 @@ const options: Array<{ value: LearningStatus; label: string; description: string
 ]
 
 export default function LearningStatusControl({ sessionId, initialStatus }: Props) {
+  const router = useRouter()
   const [status, setStatus] = useState<LearningStatus>(initialStatus)
   const [saving, setSaving] = useState<LearningStatus | null>(null)
   const [error, setError] = useState('')
@@ -38,6 +40,7 @@ export default function LearningStatusControl({ sessionId, initialStatus }: Prop
       }
 
       setStatus(nextStatus)
+      router.refresh()
     } catch {
       setError('Koneksi terputus saat menyimpan status belajar.')
     } finally {
