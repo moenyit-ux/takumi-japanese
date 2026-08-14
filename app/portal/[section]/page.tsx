@@ -23,6 +23,7 @@ type Progress = {
   session_id: string
   read_percent: number
   status: string
+  learning_status: string
   highest_score: number | null
   updated_at: string
 }
@@ -82,8 +83,8 @@ function hasActiveAccess(entitlements: Entitlement[], levelId: string) {
 }
 
 function getLearningStatus(progress?: Progress) {
-  if (progress?.status === 'completed') return 'Sudah dipelajari'
-  if (progress?.status === 'review') return 'Perlu dipelajari lagi'
+  if (progress?.learning_status === 'learned') return 'Sudah dipelajari'
+  if (progress?.learning_status === 'review') return 'Perlu dipelajari lagi'
   return 'Belum dipelajari'
 }
 
@@ -118,34 +119,37 @@ function Shell({ section, children, isAdmin, userName }: { section: string; chil
 function Dashboard({ data }: { data: PortalData }) {
   const materialIdSet = new Set(data.contentSessionIds)
   const materials = data.sessions.filter((item) => materialIdSet.has(item.id))
-  const completed = data.progress.filter((item) => item.status === 'completed' && materialIdSet.has(item.session_id))
-  const review = data.progress.filter((item) => item.status === 'review' && materialIdSet.has(item.session_id))
-  const maxScore = data.attempts.reduce<number | null>((max, item) => item.score == null ? max : Math.max(max ?? item.score, item.score), null)
-
-  const materialsById = new Map(materials.map((item) => [item.id, item]))
-  const nextMaterial = materials.find((material) => {
-    const done = completed.some((item) => item.session_id === material.id)
-    const access = material.access_tier === 'free' || hasActiveAccess(data.entitlements, material.level_id)
-    return !done && material.content_status === 'published' && access
+  const progressByMaterial = new Map(data.progress.map((item) => [item.session_id, item]))
+  const learned = materials.filter((item) => progressByMaterial.get(item.id)?.learning_status === 'learned')
+  const review = materials.filter((item) => progressByMaterial.get(item.id)?.learning_status === 'review')
+  const notStarted = materials.filter((item) => {
+    const status = progressByMaterial.get(item.id)?.learning_status
+    return status !== 'learned' && status !== 'review'
   })
-  const nextProgress = nextMaterial ? data.progress.find((item) => item.session_id === nextMaterial.id) : undefined
+
+  const nextMaterial = materials.find((material) => {
+    const status = progressByMaterial.get(material.id)?.learning_status
+    const access = material.access_tier === 'free' || hasActiveAccess(data.entitlements, material.level_id)
+    return status !== 'learned' && material.content_status === 'published' && access
+  })
+  const nextProgress = nextMaterial ? progressByMaterial.get(nextMaterial.id) : undefined
 
   return (
     <>
-      <div className="head"><div><div className="eyebrow">DASHBOARD</div><h1>Selamat datang, {data.userName}</h1><p>Belajar sesuai ritme Anda. Takumi mencatat materi yang sudah dipelajari dan yang perlu dipelajari lagi.</p></div></div>
+      <div className="head"><div><div className="eyebrow">DASHBOARD</div><h1>Selamat datang, {data.userName}</h1><p>Belajar sesuai ritme Anda. Tidak ada target jumlah sesi; tandai setiap materi sesuai kondisi belajar Anda.</p></div></div>
 
       <section className="resume">
         <div>
           <div className="eyebrow">LANJUTKAN BELAJAR</div>
-          {nextMaterial ? <><h2>{nextMaterial.title}</h2><p>Progres membaca {nextProgress?.read_percent || 0}% · {getLearningStatus(nextProgress)}</p><Link className="btn primary" href={`/portal/session/${nextMaterial.id}`}>Lanjutkan materi →</Link></> : <><h2>Belum ada materi yang siap dilanjutkan</h2><p>Materi akan muncul di sini setelah dipublikasikan dan dapat diakses oleh akun Anda.</p><Link className="btn primary" href="/portal/materi">Lihat materi →</Link></>}
+          {nextMaterial ? <><h2>{nextMaterial.title}</h2><p>Progres membaca {nextProgress?.read_percent || 0}% · {getLearningStatus(nextProgress)}</p><Link className="btn primary" href={`/portal/session/${nextMaterial.id}`}>Lanjutkan materi →</Link></> : <><h2>Belum ada materi yang perlu dilanjutkan</h2><p>Materi baru akan muncul di sini setelah dipublikasikan.</p><Link className="btn primary" href="/portal/materi">Lihat materi →</Link></>}
         </div>
         <div>匠</div>
       </section>
 
       <div className="stats">
-        <article><span>Sudah dipelajari</span><b>{completed.length}</b></article>
-        <article><span>Nilai tertinggi</span><b>{maxScore ?? '—'}</b></article>
+        <article><span>Sudah dipelajari</span><b>{learned.length}</b></article>
         <article><span>Perlu dipelajari lagi</span><b>{review.length}</b></article>
+        <article><span>Belum dipelajari</span><b>{notStarted.length}</b></article>
       </div>
 
       <div className="twocol">
@@ -153,14 +157,14 @@ function Dashboard({ data }: { data: PortalData }) {
           <h2>Program Anda</h2>
           {data.levels.map((level) => {
             const levelMaterials = materials.filter((item) => item.level_id === level.id)
-            const doneForLevel = completed.filter((item) => materialsById.get(item.session_id)?.level_id === level.id).length
-            const percent = levelMaterials.length === 0 ? 0 : Math.min(100, Math.round((doneForLevel / levelMaterials.length) * 100))
+            const learnedForLevel = levelMaterials.filter((item) => progressByMaterial.get(item.id)?.learning_status === 'learned').length
+            const percent = levelMaterials.length === 0 ? 0 : Math.min(100, Math.round((learnedForLevel / levelMaterials.length) * 100))
             const freeCount = levelMaterials.filter((item) => item.access_tier === 'free').length
             const premium = hasActiveAccess(data.entitlements, level.id)
             return <div className="course" key={level.id}><b>{level.code}</b><div><h3>{level.name}</h3><p>{levelMaterials.length} materi tersedia · {freeCount} gratis · {premium ? 'Premium aktif' : 'Freemium'}</p><div className="bar"><i style={{ width: `${percent}%` }} /></div></div><strong>{percent}%</strong></div>
           })}
         </section>
-        <section className="panel"><h2>Target kelulusan</h2><div className="row"><b>Latihan materi</b><span>≥70</span></div><div className="row"><b>Evaluasi berkala</b><span>≥75</span></div><div className="row"><b>Simulasi JLPT</b><span>≥75</span></div></section>
+        <section className="panel"><h2>Standar latihan</h2><div className="row"><b>Latihan materi</b><span>≥70</span></div><div className="row"><b>Evaluasi berkala</b><span>≥75</span></div><div className="row"><b>Simulasi JLPT</b><span>≥75</span></div></section>
       </div>
     </>
   )
@@ -179,7 +183,7 @@ function Materi({ data, selectedCode }: { data: PortalData; selectedCode: string
 
   return (
     <>
-      <div className="head"><div><div className="eyebrow">MATERI</div><h1>{selectedLevel.name}</h1><p>{materials.length} materi tersedia · tidak ada target jumlah sesi atau durasi wajib</p></div><div className="tabs">{data.levels.map((level) => <Link className={level.id === selectedLevel.id ? 'on' : ''} href={`/portal/materi?level=${level.code}`} key={level.id}>{level.code}</Link>)}</div></div>
+      <div className="head"><div><div className="eyebrow">MATERI</div><h1>{selectedLevel.name}</h1><p>{materials.length} materi tersedia · pelajari sesuai ritme Anda</p></div><div className="tabs">{data.levels.map((level) => <Link className={level.id === selectedLevel.id ? 'on' : ''} href={`/portal/materi?level=${level.code}`} key={level.id}>{level.code}</Link>)}</div></div>
 
       {materials.length === 0 ? (
         <section className="panel empty"><h2>Belum ada materi</h2><p>Materi akan muncul di halaman ini setelah Tim Takumi mulai mengisinya.</p></section>
@@ -192,11 +196,13 @@ function Materi({ data, selectedCode }: { data: PortalData; selectedCode: string
             const canOpen = isPublished && (isFree || premium)
             const learningStatus = getLearningStatus(progress)
             const accessStatus = !isPublished ? 'Segera hadir' : isFree ? 'Gratis' : premium ? 'Premium' : 'Terkunci'
+            const learned = progress?.learning_status === 'learned'
+            const review = progress?.learning_status === 'review'
 
             return <article key={material.id} className={!canOpen ? 'locked' : ''}>
               <b className="num">{String(index + 1).padStart(2, '0')}</b>
               <div><small>MATERI {index + 1}</small><h3>{material.title}</h3><p>{learningStatus} · {accessStatus}{progress?.read_percent ? ` · baca ${progress.read_percent}%` : ''}</p></div>
-              <strong>{progress?.status === 'completed' ? '✓' : canOpen ? <Link aria-label={`Buka materi ${index + 1}`} href={`/portal/session/${material.id}`}>▶</Link> : '🔒'}</strong>
+              <strong>{learned ? '✓' : review ? '↻' : canOpen ? <Link aria-label={`Buka materi ${index + 1}`} href={`/portal/session/${material.id}`}>▶</Link> : '🔒'}</strong>
             </article>
           })}
         </div>
@@ -228,7 +234,7 @@ function Hasil({ data }: { data: PortalData }) {
 
   return (
     <>
-      <div className="head"><div><div className="eyebrow">HASIL BELAJAR</div><h1>Perkembangan Anda</h1><p>Seluruh percobaan disimpan; nilai tertinggi menentukan kelulusan.</p></div></div>
+      <div className="head"><div><div className="eyebrow">HASIL BELAJAR</div><h1>Perkembangan Anda</h1><p>Seluruh percobaan disimpan; nilai tertinggi menentukan kelulusan latihan.</p></div></div>
       <div className="stats"><article><span>Nilai terbaru</span><b>{latest ?? '—'}</b></article><article><span>Nilai tertinggi</span><b>{highest ?? '—'}</b></article><article><span>Total percobaan</span><b>{data.attempts.length}</b></article></div>
       <section className="panel"><h2>Riwayat nilai</h2>{scored.length === 0 ? <p>Belum ada hasil latihan. Riwayat akan muncul setelah soal dipublikasikan dan dikerjakan.</p> : scored.slice(0, 10).map((item, index) => <div className="row" key={`${item.submitted_at}-${index}`}><b>Percobaan {data.attempts.length - index}</b><span>{item.score} · {item.result_status === 'passed' ? 'Lulus' : 'Belum lulus'}</span></div>)}</section>
     </>
@@ -245,17 +251,6 @@ function Pembayaran() {
   )
 }
 
-function Admin({ data }: { data: PortalData }) {
-  const contentMaterialCount = data.contentSessionIds.length
-  return (
-    <>
-      <div className="head"><div><div className="eyebrow">ADMIN</div><h1>Panel Operasional</h1><p>Sistem materi sekarang bersifat fleksibel: jumlah materi mengikuti konten yang benar-benar dibuat.</p></div></div>
-      <div className="four"><article><span>Program</span><b>{data.levels.length}</b></article><article><span>Materi dibuat</span><b>{contentMaterialCount}</b></article><article><span>Draft/slot lama</span><b>{data.sessions.length - contentMaterialCount}</b></article><article><span>Konten publik</span><b>{data.sessions.filter((s) => data.contentSessionIds.includes(s.id) && s.content_status === 'published').length}</b></article></div>
-      <section className="panel"><h2>Alur konten</h2><div className="flow"><span>Draft</span>→<span>Review</span>→<span>Perlu diperbaiki</span>→<span>Disetujui</span>→<span>Published</span></div><p>Slot sesi lama tetap disimpan sementara untuk kompatibilitas, tetapi tidak lagi menentukan jumlah materi yang terlihat oleh siswa.</p></section>
-    </>
-  )
-}
-
 async function loadData(): Promise<PortalData> {
   const supabase = await createClient()
   const { data: { user } } = await supabase.auth.getUser()
@@ -266,7 +261,7 @@ async function loadData(): Promise<PortalData> {
     supabase.from('levels').select('id, code, name'),
     supabase.from('learning_sessions').select('id, level_id, session_no, title, slug, access_tier, content_status, estimated_minutes').order('session_no'),
     supabase.from('content_blocks').select('session_id'),
-    supabase.from('session_progress').select('session_id, read_percent, status, highest_score, updated_at').order('updated_at', { ascending: false }),
+    supabase.from('session_progress').select('session_id, read_percent, status, learning_status, highest_score, updated_at').order('updated_at', { ascending: false }),
     supabase.from('quiz_attempts').select('score, result_status, submitted_at').order('started_at', { ascending: false }).limit(100),
     supabase.from('bookmarks').select('id, category, source, created_at').order('created_at', { ascending: false }).limit(100),
     supabase.from('entitlements').select('level_id, active, starts_at, ends_at'),
@@ -300,7 +295,6 @@ export default async function Portal({ params, searchParams }: { params: Promise
   else if (section === 'bookmark') content = <Bookmark data={data} />
   else if (section === 'hasil') content = <Hasil data={data} />
   else if (section === 'pembayaran') content = <Pembayaran />
-  else if (section === 'admin') content = <Admin data={data} />
   else content = <Dashboard data={data} />
 
   return <Shell section={section} isAdmin={isAdmin} userName={data.userName}>{content}</Shell>
