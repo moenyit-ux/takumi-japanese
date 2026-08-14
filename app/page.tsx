@@ -45,7 +45,10 @@ export default function Home() {
             <div className="eyebrow">FILOSOFI TAKUMI</div>
             <h2>Belajar dari orang yang pernah melewati jalan yang sama.</h2>
             <p>Fokus pada JLPT, bahasa kerja, dan pola belajar yang tetap masuk akal ketika badan sudah lelah.</p>
-            <div className="levelrow"><b>N4</b><span>Materi fleksibel</span><b>N3</b><span>Materi fleksibel</span></div>
+            <div className="levelrow">
+              <b>N4</b><span>1.000 kosakata · 200 kanji · 100 bunpou</span>
+              <b>N3</b><span>2.000 kosakata · 350 kanji · 130 bunpou</span>
+            </div>
           </div>
         </div>
       </section>
@@ -78,12 +81,12 @@ export default function Home() {
                 <span>N4</span>
                 <div>
                   <h3>JLPT N4</h3>
-                  <p>Akses materi N4</p>
+                  <p>1.000 kosakata · 200 kanji · 100 bunpou</p>
                 </div>
               </div>
               <div className="priceAmount">Rp299.000</div>
               <div className="priceOnce">Sekali bayar</div>
-              <p className="priceDesc">Materi N4, latihan per materi, evaluasi berkala, bookmark, statistik belajar, dan 5 simulasi JLPT.</p>
+              <p className="priceDesc">Termasuk 25 dokkai, 25 choukai, 5 simulasi JLPT, latihan dan kuis yang terus di-update, bookmark, serta statistik belajar.</p>
               <Link className="btn primary full" href="/login">Mulai N4</Link>
             </article>
 
@@ -92,12 +95,12 @@ export default function Home() {
                 <span>N3</span>
                 <div>
                   <h3>JLPT N3</h3>
-                  <p>Akses materi N3</p>
+                  <p>2.000 kosakata · 350 kanji · 130 bunpou</p>
                 </div>
               </div>
               <div className="priceAmount">Rp399.000</div>
               <div className="priceOnce">Sekali bayar</div>
-              <p className="priceDesc">Materi N3, latihan per materi, evaluasi berkala, bookmark, statistik belajar, dan 5 simulasi JLPT.</p>
+              <p className="priceDesc">Termasuk 25 dokkai, 25 choukai, 5 simulasi JLPT, latihan dan kuis yang terus di-update, bookmark, serta statistik belajar.</p>
               <Link className="btn primary full" href="/login">Mulai N3</Link>
             </article>
           </div>
