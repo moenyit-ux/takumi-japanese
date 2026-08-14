@@ -33,6 +33,8 @@ function errorMessage(message: string) {
     at_least_two_options_required: 'Setiap soal harus memiliki minimal dua pilihan jawaban.',
     option_text_required: 'Minimal dua pilihan jawaban harus diisi.',
     question_has_attempt_history: 'Soal ini sudah memiliki riwayat jawaban siswa sehingga tidak dapat diubah atau dihapus.',
+    invalid_block_review_status: 'Status review materi tidak valid.',
+    revision_note_required: 'Tuliskan catatan revisi sebelum mengirim materi ke Perlu direvisi.',
   }
   return map[message] || message.replaceAll('_', ' ')
 }
@@ -71,6 +73,13 @@ export async function POST(request: Request) {
       p_body: body.contentBody && typeof body.contentBody === 'object' ? body.contentBody : {},
       p_audio_url: text(body.audioUrl),
       p_image_url: text(body.imageUrl),
+    })
+  } else if (action === 'set_block_review_status') {
+    result = await supabase.rpc('admin_set_content_block_review_status', {
+      p_session_id: sessionId,
+      p_block_id: text(body.blockId),
+      p_status: text(body.status),
+      p_note: text(body.note),
     })
   } else if (action === 'delete_block') {
     result = await supabase.rpc('admin_delete_content_block', {

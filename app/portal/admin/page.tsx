@@ -159,7 +159,9 @@ export default async function AdminPage({ searchParams }: { searchParams: Promis
           const href = workspace
             ? isQuiz
               ? `/portal/admin/session/${workspace.id}/quiz`
-              : `/portal/admin/session/${workspace.id}#material-studio`
+              : isJlpt
+                ? null
+                : `/portal/admin/session/${workspace.id}?kind=${category.key}#material-studio`
             : null
 
           return (
@@ -191,6 +193,7 @@ export default async function AdminPage({ searchParams }: { searchParams: Promis
                     className={styles.editButton}
                     label={isQuiz ? 'Buka →' : 'Mulai isi →'}
                     destination={isQuiz ? 'quiz' : 'material'}
+                    kind={isQuiz ? undefined : category.key}
                   />
                 ) : null}
               </div>

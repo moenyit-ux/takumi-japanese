@@ -3,10 +3,13 @@ import { notFound, redirect } from 'next/navigation'
 import { createClient } from '../../../../../lib/supabase/server'
 import Editor from './editor'
 import AssetUploader from './asset-uploader'
-import SimpleMaterialStudio from './simple-material-studio'
-import QuizTabPortal from './quiz-tab-portal'
+import MaterialWorkflowStudio from './material-workflow-studio'
 import BulkImport from './bulk-import'
 import styles from '../../admin.module.css'
+
+type StructuredKind = 'vocabulary' | 'kanji' | 'grammar' | 'reading' | 'listening'
+
+const validKinds: StructuredKind[] = ['vocabulary', 'kanji', 'grammar', 'reading', 'listening']
 
 type EditorData = {
   role: 'content_admin' | 'super_admin'
@@ -33,6 +36,10 @@ type EditorData = {
     body: unknown
     audio_url: string | null
     image_url: string | null
+    review_status?: 'saved' | 'needs_revision' | 'approved'
+    review_note?: string | null
+    reviewed_by?: string | null
+    reviewed_at?: string | null
     updated_at: string
   }>
   quiz: {
@@ -89,8 +96,9 @@ const compactSummaryStyle = {
   fontWeight: 800,
 } as const
 
-export default async function AdminSessionPage({ params }: { params: Promise<{ id: string }> }) {
+export default async function AdminSessionPage({ params, searchParams }: { params: Promise<{ id: string }>; searchParams: Promise<{ kind?: string }> }) {
   const { id } = await params
+  const query = await searchParams
   const supabase = await createClient()
   const { data: { user } } = await supabase.auth.getUser()
   if (!user) redirect('/login')
@@ -102,6 +110,8 @@ export default async function AdminSessionPage({ params }: { params: Promise<{ i
   if (error || !data) notFound()
 
   const editorData = data as EditorData
+  const requestedKind = query.kind as StructuredKind | undefined
+  const selectedKind: StructuredKind = requestedKind && validKinds.includes(requestedKind) ? requestedKind : 'vocabulary'
   const nextPosition = editorData.blocks.reduce((max, block) => Math.max(max, block.position), 0) + 1
 
   return (
@@ -118,20 +128,20 @@ export default async function AdminSessionPage({ params }: { params: Promise<{ i
         <div>
           <div className={styles.eyebrow}>{editorData.session.level_code} · CONTENT STUDIO</div>
           <h1>Isi Materi {editorData.session.level_code}</h1>
-          <p>Pilih Kosakata, Kanji, Bunpou, Dokkai, atau Choukai di bawah. Setiap kategori dapat diisi dan diperbarui secara terpisah.</p>
+          <p>Satu kategori ditampilkan per layar agar penambahan, revisi, dan persetujuan materi dapat dikelola per item.</p>
         </div>
         <span className={`${styles.status} ${styles[editorData.session.content_status] || ''}`}>{editorData.session.content_status === 'draft' ? 'Draft aktif' : editorData.session.content_status}</span>
       </header>
 
       <div id="material-studio">
-        <SimpleMaterialStudio sessionId={editorData.session.id} blocks={editorData.blocks} />
+        <MaterialWorkflowStudio
+          sessionId={editorData.session.id}
+          levelCode={editorData.session.level_code}
+          role={editorData.role}
+          kind={selectedKind}
+          blocks={editorData.blocks}
+        />
       </div>
-
-      <QuizTabPortal
-        sessionId={editorData.session.id}
-        quizId={editorData.quiz.id}
-        questions={editorData.quiz.questions || []}
-      />
 
       <div id="session-material-extras" style={{ display: 'contents' }}>
         <details style={compactToolStyle}>
