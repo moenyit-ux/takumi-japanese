@@ -33,6 +33,7 @@ type ContentProgress = {
 type ContentBlockSummary = {
   session_id: string
   kind: string
+  review_status: 'saved' | 'needs_revision' | 'approved' | null
 }
 
 type CategoryKey = 'vocabulary' | 'kanji' | 'grammar' | 'reading' | 'listening' | 'quiz' | 'jlpt'
@@ -71,7 +72,7 @@ export default async function AdminPage({ searchParams }: { searchParams: Promis
     supabase.from('levels').select('id, code, name'),
     supabase.from('learning_sessions').select('id, level_id, session_no, title, access_tier, content_status, created_by, updated_at').order('session_no'),
     supabase.rpc('admin_content_progress'),
-    supabase.from('content_blocks').select('session_id, kind'),
+    supabase.from('content_blocks').select('session_id, kind, review_status'),
   ])
 
   const levels = (levelsResult.data || []) as Level[]
@@ -95,10 +96,9 @@ export default async function AdminPage({ searchParams }: { searchParams: Promis
   const countByKind = new Map<string, number>()
   selectedBlocks.forEach((block) => countByKind.set(block.kind, (countByKind.get(block.kind) || 0) + 1))
 
-  const published = activeSessions.filter((session) => session.content_status === 'published').length
-  const review = activeSessions.filter((session) => session.content_status === 'review').length
-  const needsChanges = activeSessions.filter((session) => session.content_status === 'changes_requested').length
-  const draftsInProgress = activeSessions.filter((session) => session.content_status === 'draft').length
+  const savedCount = selectedBlocks.filter((block) => !block.review_status || block.review_status === 'saved').length
+  const revisionCount = selectedBlocks.filter((block) => block.review_status === 'needs_revision').length
+  const approvedCount = selectedBlocks.filter((block) => block.review_status === 'approved').length
 
   return (
     <main className={styles.adminShell}>
@@ -121,20 +121,10 @@ export default async function AdminPage({ searchParams }: { searchParams: Promis
       </header>
 
       <section className={styles.stats}>
-        <article><span>Materi terisi</span><b>{selectedBlocks.length}</b></article>
-        <article><span>Published</span><b>{published}</b></article>
-        <article><span>Menunggu review</span><b>{review}</b></article>
-        <article><span>Perlu diperbaiki</span><b>{needsChanges}</b></article>
-      </section>
-
-      <section className={styles.workflow}>
-        <div className={draftsInProgress > 0 ? overview.workflowActive : ''}><b>1</b><span>{draftsInProgress > 0 ? `Draft · ${draftsInProgress} aktif` : 'Draft'}</span></div>
-        <i>→</i>
-        <div><b>2</b><span>Review</span></div>
-        <i>→</i>
-        <div><b>3</b><span>Perbaikan / Approved</span></div>
-        <i>→</i>
-        <div><b>4</b><span>Published</span></div>
+        <article><span>Total materi</span><b>{selectedBlocks.length}</b></article>
+        <article><span>Materi tersimpan</span><b>{savedCount}</b></article>
+        <article><span>Perlu direvisi</span><b>{revisionCount}</b></article>
+        <article><span>Sudah disetujui</span><b>{approvedCount}</b></article>
       </section>
 
       <div className={styles.categoryHeader}>
