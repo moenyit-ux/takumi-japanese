@@ -4,7 +4,6 @@ import { createClient } from '../../../../../lib/supabase/server'
 import Editor from './editor'
 import AssetUploader from './asset-uploader'
 import MaterialWorkflowStudio from './material-workflow-studio'
-import QuizTabPortal from './quiz-tab-portal'
 import BulkImport from './bulk-import'
 import styles from '../../admin.module.css'
 
@@ -143,12 +142,6 @@ export default async function AdminSessionPage({ params, searchParams }: { param
           blocks={editorData.blocks}
         />
       </div>
-
-      <QuizTabPortal
-        sessionId={editorData.session.id}
-        quizId={editorData.quiz.id}
-        questions={editorData.quiz.questions || []}
-      />
 
       <div id="session-material-extras" style={{ display: 'contents' }}>
         <details style={compactToolStyle}>
