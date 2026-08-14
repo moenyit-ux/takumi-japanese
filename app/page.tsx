@@ -35,7 +35,7 @@ export default function Home() {
           </div>
           <div className="trust">
             <span>✓ 15% materi gratis</span>
-            <span>✓ ±60 menit per sesi</span>
+            <span>✓ Belajar sesuai ritme sendiri</span>
           </div>
         </div>
 
@@ -45,7 +45,7 @@ export default function Home() {
             <div className="eyebrow">FILOSOFI TAKUMI</div>
             <h2>Belajar dari orang yang pernah melewati jalan yang sama.</h2>
             <p>Fokus pada JLPT, bahasa kerja, dan pola belajar yang tetap masuk akal ketika badan sudah lelah.</p>
-            <div className="levelrow"><b>N4</b><span>48 sesi</span><b>N3</b><span>60 sesi</span></div>
+            <div className="levelrow"><b>N4</b><span>Materi fleksibel</span><b>N3</b><span>Materi fleksibel</span></div>
           </div>
         </div>
       </section>
@@ -54,14 +54,14 @@ export default function Home() {
         <div className="split">
           <div>
             <div className="eyebrow">CARA BELAJAR</div>
-            <h2>Bukan sekadar membuka materi.</h2>
-            <p>Sesi selesai setelah materi dibaca dan nilai latihan minimal 70. Evaluasi setiap lima sesi dan simulasi membutuhkan nilai minimal 75.</p>
+            <h2>Belajar tanpa dikejar jumlah sesi.</h2>
+            <p>Pilih materi yang kamu butuhkan, belajar sesuai ritmemu, lalu tandai statusnya sebagai belum dipelajari, perlu dipelajari lagi, atau sudah dipelajari. Progres membaca dan hasil latihan tetap tersimpan terpisah.</p>
           </div>
           <ol>
-            <li><b>01</b> Pelajari materi</li>
-            <li><b>02</b> Kerjakan latihan</li>
-            <li><b>03</b> Ulangi bagian lemah</li>
-            <li><b>04</b> Ukur kesiapan dengan simulasi</li>
+            <li><b>01</b> Pilih materi yang ingin dipelajari</li>
+            <li><b>02</b> Pelajari materi dan kerjakan latihan</li>
+            <li><b>03</b> Tandai status belajarmu</li>
+            <li><b>04</b> Ulangi bagian lemah dan ukur kesiapan dengan simulasi</li>
           </ol>
         </div>
       </section>
@@ -78,12 +78,12 @@ export default function Home() {
                 <span>N4</span>
                 <div>
                   <h3>JLPT N4</h3>
-                  <p>48 sesi</p>
+                  <p>Akses materi N4</p>
                 </div>
               </div>
               <div className="priceAmount">Rp299.000</div>
               <div className="priceOnce">Sekali bayar</div>
-              <p className="priceDesc">Materi lengkap N4, latihan, evaluasi, bookmark, statistik, dan 5 simulasi JLPT.</p>
+              <p className="priceDesc">Materi N4, latihan per materi, evaluasi berkala, bookmark, statistik belajar, dan 5 simulasi JLPT.</p>
               <Link className="btn primary full" href="/login">Mulai N4</Link>
             </article>
 
@@ -92,12 +92,12 @@ export default function Home() {
                 <span>N3</span>
                 <div>
                   <h3>JLPT N3</h3>
-                  <p>60 sesi</p>
+                  <p>Akses materi N3</p>
                 </div>
               </div>
               <div className="priceAmount">Rp399.000</div>
               <div className="priceOnce">Sekali bayar</div>
-              <p className="priceDesc">Materi lengkap N3, latihan, evaluasi, bookmark, statistik, dan 5 simulasi JLPT.</p>
+              <p className="priceDesc">Materi N3, latihan per materi, evaluasi berkala, bookmark, statistik belajar, dan 5 simulasi JLPT.</p>
               <Link className="btn primary full" href="/login">Mulai N3</Link>
             </article>
           </div>
