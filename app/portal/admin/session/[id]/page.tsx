@@ -1,7 +1,6 @@
 import Link from 'next/link'
 import { notFound, redirect } from 'next/navigation'
 import { createClient } from '../../../../../lib/supabase/server'
-import Editor from './editor'
 import AssetUploader from './asset-uploader'
 import MaterialWorkflowStudio from './material-workflow-studio'
 import BulkImport from './bulk-import'
@@ -41,39 +40,6 @@ type EditorData = {
     reviewed_by?: string | null
     reviewed_at?: string | null
     updated_at: string
-  }>
-  quiz: {
-    id: string
-    kind: string
-    title: string
-    pass_score: number
-    time_limit_minutes: number | null
-    published: boolean
-    questions: Array<{
-      id: string
-      position: number
-      kind: string
-      prompt: string
-      passage: string | null
-      audio_url: string | null
-      explanation_id: string | null
-      explanation_text: string | null
-      points: number
-      options: Array<{
-        id: string
-        position: number
-        label: string | null
-        option_text: string
-        is_correct: boolean
-      }>
-    }>
-  }
-  review_notes: Array<{
-    id: string
-    author_id: string | null
-    author_name: string | null
-    note: string
-    created_at: string
   }>
 }
 
@@ -130,7 +96,6 @@ export default async function AdminSessionPage({ params, searchParams }: { param
           <h1>Isi Materi {editorData.session.level_code}</h1>
           <p>Satu kategori ditampilkan per layar agar penambahan, revisi, dan persetujuan materi dapat dikelola per item.</p>
         </div>
-        <span className={`${styles.status} ${styles[editorData.session.content_status] || ''}`}>{editorData.session.content_status === 'draft' ? 'Draft aktif' : editorData.session.content_status}</span>
       </header>
 
       <div id="material-studio">
@@ -169,8 +134,6 @@ export default async function AdminSessionPage({ params, searchParams }: { param
             <AssetUploader sessionId={editorData.session.id} nextPosition={nextPosition} />
           </div>
         </details>
-
-        <Editor initialData={editorData} section="workflow" />
       </div>
     </main>
   )
