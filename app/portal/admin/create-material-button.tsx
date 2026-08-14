@@ -9,9 +9,10 @@ type Props = {
   className?: string
   label?: string
   destination?: 'material' | 'quiz'
+  kind?: string
 }
 
-export default function CreateMaterialButton({ levelId, levelCode, className = '', label, destination = 'material' }: Props) {
+export default function CreateMaterialButton({ levelId, levelCode, className = '', label, destination = 'material', kind }: Props) {
   const router = useRouter()
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState('')
@@ -40,7 +41,8 @@ export default function CreateMaterialButton({ levelId, levelCode, className = '
         return
       }
 
-      router.push(destination === 'quiz' ? `/portal/admin/session/${sessionId}/quiz` : `/portal/admin/session/${sessionId}#material-studio`)
+      const materialUrl = `/portal/admin/session/${sessionId}${kind ? `?kind=${encodeURIComponent(kind)}` : ''}#material-studio`
+      router.push(destination === 'quiz' ? `/portal/admin/session/${sessionId}/quiz` : materialUrl)
       router.refresh()
     } catch {
       setError('Koneksi terputus saat menyiapkan ruang kerja materi.')
