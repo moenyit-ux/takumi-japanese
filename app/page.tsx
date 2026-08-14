@@ -46,8 +46,18 @@ export default function Home() {
             <h2>Belajar dari orang yang pernah melewati jalan yang sama.</h2>
             <p>Fokus pada JLPT, bahasa kerja, dan pola belajar yang tetap masuk akal ketika badan sudah lelah.</p>
             <div className="levelrow">
-              <b>N4</b><span>1.000 kosakata · 200 kanji · 100 bunpou</span>
-              <b>N3</b><span>2.000 kosakata · 350 kanji · 130 bunpou</span>
+              <b>N4</b>
+              <span style={{ display: 'grid', gap: '2px', lineHeight: 1.25 }}>
+                <span>1.000 kosakata</span>
+                <span>200 kanji</span>
+                <span>100 bunpou</span>
+              </span>
+              <b>N3</b>
+              <span style={{ display: 'grid', gap: '2px', lineHeight: 1.25 }}>
+                <span>2.000 kosakata</span>
+                <span>350 kanji</span>
+                <span>130 bunpou</span>
+              </span>
             </div>
           </div>
         </div>
