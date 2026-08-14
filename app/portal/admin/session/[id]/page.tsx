@@ -107,16 +107,26 @@ export default async function AdminSessionPage({ params }: { params: Promise<{ i
   return (
     <main className={styles.editorShell}>
       <div className={styles.editorTop}>
-        <Link href={`/portal/admin?level=${editorData.session.level_code}`}>← Kembali ke daftar {editorData.session.level_code}</Link>
+        <Link href={`/portal/admin?level=${editorData.session.level_code}`}>← Kembali ke kategori {editorData.session.level_code}</Link>
         <div className={styles.editorTopActions}>
           <Link className={styles.secondary} href={`/portal/admin/session/${editorData.session.id}/preview`}>Preview</Link>
           <Link href="/portal/dashboard">Dashboard siswa</Link>
         </div>
       </div>
 
-      <Editor initialData={editorData} section="session" />
+      <header className={styles.editorHeader}>
+        <div>
+          <div className={styles.eyebrow}>{editorData.session.level_code} · CONTENT STUDIO</div>
+          <h1>Isi Materi {editorData.session.level_code}</h1>
+          <p>Pilih Kosakata, Kanji, Bunpou, Dokkai, atau Choukai di bawah. Setiap kategori dapat diisi dan diperbarui secara terpisah.</p>
+        </div>
+        <span className={`${styles.status} ${styles[editorData.session.content_status] || ''}`}>{editorData.session.content_status === 'draft' ? 'Draft aktif' : editorData.session.content_status}</span>
+      </header>
 
-      <SimpleMaterialStudio sessionId={editorData.session.id} blocks={editorData.blocks} />
+      <div id="material-studio">
+        <SimpleMaterialStudio sessionId={editorData.session.id} blocks={editorData.blocks} />
+      </div>
+
       <QuizTabPortal
         sessionId={editorData.session.id}
         quizId={editorData.quiz.id}

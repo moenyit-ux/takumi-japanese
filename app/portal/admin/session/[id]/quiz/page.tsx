@@ -56,14 +56,14 @@ export default async function QuizOnlyPage({ params }: { params: Promise<{ id: s
   return (
     <main className={styles.editorShell}>
       <div className={styles.editorTop}>
-        <Link href={`/portal/admin/session/${editorData.session.id}`}>← Kembali ke materi sesi</Link>
+        <Link href={`/portal/admin?level=${editorData.session.level_code}`}>← Kembali ke kategori {editorData.session.level_code}</Link>
         <Link href={`/portal/admin/session/${editorData.session.id}/preview`}>Preview siswa</Link>
       </div>
 
       <header className={styles.editorHeader}>
         <div>
-          <div className={styles.eyebrow}>{editorData.session.level_code} · SESI {editorData.session.session_no} · KUIS</div>
-          <h1>{editorData.quiz?.title || `Kuis ${editorData.session.title}`}</h1>
+          <div className={styles.eyebrow}>{editorData.session.level_code} · KUIS</div>
+          <h1>Kuis {editorData.session.level_code}</h1>
           <p>{editorData.session.level_name} · {editorData.quiz?.questions.length || 0} soal · Nilai lulus ≥ {editorData.quiz?.pass_score ?? 70}</p>
         </div>
       </header>
@@ -71,7 +71,7 @@ export default async function QuizOnlyPage({ params }: { params: Promise<{ id: s
       {!editorData.quiz ? (
         <section className={styles.panel}>
           <h2>Kuis belum tersedia</h2>
-          <p className={styles.note}>Struktur kuis untuk sesi ini belum dibuat.</p>
+          <p className={styles.note}>Struktur kuis untuk level ini belum dibuat.</p>
         </section>
       ) : (
         <QuizEditor sessionId={editorData.session.id} quizId={editorData.quiz.id} questions={editorData.quiz.questions} />

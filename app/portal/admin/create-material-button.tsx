@@ -7,9 +7,11 @@ type Props = {
   levelId: string
   levelCode: string
   className?: string
+  label?: string
+  destination?: 'material' | 'quiz'
 }
 
-export default function CreateMaterialButton({ levelId, levelCode, className = '' }: Props) {
+export default function CreateMaterialButton({ levelId, levelCode, className = '', label, destination = 'material' }: Props) {
   const router = useRouter()
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState('')
@@ -28,20 +30,20 @@ export default function CreateMaterialButton({ levelId, levelCode, className = '
       const payload = await response.json().catch(() => null)
 
       if (!response.ok) {
-        setError(payload?.error || 'Materi baru gagal dibuat.')
+        setError(payload?.error || 'Ruang kerja materi gagal dibuat.')
         return
       }
 
       const sessionId = payload?.data?.session_id
       if (!sessionId) {
-        setError('Materi berhasil dibuat tetapi halaman edit tidak ditemukan.')
+        setError('Ruang kerja berhasil dibuat tetapi halaman editor tidak ditemukan.')
         return
       }
 
-      router.push(`/portal/admin/session/${sessionId}`)
+      router.push(destination === 'quiz' ? `/portal/admin/session/${sessionId}/quiz` : `/portal/admin/session/${sessionId}#material-studio`)
       router.refresh()
     } catch {
-      setError('Koneksi terputus saat membuat materi baru.')
+      setError('Koneksi terputus saat menyiapkan ruang kerja materi.')
     } finally {
       setLoading(false)
     }
@@ -50,7 +52,7 @@ export default function CreateMaterialButton({ levelId, levelCode, className = '
   return (
     <div>
       <button className={className} type="button" onClick={createMaterial} disabled={loading}>
-        {loading ? 'Membuat…' : `+ Tambah Materi ${levelCode}`}
+        {loading ? 'Menyiapkan…' : (label || `+ Tambah Materi ${levelCode}`)}
       </button>
       {error && <p role="alert" style={{ margin: '7px 0 0', fontSize: 12, color: '#a43e29' }}>{error}</p>}
     </div>
