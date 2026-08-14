@@ -5,8 +5,10 @@ import { createClient } from '../../../../lib/supabase/server'
 import { resolveLearningAsset } from '../../../../lib/supabase/assets'
 import MaterialView, { type ContentBlock } from './material-view'
 import ProgressTracker from './progress-tracker'
+import LearningStatusControl from './learning-status-control'
 
 type StudyKind = 'vocabulary' | 'kanji' | 'grammar' | 'reading' | 'listening'
+type LearningStatus = 'not_started' | 'review' | 'learned'
 
 const studyKinds: StudyKind[] = ['vocabulary', 'kanji', 'grammar', 'reading', 'listening']
 
@@ -14,8 +16,13 @@ function isStudyKind(value: string | undefined): value is StudyKind {
   return Boolean(value && studyKinds.includes(value as StudyKind))
 }
 
-function getLearningStatus(status?: string | null) {
-  if (status === 'completed') return 'Sudah dipelajari'
+function normalizeLearningStatus(status?: string | null): LearningStatus {
+  if (status === 'review' || status === 'learned') return status
+  return 'not_started'
+}
+
+function learningStatusLabel(status: LearningStatus) {
+  if (status === 'learned') return 'Sudah dipelajari'
   if (status === 'review') return 'Perlu dipelajari lagi'
   return 'Belum dipelajari'
 }
@@ -51,7 +58,7 @@ export default async function SessionPage({
     supabase.from('levels').select('code, name').eq('id', session.level_id).maybeSingle(),
     supabase.from('entitlements').select('active, starts_at, ends_at').eq('level_id', session.level_id),
     supabase.from('content_blocks').select('id, position, kind, title, body, audio_url, image_url').eq('session_id', session.id).order('position'),
-    supabase.from('session_progress').select('read_percent, status, highest_score, last_block_id').eq('session_id', session.id).maybeSingle(),
+    supabase.from('session_progress').select('read_percent, status, learning_status, highest_score, last_block_id').eq('session_id', session.id).maybeSingle(),
     supabase.from('quizzes').select('id, title, pass_score').eq('session_id', session.id).eq('kind', 'session').eq('published', true).maybeSingle(),
     supabase.from('bookmarks').select('content_block_id').not('content_block_id', 'is', null),
   ])
@@ -105,7 +112,7 @@ export default async function SessionPage({
 
   const progress = progressResult.data
   const initialReadPercent = progress?.read_percent || 0
-  const learningStatus = getLearningStatus(progress?.status)
+  const learningStatus = normalizeLearningStatus(progress?.learning_status)
   const quizHref = quizResult.data ? `/portal/quiz/${quizResult.data.id}` : null
   const bookmarkedIds = new Set((bookmarkResult.data || []).map((item) => item.content_block_id).filter((value): value is string => Boolean(value)))
 
@@ -134,7 +141,7 @@ export default async function SessionPage({
         backHref={`/portal/materi?level=${levelCode}`}
         active={active}
         progressPercent={initialReadPercent}
-        learningStatus={learningStatus}
+        learningStatus={learningStatusLabel(learningStatus)}
         anchors={anchors}
         quizHref={quizHref}
       />
@@ -162,9 +169,11 @@ export default async function SessionPage({
 
       <ProgressTracker sessionId={session.id} blockIds={progressBlocks.map((block) => block.id)} initialReadPercent={initialReadPercent} />
 
+      <LearningStatusControl sessionId={session.id} initialStatus={learningStatus} />
+
       <section className="tm-callout" style={{ marginTop: 16 }}>
-        <div className="tm-callout-head"><div className="tm-icon-box">✓</div><b>Target selesai materi</b></div>
-        <p>Seluruh materi perlu dibaca dan nilai latihan harus mencapai minimal {quizResult.data?.pass_score ?? 70}. Nilai tertinggi saat ini: <b>{progress?.highest_score ?? '—'}</b>.</p>
+        <div className="tm-callout-head"><div className="tm-icon-box">✓</div><b>Syarat kelulusan materi</b></div>
+        <p>Status belajar adalah penilaian pribadi dan dapat diubah kapan saja. Kelulusan teknis tetap dihitung dari seluruh materi yang dibaca dan nilai latihan minimal {quizResult.data?.pass_score ?? 70}. Nilai tertinggi saat ini: <b>{progress?.highest_score ?? '—'}</b>.</p>
       </section>
     </main>
   )
