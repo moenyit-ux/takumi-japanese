@@ -87,7 +87,6 @@ export default async function AdminSessionPreviewPage({
   if (error || !data) notFound()
   const editor = data as EditorData
 
-  const { data: level } = await supabase.from('levels').select('total_sessions').eq('code', editor.session.level_code).maybeSingle()
   const blocks = await Promise.all((editor.blocks || []).map(async (block) => ({
     ...block,
     audio_url: await resolveLearningAsset(supabase, block.audio_url),
@@ -136,8 +135,8 @@ export default async function AdminSessionPreviewPage({
       <TakumiStudyHeader
         backHref={`/portal/admin/session/${editor.session.id}`}
         active={active}
-        sessionNo={editor.session.session_no}
-        totalSessions={level?.total_sessions || null}
+        progressPercent={0}
+        learningStatus="Belum dipelajari"
         anchors={anchors}
         quizHref={quizHref}
       />
@@ -152,11 +151,11 @@ export default async function AdminSessionPreviewPage({
       {active === 'quiz' ? (
         <section className={`panel ${styles.quizPreview}`}>
           <div className={styles.quizHead}>
-            <div><div className="eyebrow">PREVIEW LATIHAN SESI</div><h2>{editor.quiz?.title || 'Latihan sesi'}</h2></div>
+            <div><div className="eyebrow">PREVIEW LATIHAN MATERI</div><h2>{editor.quiz?.title || 'Latihan materi'}</h2></div>
             <span>{questions.length} soal · Lulus ≥ {editor.quiz?.pass_score ?? 70}</span>
           </div>
 
-          {questions.length === 0 ? <div className={styles.empty}>Belum ada soal pada latihan sesi.</div> : questions.map((question) => {
+          {questions.length === 0 ? <div className={styles.empty}>Belum ada soal pada latihan materi.</div> : questions.map((question) => {
             const correct = question.options.find((option) => option.is_correct)
             return (
               <article className="question-card" key={question.id}>

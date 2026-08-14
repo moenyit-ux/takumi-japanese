@@ -5,8 +5,8 @@ type StudyKind = 'vocabulary' | 'kanji' | 'grammar' | 'reading' | 'listening' | 
 type Props = {
   backHref: string
   active: StudyKind
-  sessionNo?: number | null
-  totalSessions?: number | null
+  progressPercent?: number | null
+  learningStatus?: string | null
   anchors?: Partial<Record<Exclude<StudyKind, 'quiz'>, string>>
   quizHref?: string | null
   compact?: boolean
@@ -21,9 +21,8 @@ const navItems: Array<{ key: StudyKind; label: string; icon: string }> = [
   { key: 'quiz', label: 'Kuis', icon: '◌' },
 ]
 
-export default function TakumiStudyHeader({ backHref, active, sessionNo, totalSessions, anchors = {}, quizHref, compact = false }: Props) {
-  const safeTotal = totalSessions && totalSessions > 0 ? totalSessions : null
-  const percent = safeTotal && sessionNo ? Math.min(100, Math.max(0, Math.round((sessionNo / safeTotal) * 100))) : 0
+export default function TakumiStudyHeader({ backHref, active, progressPercent = 0, learningStatus = 'Belum dipelajari', anchors = {}, quizHref, compact = false }: Props) {
+  const safePercent = Math.min(100, Math.max(0, Math.round(progressPercent || 0)))
 
   return (
     <header className={`tm-study-header${compact ? ' tm-study-header-compact' : ''}`}>
@@ -33,7 +32,7 @@ export default function TakumiStudyHeader({ backHref, active, sessionNo, totalSe
         <Link className="tm-header-bookmark" href="/portal/bookmark" aria-label="Buka bookmark">♡</Link>
       </div>
 
-      <nav className="tm-study-nav" aria-label="Navigasi materi sesi">
+      <nav className="tm-study-nav" aria-label="Navigasi materi">
         {navItems.map((item) => {
           let href: string | null = null
           if (item.key === 'quiz') href = quizHref || null
@@ -53,9 +52,13 @@ export default function TakumiStudyHeader({ backHref, active, sessionNo, totalSe
           </div>
 
           <div className="tm-session-progress">
-            <b>{safeTotal && sessionNo ? `Progres Sesi ${sessionNo}/${safeTotal}` : 'Progres Belajar'}</b>
-            <div className="tm-session-track"><i style={{ width: `${percent}%` }} /></div>
-            <div className="tm-progress-legend"><span><i className="done" />Selesai</span><span><i className="current" />Sedang dipelajari</span><span><i className="todo" />Belum</span></div>
+            <b>Progres materi {safePercent}%</b>
+            <div className="tm-session-track"><i style={{ width: `${safePercent}%` }} /></div>
+            <div className="tm-progress-legend" aria-label={`Status belajar: ${learningStatus}`}>
+              <span><i className={learningStatus === 'Sudah dipelajari' ? 'done' : 'todo'} />Sudah dipelajari</span>
+              <span><i className={learningStatus === 'Perlu dipelajari lagi' ? 'current' : 'todo'} />Perlu dipelajari lagi</span>
+              <span><i className={learningStatus === 'Belum dipelajari' ? 'current' : 'todo'} />Belum dipelajari</span>
+            </div>
           </div>
 
           <div className="tm-mascot tm-mascot-girl">

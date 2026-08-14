@@ -5,13 +5,26 @@ import { createClient } from '../../../../lib/supabase/server'
 import { resolveLearningAsset } from '../../../../lib/supabase/assets'
 import MaterialView, { type ContentBlock } from './material-view'
 import ProgressTracker from './progress-tracker'
+import LearningStatusControl from './learning-status-control'
 
 type StudyKind = 'vocabulary' | 'kanji' | 'grammar' | 'reading' | 'listening'
+type LearningStatus = 'not_started' | 'review' | 'learned'
 
 const studyKinds: StudyKind[] = ['vocabulary', 'kanji', 'grammar', 'reading', 'listening']
 
 function isStudyKind(value: string | undefined): value is StudyKind {
   return Boolean(value && studyKinds.includes(value as StudyKind))
+}
+
+function normalizeLearningStatus(status?: string | null): LearningStatus {
+  if (status === 'review' || status === 'learned') return status
+  return 'not_started'
+}
+
+function learningStatusLabel(status: LearningStatus) {
+  if (status === 'learned') return 'Sudah dipelajari'
+  if (status === 'review') return 'Perlu dipelajari lagi'
+  return 'Belum dipelajari'
 }
 
 type SearchParams = {
@@ -42,10 +55,10 @@ export default async function SessionPage({
   if (sessionError || !session) notFound()
 
   const [levelResult, entitlementResult, blocksResult, progressResult, quizResult, bookmarkResult] = await Promise.all([
-    supabase.from('levels').select('code, name, total_sessions').eq('id', session.level_id).maybeSingle(),
+    supabase.from('levels').select('code, name').eq('id', session.level_id).maybeSingle(),
     supabase.from('entitlements').select('active, starts_at, ends_at').eq('level_id', session.level_id),
     supabase.from('content_blocks').select('id, position, kind, title, body, audio_url, image_url').eq('session_id', session.id).order('position'),
-    supabase.from('session_progress').select('read_percent, status, highest_score, last_block_id').eq('session_id', session.id).maybeSingle(),
+    supabase.from('session_progress').select('read_percent, status, learning_status, highest_score, last_block_id').eq('session_id', session.id).maybeSingle(),
     supabase.from('quizzes').select('id, title, pass_score').eq('session_id', session.id).eq('kind', 'session').eq('published', true).maybeSingle(),
     supabase.from('bookmarks').select('content_block_id').not('content_block_id', 'is', null),
   ])
@@ -64,11 +77,11 @@ export default async function SessionPage({
       <main className="tm-material-page">
         <Link className="tm-back" href={`/portal/materi?level=${levelCode}`} aria-label="Kembali">←</Link>
         <section className="panel locked-panel" style={{ marginTop: 20 }}>
-          <div className="eyebrow">{levelCode} · SESI {session.session_no}</div>
+          <div className="eyebrow">{levelCode} · MATERI</div>
           <h1>{session.title}</h1>
           {session.content_status !== 'published'
-            ? <p>Materi sesi ini belum dipublikasikan.</p>
-            : <><p>Sesi ini termasuk akses premium.</p><Link className="btn primary" href="/portal/pembayaran">Lihat akses premium</Link></>}
+            ? <p>Materi ini belum dipublikasikan.</p>
+            : <><p>Materi ini termasuk akses premium.</p><Link className="btn primary" href="/portal/pembayaran">Lihat akses premium</Link></>}
         </section>
       </main>
     )
@@ -99,6 +112,7 @@ export default async function SessionPage({
 
   const progress = progressResult.data
   const initialReadPercent = progress?.read_percent || 0
+  const learningStatus = normalizeLearningStatus(progress?.learning_status)
   const quizHref = quizResult.data ? `/portal/quiz/${quizResult.data.id}` : null
   const bookmarkedIds = new Set((bookmarkResult.data || []).map((item) => item.content_block_id).filter((value): value is string => Boolean(value)))
 
@@ -126,8 +140,8 @@ export default async function SessionPage({
       <TakumiStudyHeader
         backHref={`/portal/materi?level=${levelCode}`}
         active={active}
-        sessionNo={session.session_no}
-        totalSessions={levelResult.data?.total_sessions || null}
+        progressPercent={initialReadPercent}
+        learningStatus={learningStatusLabel(learningStatus)}
         anchors={anchors}
         quizHref={quizHref}
       />
@@ -141,8 +155,8 @@ export default async function SessionPage({
 
       {blocks.length === 0 ? (
         <section className="tm-material-card tm-empty-card">
-          <h2>Materi sesi belum diisi</h2>
-          <p>Struktur sesi sudah aktif, tetapi isi kosakata, kanji, bunpou, dokkai, atau choukai belum dimasukkan oleh Tim Takumi.</p>
+          <h2>Materi belum diisi</h2>
+          <p>Kerangka materi sudah aktif, tetapi isi kosakata, kanji, bunpou, dokkai, atau choukai belum dimasukkan oleh Tim Takumi.</p>
         </section>
       ) : visibleBlocks.length === 0 ? (
         <section className="tm-material-card tm-empty-card">
@@ -155,9 +169,11 @@ export default async function SessionPage({
 
       <ProgressTracker sessionId={session.id} blockIds={progressBlocks.map((block) => block.id)} initialReadPercent={initialReadPercent} />
 
+      <LearningStatusControl sessionId={session.id} initialStatus={learningStatus} />
+
       <section className="tm-callout" style={{ marginTop: 16 }}>
-        <div className="tm-callout-head"><div className="tm-icon-box">✓</div><b>Target selesai sesi</b></div>
-        <p>Seluruh materi perlu dibaca dan nilai latihan harus mencapai minimal {quizResult.data?.pass_score ?? 70}. Nilai tertinggi saat ini: <b>{progress?.highest_score ?? '—'}</b>.</p>
+        <div className="tm-callout-head"><div className="tm-icon-box">✓</div><b>Syarat kelulusan materi</b></div>
+        <p>Status belajar adalah penilaian pribadi dan dapat diubah kapan saja. Kelulusan teknis tetap dihitung dari seluruh materi yang dibaca dan nilai latihan minimal {quizResult.data?.pass_score ?? 70}. Nilai tertinggi saat ini: <b>{progress?.highest_score ?? '—'}</b>.</p>
       </section>
     </main>
   )

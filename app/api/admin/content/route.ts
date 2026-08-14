@@ -22,10 +22,11 @@ function errorMessage(message: string) {
   const map: Record<string, string> = {
     admin_required: 'Akun ini tidak memiliki akses editor.',
     super_admin_required: 'Tindakan ini hanya dapat dilakukan Super Admin.',
+    level_not_found: 'Level belajar tidak ditemukan.',
     content_admin_transition_not_allowed: 'Admin konten hanya dapat menyimpan draft atau mengirim materi ke review.',
     published_session_requires_super_admin: 'Materi yang sudah dipublikasikan hanya dapat diubah Super Admin.',
     publish_requires_content: 'Tambahkan minimal satu blok materi sebelum dipublikasikan.',
-    publish_requires_session_quiz: 'Latihan sesi belum tersedia.',
+    publish_requires_session_quiz: 'Latihan materi belum tersedia.',
     publish_requires_questions: 'Tambahkan minimal satu soal sebelum dipublikasikan.',
     publish_requires_valid_options: 'Setiap soal harus memiliki minimal dua pilihan dan tepat satu jawaban benar.',
     exactly_one_correct_option_required: 'Pilih tepat satu jawaban benar.',
@@ -48,7 +49,11 @@ export async function POST(request: Request) {
   const sessionId = text(body.sessionId)
   let result: { data: unknown; error: { message: string } | null } | null = null
 
-  if (action === 'save_session') {
+  if (action === 'create_material') {
+    const levelId = text(body.levelId)
+    if (!levelId) return NextResponse.json({ error: 'Level belajar belum dipilih.' }, { status: 400 })
+    result = await supabase.rpc('admin_create_material', { p_level_id: levelId })
+  } else if (action === 'save_session') {
     result = await supabase.rpc('admin_save_session', {
       p_session_id: sessionId,
       p_title: text(body.title),
