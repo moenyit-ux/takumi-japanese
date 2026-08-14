@@ -24,8 +24,24 @@ html{scroll-behavior:smooth}
 .tm-audio-panel.tm-audio-compact{max-width:560px;padding:10px 12px;margin-top:12px}
 .tm-audio-panel.tm-audio-compact audio{display:block}
 
+/* Personal learning state is intentionally separate from quiz completion. */
+.tm-learning-status{margin-top:16px;padding:18px;border:1px solid #cfe8f3;border-radius:18px;background:#fff;display:grid;gap:14px}
+.tm-learning-status>div:first-child>p{margin:7px 0 0;color:var(--tm-muted);line-height:1.6}
+.tm-learning-status-options{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px}
+.tm-learning-status-options button{border:1px solid #d7e9f2;border-radius:14px;background:#f9fcfe;padding:13px;text-align:left;color:#17324d;cursor:pointer;transition:border-color .15s ease,background .15s ease,transform .15s ease}
+.tm-learning-status-options button:hover:not(:disabled){transform:translateY(-1px);border-color:#7fc8e9}
+.tm-learning-status-options button.active{background:#eaf7fd;border-color:#56b6df;box-shadow:0 0 0 2px rgba(86,182,223,.12)}
+.tm-learning-status-options button:disabled{opacity:.65;cursor:not-allowed}
+.tm-learning-status-options b{display:block;font-size:13px;margin-bottom:5px}
+.tm-learning-status-options span{display:block;font-size:11px;line-height:1.5;color:#6b8294}
+.tm-learning-status-error{margin:0;color:#a43e29;font-size:12px}
+
 @media(max-width:820px){
   .tm-study-header nav{display:flex}
+}
+
+@media(max-width:700px){
+  .tm-learning-status-options{grid-template-columns:1fr}
 }
 
 @media(max-width:560px){
