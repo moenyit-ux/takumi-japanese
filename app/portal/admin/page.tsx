@@ -2,8 +2,11 @@ import Link from 'next/link'
 import { redirect } from 'next/navigation'
 import { createClient } from '../../../lib/supabase/server'
 import CreateMaterialButton from './create-material-button'
-import styles from './admin.module.css'
+import baseStyles from './admin.module.css'
+import categoryStyles from './admin-categories.module.css'
 import overview from './admin-overview.module.css'
+
+const styles = { ...baseStyles, ...categoryStyles }
 
 type Level = {
   id: string
