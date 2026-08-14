@@ -189,7 +189,7 @@ export default async function AdminPage({ searchParams }: { searchParams: Promis
                     levelId={selectedLevel.id}
                     levelCode={selectedLevel.code}
                     className={styles.editButton}
-                    label={`Mulai ${category.label} →`}
+                    label={isQuiz ? 'Buka →' : 'Mulai isi →'}
                     destination={isQuiz ? 'quiz' : 'material'}
                   />
                 ) : null}
