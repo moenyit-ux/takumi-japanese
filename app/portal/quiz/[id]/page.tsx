@@ -23,6 +23,12 @@ type OptionRow = {
   option_text: string
 }
 
+function getLearningStatus(status?: string | null) {
+  if (status === 'completed') return 'Sudah dipelajari'
+  if (status === 'review') return 'Perlu dipelajari lagi'
+  return 'Belum dipelajari'
+}
+
 export default async function QuizPage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = await params
   const supabase = await createClient()
@@ -77,15 +83,15 @@ export default async function QuizPage({ params }: { params: Promise<{ id: strin
     options: options.filter((option) => option.question_id === question.id),
   }))
 
-  const [levelResult, sessionResult] = await Promise.all([
-    supabase.from('levels').select('code, total_sessions').eq('id', quiz.level_id).maybeSingle(),
+  const [levelResult, progressResult] = await Promise.all([
+    supabase.from('levels').select('code').eq('id', quiz.level_id).maybeSingle(),
     quiz.session_id
-      ? supabase.from('learning_sessions').select('id, session_no').eq('id', quiz.session_id).maybeSingle()
+      ? supabase.from('session_progress').select('read_percent, status').eq('session_id', quiz.session_id).maybeSingle()
       : Promise.resolve({ data: null, error: null }),
   ])
 
   const levelCode = levelResult.data?.code || 'N4'
-  const sessionNo = sessionResult.data?.session_no || null
+  const progress = progressResult.data
   const backHref = quiz.session_id ? `/portal/session/${quiz.session_id}` : `/portal/materi?level=${levelCode}`
   const nextHref = `/portal/materi?level=${levelCode}`
 
@@ -94,8 +100,8 @@ export default async function QuizPage({ params }: { params: Promise<{ id: strin
       <TakumiStudyHeader
         backHref={backHref}
         active="quiz"
-        sessionNo={sessionNo}
-        totalSessions={levelResult.data?.total_sessions || null}
+        progressPercent={progress?.read_percent || 0}
+        learningStatus={getLearningStatus(progress?.status)}
         quizHref={`/portal/quiz/${quiz.id}`}
         compact={quiz.kind === 'simulation'}
       />
