@@ -1,0 +1,280 @@
+'use client'
+
+import { useMemo, useState } from 'react'
+import { useRouter } from 'next/navigation'
+import admin from '../../admin.module.css'
+import styles from './material-workflow-studio.module.css'
+
+type StructuredKind = 'vocabulary' | 'kanji' | 'grammar' | 'reading' | 'listening'
+type ReviewStatus = 'saved' | 'needs_revision' | 'approved'
+type WorkflowTab = 'new' | ReviewStatus
+type RecordValue = Record<string, unknown>
+
+type ContentBlock = {
+  id: string
+  position: number
+  kind: string
+  title: string | null
+  body: unknown
+  audio_url: string | null
+  image_url: string | null
+  review_status?: ReviewStatus
+  review_note?: string | null
+  reviewed_at?: string | null
+}
+
+type Props = {
+  sessionId: string
+  levelCode: string
+  role: 'content_admin' | 'super_admin'
+  kind: StructuredKind
+  blocks: ContentBlock[]
+}
+
+const meta: Record<StructuredKind, { label: string; jp: string; newLabel: string }> = {
+  vocabulary: { label: 'Kosakata', jp: '単語', newLabel: 'Tambah Kosakata' },
+  kanji: { label: 'Kanji', jp: '漢字', newLabel: 'Tambah Kanji' },
+  grammar: { label: 'Bunpou', jp: '文法', newLabel: 'Tambah Bunpou' },
+  reading: { label: 'Dokkai', jp: '読解', newLabel: 'Tambah Dokkai' },
+  listening: { label: 'Choukai', jp: '聴解', newLabel: 'Tambah Choukai' },
+}
+
+function asRecord(value: unknown): RecordValue {
+  return value && typeof value === 'object' && !Array.isArray(value) ? value as RecordValue : {}
+}
+
+function field(body: RecordValue, key: string) {
+  return typeof body[key] === 'string' ? body[key] as string : ''
+}
+
+function listField(body: RecordValue, key: string) {
+  const value = body[key]
+  return Array.isArray(value) ? value.filter((item): item is string => typeof item === 'string').join('、') : typeof value === 'string' ? value : ''
+}
+
+async function callAdmin(payload: Record<string, unknown>) {
+  const response = await fetch('/api/admin/content', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(payload),
+  })
+  const data = await response.json().catch(() => ({})) as { error?: string }
+  if (!response.ok || data.error) throw new Error(data.error || 'Perubahan gagal disimpan.')
+}
+
+async function uploadAsset(sessionId: string, file: File) {
+  const form = new FormData()
+  form.append('sessionId', sessionId)
+  form.append('file', file)
+  const response = await fetch('/api/admin/assets', { method: 'POST', body: form })
+  const data = await response.json().catch(() => ({})) as { asset?: string; error?: string }
+  if (!response.ok || !data.asset) throw new Error(data.error || 'Upload aset gagal.')
+  return data.asset
+}
+
+function CoreFields({ kind, body, setBody }: { kind: StructuredKind; body: RecordValue; setBody: (body: RecordValue) => void }) {
+  const set = (key: string, value: unknown) => setBody({ ...body, [key]: value })
+
+  if (kind === 'vocabulary') return <div className={admin.formGrid}>
+    <label className={admin.label}>Kosakata<input className={admin.input} value={field(body, 'term')} onChange={(e) => set('term', e.target.value)} placeholder="予定" /></label>
+    <label className={admin.label}>Furigana<input className={admin.input} value={field(body, 'reading')} onChange={(e) => set('reading', e.target.value)} placeholder="よてい" /></label>
+    <label className={`${admin.label} ${admin.full}`}>Arti Indonesia<input className={admin.input} value={field(body, 'meaning')} onChange={(e) => set('meaning', e.target.value)} placeholder="rencana / jadwal" /></label>
+    <label className={`${admin.label} ${admin.full}`}>Penjelasan<textarea className={admin.textarea} value={field(body, 'description')} onChange={(e) => set('description', e.target.value)} /></label>
+  </div>
+
+  if (kind === 'kanji') return <div className={admin.formGrid}>
+    <label className={admin.label}>Kanji<input className={admin.input} value={field(body, 'kanji')} onChange={(e) => set('kanji', e.target.value)} placeholder="家" /></label>
+    <label className={admin.label}>Arti<input className={admin.input} value={field(body, 'meaning')} onChange={(e) => set('meaning', e.target.value)} placeholder="rumah, keluarga" /></label>
+    <label className={admin.label}>Onyomi<input className={admin.input} value={listField(body, 'onyomi')} onChange={(e) => set('onyomi', e.target.value.split(/[、,]/).map((v) => v.trim()).filter(Boolean))} /></label>
+    <label className={admin.label}>Kunyomi<input className={admin.input} value={listField(body, 'kunyomi')} onChange={(e) => set('kunyomi', e.target.value.split(/[、,]/).map((v) => v.trim()).filter(Boolean))} /></label>
+    <label className={`${admin.label} ${admin.full}`}>Catatan pemakaian<textarea className={admin.textarea} value={field(body, 'description')} onChange={(e) => set('description', e.target.value)} /></label>
+  </div>
+
+  if (kind === 'grammar') return <div className={admin.formGrid}>
+    <label className={`${admin.label} ${admin.full}`}>Pola Bunpou<input className={admin.input} value={field(body, 'pattern')} onChange={(e) => set('pattern', e.target.value)} placeholder="〜なさい" /></label>
+    <label className={`${admin.label} ${admin.full}`}>Makna<input className={admin.input} value={field(body, 'core_meaning')} onChange={(e) => set('core_meaning', e.target.value)} /></label>
+    <label className={`${admin.label} ${admin.full}`}>Penjelasan<textarea className={admin.textarea} value={field(body, 'explanation')} onChange={(e) => set('explanation', e.target.value)} /></label>
+    <label className={admin.label}>Target belajar<input className={admin.input} value={field(body, 'target')} onChange={(e) => set('target', e.target.value)} /></label>
+    <label className={admin.label}>Catatan penting<input className={admin.input} value={field(body, 'important')} onChange={(e) => set('important', e.target.value)} /></label>
+  </div>
+
+  if (kind === 'reading') return <div className={admin.formGrid}>
+    <label className={`${admin.label} ${admin.full}`}>Bacaan<textarea className={`${admin.textarea} ${styles.longText}`} value={field(body, 'passage')} onChange={(e) => set('passage', e.target.value)} /></label>
+    <label className={`${admin.label} ${admin.full}`}>Target belajar<input className={admin.input} value={field(body, 'target')} onChange={(e) => set('target', e.target.value)} /></label>
+    <label className={`${admin.label} ${admin.full}`}>Persiapan membaca<textarea className={admin.textarea} value={field(body, 'preparation')} onChange={(e) => set('preparation', e.target.value)} /></label>
+    <label className={`${admin.label} ${admin.full}`}>Inti pemahaman<textarea className={admin.textarea} value={field(body, 'takeaway')} onChange={(e) => set('takeaway', e.target.value)} /></label>
+  </div>
+
+  return <div className={admin.formGrid}>
+    <label className={`${admin.label} ${admin.full}`}>Skrip audio<textarea className={`${admin.textarea} ${styles.longText}`} value={field(body, 'script')} onChange={(e) => set('script', e.target.value)} /></label>
+    <label className={`${admin.label} ${admin.full}`}>Target belajar<input className={admin.input} value={field(body, 'target')} onChange={(e) => set('target', e.target.value)} /></label>
+    <label className={`${admin.label} ${admin.full}`}>Persiapan mendengar<textarea className={admin.textarea} value={field(body, 'preparation')} onChange={(e) => set('preparation', e.target.value)} /></label>
+    <label className={`${admin.label} ${admin.full}`}>Inti pemahaman<textarea className={admin.textarea} value={field(body, 'takeaway')} onChange={(e) => set('takeaway', e.target.value)} /></label>
+  </div>
+}
+
+function MaterialEditor({ sessionId, kind, block, defaultPosition, role }: { sessionId: string; kind: StructuredKind; block?: ContentBlock; defaultPosition: number; role: Props['role'] }) {
+  const router = useRouter()
+  const [position, setPosition] = useState(block?.position || defaultPosition)
+  const [title, setTitle] = useState(block?.title || '')
+  const [body, setBody] = useState<RecordValue>(() => asRecord(block?.body))
+  const [audioUrl, setAudioUrl] = useState(block?.audio_url || '')
+  const [imageUrl, setImageUrl] = useState(block?.image_url || '')
+  const [busy, setBusy] = useState(false)
+  const [message, setMessage] = useState('')
+  const info = meta[kind]
+  const manualTitle = kind === 'reading' || kind === 'listening'
+
+  const automaticTitle = kind === 'vocabulary' ? field(body, 'term') : kind === 'kanji' ? field(body, 'kanji') : kind === 'grammar' ? field(body, 'pattern') : ''
+
+  async function save() {
+    const finalTitle = (title || automaticTitle).trim()
+    if (!finalTitle) {
+      setMessage(manualTitle ? 'Isi judul materi terlebih dahulu.' : `Isi ${info.label.toLowerCase()} terlebih dahulu.`)
+      return
+    }
+    setBusy(true)
+    setMessage('Menyimpan...')
+    try {
+      await callAdmin({ action: 'upsert_block', sessionId, blockId: block?.id || null, position, kind, title: finalTitle, contentBody: body, audioUrl, imageUrl })
+      setMessage(block ? 'Perubahan tersimpan. Status kembali ke Materi tersimpan untuk pengecekan ulang.' : `${info.label} berhasil ditambahkan.`)
+      router.refresh()
+      if (!block) {
+        setTitle('')
+        setBody({})
+        setAudioUrl('')
+        setImageUrl('')
+        setPosition((value) => value + 1)
+      }
+    } catch (error) {
+      setMessage(error instanceof Error ? error.message : 'Gagal menyimpan materi.')
+    } finally {
+      setBusy(false)
+    }
+  }
+
+  async function remove() {
+    if (!block || !window.confirm(`Hapus materi “${block.title || info.label}”?`)) return
+    setBusy(true)
+    try {
+      await callAdmin({ action: 'delete_block', sessionId, blockId: block.id })
+      router.refresh()
+    } catch (error) {
+      setMessage(error instanceof Error ? error.message : 'Gagal menghapus materi.')
+    } finally {
+      setBusy(false)
+    }
+  }
+
+  async function setReviewStatus(status: ReviewStatus) {
+    if (!block) return
+    let note = ''
+    if (status === 'needs_revision') {
+      note = window.prompt('Tuliskan bagian yang perlu direvisi:')?.trim() || ''
+      if (!note) return
+    }
+    setBusy(true)
+    try {
+      await callAdmin({ action: 'set_block_review_status', sessionId, blockId: block.id, status, note })
+      router.refresh()
+    } catch (error) {
+      setMessage(error instanceof Error ? error.message : 'Status materi gagal diubah.')
+    } finally {
+      setBusy(false)
+    }
+  }
+
+  async function handleUpload(file: File, target: 'audio' | 'image') {
+    setBusy(true)
+    setMessage('Mengunggah aset...')
+    try {
+      const path = await uploadAsset(sessionId, file)
+      if (target === 'audio') setAudioUrl(path); else setImageUrl(path)
+      setMessage('Upload selesai. Klik Simpan untuk menyimpan perubahan.')
+    } catch (error) {
+      setMessage(error instanceof Error ? error.message : 'Upload gagal.')
+    } finally {
+      setBusy(false)
+    }
+  }
+
+  const status = block?.review_status || 'saved'
+  const statusLabel = status === 'needs_revision' ? 'Perlu direvisi' : status === 'approved' ? 'Disetujui' : 'Tersimpan'
+
+  return <details className={styles.itemCard} open={!block}>
+    <summary>
+      <div className={styles.itemTitle}><span className={`${styles.statusDot} ${styles[status]}`} /><div><b>{block?.title || info.newLabel}</b><small>{block ? statusLabel : 'Penambahan materi baru'}</small></div></div>
+      <span className={styles.chevron}>⌄</span>
+    </summary>
+    <div className={styles.itemBody}>
+      {block?.review_note && <div className={styles.revisionNote}><b>Catatan revisi</b><span>{block.review_note}</span></div>}
+      {manualTitle && <label className={`${admin.label} ${admin.full}`}>Judul materi<input className={admin.input} value={title} onChange={(e) => setTitle(e.target.value)} placeholder={kind === 'reading' ? 'Contoh: Jadwal kereta' : 'Contoh: Percakapan di tempat kerja'} /></label>}
+      <CoreFields kind={kind} body={body} setBody={setBody} />
+
+      <details className={styles.extra}>
+        <summary>Urutan & media</summary>
+        <div className={admin.formGrid}>
+          <label className={admin.label}>Urutan<input className={admin.input} type="number" min={1} value={position} onChange={(e) => setPosition(Math.max(1, Number(e.target.value) || 1))} /></label>
+          {!manualTitle && <label className={admin.label}>Judul tampilan (opsional)<input className={admin.input} value={title} onChange={(e) => setTitle(e.target.value)} /></label>}
+          <label className={admin.label}>Gambar<input className={styles.fileInput} type="file" accept="image/jpeg,image/png,image/webp,image/gif" disabled={busy} onChange={(e) => { const file = e.target.files?.[0]; if (file) void handleUpload(file, 'image') }} /></label>
+          <label className={admin.label}>Audio<input className={styles.fileInput} type="file" accept="audio/mpeg,audio/mp4,audio/x-m4a,audio/wav,audio/ogg" disabled={busy} onChange={(e) => { const file = e.target.files?.[0]; if (file) void handleUpload(file, 'audio') }} /></label>
+          <label className={`${admin.label} ${admin.full}`}>URL/path gambar<input className={admin.input} value={imageUrl} onChange={(e) => setImageUrl(e.target.value)} /></label>
+          <label className={`${admin.label} ${admin.full}`}>URL/path audio<input className={admin.input} value={audioUrl} onChange={(e) => setAudioUrl(e.target.value)} /></label>
+        </div>
+      </details>
+
+      <div className={styles.actions}>
+        <button className={admin.primary} type="button" disabled={busy} onClick={save}>{busy ? 'Memproses…' : block ? 'Simpan perubahan' : `Simpan ${info.label}`}</button>
+        {block && role === 'super_admin' && status !== 'needs_revision' && <button className={styles.reviewButton} type="button" disabled={busy} onClick={() => void setReviewStatus('needs_revision')}>Perlu revisi</button>}
+        {block && role === 'super_admin' && status !== 'approved' && <button className={styles.approveButton} type="button" disabled={busy} onClick={() => void setReviewStatus('approved')}>Setujui</button>}
+        {block && role === 'super_admin' && status === 'approved' && <button className={styles.reviewButton} type="button" disabled={busy} onClick={() => void setReviewStatus('saved')}>Batalkan persetujuan</button>}
+        {block && <button className={admin.danger} type="button" disabled={busy} onClick={remove}>Hapus</button>}
+      </div>
+      {message && <div className={admin.message}>{message}</div>}
+    </div>
+  </details>
+}
+
+export default function MaterialWorkflowStudio({ sessionId, levelCode, role, kind, blocks }: Props) {
+  const info = meta[kind]
+  const relevant = useMemo(() => blocks.filter((block) => block.kind === kind), [blocks, kind])
+  const groups = {
+    saved: relevant.filter((block) => (block.review_status || 'saved') === 'saved'),
+    needs_revision: relevant.filter((block) => block.review_status === 'needs_revision'),
+    approved: relevant.filter((block) => block.review_status === 'approved'),
+  }
+  const [tab, setTab] = useState<WorkflowTab>(relevant.length ? 'saved' : 'new')
+  const nextPosition = blocks.reduce((max, block) => Math.max(max, block.position), 0) + 1
+  const visible = tab === 'new' ? [] : groups[tab]
+
+  const tabs: Array<{ key: WorkflowTab; label: string; count?: number }> = [
+    { key: 'new', label: 'Penambahan materi' },
+    { key: 'saved', label: 'Materi tersimpan', count: groups.saved.length },
+    { key: 'needs_revision', label: 'Perlu direvisi', count: groups.needs_revision.length },
+    { key: 'approved', label: 'Sudah disetujui', count: groups.approved.length },
+  ]
+
+  return <section className={`${admin.panel} ${styles.workspace}`}>
+    <div className={styles.head}>
+      <div><div className={admin.eyebrow}>{info.jp} · {levelCode}</div><h2>{info.label} {levelCode}</h2><p>Kelola satu jenis materi saja. Materi dipisahkan berdasarkan status kerja agar review Yozi dan persetujuan akhir tidak bercampur.</p></div>
+      <div className={styles.total}><b>{relevant.length}</b><span>total {info.label.toLowerCase()}</span></div>
+    </div>
+
+    <div className={styles.workflowTabs} role="tablist" aria-label={`Status ${info.label}`}>
+      {tabs.map((item) => <button key={item.key} type="button" role="tab" aria-selected={tab === item.key} className={tab === item.key ? styles.active : ''} onClick={() => setTab(item.key)}><span>{item.label}</span>{typeof item.count === 'number' && <b>{item.count}</b>}</button>)}
+    </div>
+
+    <div className={styles.sectionHead}>
+      <div><small>{tabs.find((item) => item.key === tab)?.label.toUpperCase()}</small><h3>{tab === 'new' ? info.newLabel : `${visible.length} ${info.label.toLowerCase()}`}</h3></div>
+      {tab !== 'new' && <button className={styles.addShortcut} type="button" onClick={() => setTab('new')}>+ {info.newLabel}</button>}
+    </div>
+
+    {tab === 'new' ? (
+      <MaterialEditor sessionId={sessionId} kind={kind} defaultPosition={nextPosition} role={role} />
+    ) : visible.length ? (
+      <div className={styles.list}>{visible.map((block) => <MaterialEditor key={block.id} sessionId={sessionId} kind={kind} block={block} defaultPosition={block.position} role={role} />)}</div>
+    ) : (
+      <div className={styles.empty}>Belum ada materi pada kelompok ini.</div>
+    )}
+  </section>
+}
