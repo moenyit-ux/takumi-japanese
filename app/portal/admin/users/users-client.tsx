@@ -3,6 +3,7 @@
 import { useRouter } from 'next/navigation'
 import { useState } from 'react'
 import styles from '../admin.module.css'
+import userStyles from './admin-users.module.css'
 
 type Device = { id: string; device_name: string | null; last_seen_at: string; revoked_at: string | null }
 type Entitlement = { level: string; active: boolean; starts_at: string; ends_at: string | null; source: string }
@@ -58,22 +59,22 @@ export default function UsersClient({ users }: { users: AdminUser[] }) {
   return (
     <>
       <div className={styles.message}>{message}</div>
-      <div className={styles.stack}>
+      <div className={userStyles.userList}>
         {users.map((user) => {
           const activeDevices = user.devices.filter((device) => !device.revoked_at)
           const activePremium = user.entitlements.filter((item) => item.active && (!item.ends_at || new Date(item.ends_at).getTime() > Date.now()))
           return (
-            <section className={styles.panel} key={user.id}>
-              <div className={styles.cardHead}>
-                <div>
+            <section className={userStyles.userCard} key={user.id}>
+              <div className={userStyles.userHead}>
+                <div className={userStyles.userIdentity}>
                   <div className={styles.eyebrow}>{user.email_confirmed_at ? 'EMAIL TERVERIFIKASI' : 'EMAIL BELUM TERVERIFIKASI'}</div>
                   <h2>{user.full_name || user.email || 'Pengguna Takumi'}</h2>
-                  <p className={styles.note}>{user.email} · dibuat {new Date(user.created_at).toLocaleDateString('id-ID')} · terakhir masuk {user.last_sign_in_at ? new Date(user.last_sign_in_at).toLocaleString('id-ID') : '—'}</p>
+                  <p className={userStyles.userMeta}>{user.email} · dibuat {new Date(user.created_at).toLocaleDateString('id-ID')} · terakhir masuk {user.last_sign_in_at ? new Date(user.last_sign_in_at).toLocaleString('id-ID') : '—'}</p>
                 </div>
                 <span className={styles.roleBadge}>{user.role}</span>
               </div>
 
-              <div className={styles.formGrid}>
+              <div className={userStyles.summaryGrid}>
                 <label className={styles.label}>Role
                   <select className={styles.select} value={user.role} disabled={busy} onChange={(event) => run({ action: 'set_role', userId: user.id, role: event.target.value }, 'Role pengguna diperbarui.')}>
                     <option value="student">Student</option>
@@ -81,32 +82,38 @@ export default function UsersClient({ users }: { users: AdminUser[] }) {
                     <option value="super_admin">Super Admin</option>
                   </select>
                 </label>
-                <div><b>Premium aktif</b><p className={styles.note}>{activePremium.length ? activePremium.map((item) => `${item.level}${item.ends_at ? ` sampai ${new Date(item.ends_at).toLocaleDateString('id-ID')}` : ''}`).join(' · ') : 'Tidak ada'}</p></div>
+                <div className={userStyles.premiumBox}><b>Premium aktif</b><p className={styles.note}>{activePremium.length ? activePremium.map((item) => `${item.level}${item.ends_at ? ` sampai ${new Date(item.ends_at).toLocaleDateString('id-ID')}` : ''}`).join(' · ') : 'Tidak ada'}</p></div>
               </div>
 
               <div className={styles.divider} />
-              <h3>Perangkat ({activeDevices.length}/2 aktif)</h3>
-              {user.devices.length === 0 ? <p className={styles.note}>Belum ada perangkat.</p> : user.devices.map((device) => (
-                <div className={styles.optionRow} key={device.id}>
-                  <div style={{ flex: 1 }}><b>{device.device_name || 'Perangkat'}</b><small style={{ display: 'block' }}>{device.revoked_at ? 'Dicabut' : 'Aktif'} · {new Date(device.last_seen_at).toLocaleString('id-ID')}</small></div>
-                  {!device.revoked_at && <button className={styles.danger} disabled={busy} onClick={() => run({ action: 'revoke_device', deviceId: device.id }, 'Akses perangkat dicabut.')}>Cabut</button>}
+              <h3 className={userStyles.sectionTitle}>Perangkat ({activeDevices.length}/2 aktif)</h3>
+              {user.devices.length === 0 ? (
+                <p className={styles.note}>Belum ada perangkat.</p>
+              ) : (
+                <div className={userStyles.deviceList}>
+                  {user.devices.map((device) => (
+                    <div className={userStyles.deviceRow} key={device.id}>
+                      <div className={userStyles.deviceInfo}><b>{device.device_name || 'Perangkat'}</b><small>{device.revoked_at ? 'Dicabut' : 'Aktif'} · {new Date(device.last_seen_at).toLocaleString('id-ID')}</small></div>
+                      {!device.revoked_at && <button className={styles.danger} disabled={busy} onClick={() => run({ action: 'revoke_device', deviceId: device.id }, 'Akses perangkat dicabut.')}>Cabut</button>}
+                    </div>
+                  ))}
                 </div>
-              ))}
+              )}
 
               {user.deletion_request && user.deletion_request.status !== 'cancelled' && (
-                <>
+                <div className={userStyles.deleteBlock}>
                   <div className={styles.divider} />
-                  <h3>Permintaan penghapusan akun</h3>
+                  <h3 className={userStyles.sectionTitle}>Permintaan penghapusan akun</h3>
                   <p>Status: <b>{user.deletion_request.status}</b> · {new Date(user.deletion_request.requested_at).toLocaleString('id-ID')}</p>
                   {user.deletion_request.reason && <p className={styles.note}>{user.deletion_request.reason}</p>}
-                  <div className={styles.actions}>
+                  <div className={userStyles.deleteActions}>
                     <button className={styles.secondary} disabled={busy} onClick={() => run({ action: 'deletion_status', requestId: user.deletion_request?.id, status: 'confirmed' }, 'Permintaan dikonfirmasi.')}>Konfirmasi</button>
                     <button className={styles.secondary} disabled={busy} onClick={() => run({ action: 'deletion_status', requestId: user.deletion_request?.id, status: 'processing' }, 'Permintaan ditandai sedang diproses.')}>Proses</button>
                     <button className={styles.danger} disabled={busy} onClick={() => run({ action: 'deletion_status', requestId: user.deletion_request?.id, status: 'cancelled' }, 'Permintaan dibatalkan.')}>Batalkan</button>
                     {user.role === 'student' && ['confirmed', 'processing'].includes(user.deletion_request.status) && <button className={styles.danger} disabled={busy} onClick={() => finalizeDeletion(user)}>Hapus akun permanen</button>}
                   </div>
                   <p className={styles.note}>Penghapusan permanen menghapus identitas Auth dan data belajar. Bukti pembayaran di Storage dihapus lebih dulu; catatan transaksi yang perlu dipertahankan dibuat anonim. Akun admin harus memindahkan tanggung jawab/aset sebelum dapat dihapus.</p>
-                </>
+                </div>
               )}
             </section>
           )
