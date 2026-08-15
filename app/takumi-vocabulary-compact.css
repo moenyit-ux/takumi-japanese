@@ -19,6 +19,25 @@
 .tm-vocab-expanded-topbar button:hover{background:#edf6ff;border-color:#9fc7ef}
 .tm-vocab-expanded-topbar button span{font-size:15px;line-height:1}
 
+/* Vocabulary chapters keep long lists manageable. */
+.tm-vocab-chapter-list{display:grid;gap:14px}
+.tm-vocab-chapter{border:1.5px solid #c9e0ff;border-radius:18px;background:#fff;overflow:hidden;scroll-margin-top:18px}
+.tm-vocab-chapter-summary{list-style:none;cursor:pointer;display:flex;align-items:center;justify-content:space-between;gap:18px;padding:16px 18px;background:linear-gradient(180deg,#f8fbff,#f3f8ff);user-select:none}
+.tm-vocab-chapter-summary::-webkit-details-marker{display:none}
+.tm-vocab-chapter-heading{display:grid;grid-template-columns:auto 1fr;column-gap:10px;align-items:center;min-width:0}
+.tm-vocab-chapter-heading>span{grid-column:1/3;color:var(--tm-blue);font-size:9px;letter-spacing:.15em;font-weight:900;margin-bottom:2px}
+.tm-vocab-chapter-heading>b{font-size:20px;line-height:1.2;color:var(--tm-ink)}
+.tm-vocab-chapter-heading>small{font-size:12px;color:var(--tm-muted);font-weight:800;white-space:nowrap}
+.tm-vocab-chapter-stats{display:flex;align-items:center;justify-content:flex-end;gap:8px;flex-wrap:wrap}
+.tm-vocab-chapter-stats>span{display:inline-flex;align-items:center;border-radius:999px;padding:6px 9px;font-size:10px;font-weight:900;background:#fff;border:1px solid #d8e5f2;color:#607284}
+.tm-vocab-chapter-stats>span.learned{background:#edfaef;border-color:#b8e5bf;color:#2f7340}
+.tm-vocab-chapter-stats>span.review{background:#fff8da;border-color:#ead38b;color:#735d18}
+.tm-vocab-chapter-stats>i{font-style:normal;width:30px;height:30px;border-radius:50%;display:grid;place-items:center;background:#e8f2ff;color:#3e6f9f;font-size:20px;font-weight:900;transition:transform .2s ease}
+.tm-vocab-chapter[open]>.tm-vocab-chapter-summary{border-bottom:1px solid #d8e7f5}
+.tm-vocab-chapter[open]>.tm-vocab-chapter-summary .tm-vocab-chapter-stats>i{transform:rotate(180deg)}
+.tm-vocab-chapter-items{display:grid;gap:9px;padding:11px;background:#fafdff}
+.tm-vocab-chapter-items>.tm-vocab-compact-card{border-radius:13px}
+
 @media(max-width:700px){
   .tm-vocab-compact-toggle{grid-template-columns:42px minmax(0,1fr) 24px;gap:10px;padding:11px 12px}
   .tm-vocab-compact-number{width:38px;height:38px;border-radius:9px;font-size:14px}
@@ -26,10 +45,17 @@
   .tm-vocab-compact-word small{font-size:13px}
   .tm-vocab-compact-status{grid-column:2/3;justify-self:start;margin-top:3px;padding:6px 9px;font-size:11px;max-width:100%}
   .tm-vocab-compact-chevron{grid-column:3;grid-row:1/3;align-self:center;width:24px;height:24px;font-size:18px}
+  .tm-vocab-chapter-summary{padding:14px;align-items:flex-start}
+  .tm-vocab-chapter-heading{grid-template-columns:1fr}
+  .tm-vocab-chapter-heading>span{grid-column:1}
+  .tm-vocab-chapter-heading>small{margin-top:3px}
+  .tm-vocab-chapter-stats>span{display:none}
+  .tm-vocab-chapter-items{padding:8px;gap:8px}
 }
 
 @media(max-width:420px){
   .tm-vocab-compact-toggle{min-height:82px}
   .tm-vocab-compact-word b{font-size:20px}
   .tm-vocab-compact-status span{max-width:150px;overflow:hidden;text-overflow:ellipsis}
+  .tm-vocab-chapter-heading>b{font-size:18px}
 }
