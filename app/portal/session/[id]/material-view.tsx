@@ -50,7 +50,7 @@ function numberOf(value: RecordValue, key: string, fallback = 1) {
   return Number.isFinite(parsed) && parsed >= 1 ? Math.floor(parsed) : fallback
 }
 
-function chapterOfVocabulary(block: ContentBlock) {
+function chapterOf(block: ContentBlock) {
   return numberOf(recordOf(block.body), 'chapter_number', 1)
 }
 
@@ -197,11 +197,15 @@ function KanjiCard({ block }: { block: ContentBlock }) {
   const description = textOf(body, 'description', 'text', 'explanation')
   const onyomi = stringsOf(body, 'onyomi', 'on_reading')
   const kunyomi = stringsOf(body, 'kunyomi', 'kun_reading')
+  const total = textOf(body, 'count_label')
 
   return (
     <>
       <div className="tm-kanji-hero">
-        <div className="tm-kanji-character">{kanji}</div>
+        <div>
+          <span className="tm-count-pill">{total || String(block.position).padStart(2, '0')}</span>
+          <div className="tm-kanji-character">{kanji}</div>
+        </div>
         <div>{meaning && <div className="tm-meaning">{meaning}</div>}{description && <p className="tm-description">{description}</p>}{block.audio_url && <div className="tm-audio-panel tm-audio-compact"><audio controls preload="none" src={block.audio_url}>Browser Anda tidak mendukung audio.</audio></div>}</div>
       </div>
       {(onyomi.length > 0 || kunyomi.length > 0) && <div className="tm-reading-grid">
@@ -330,12 +334,26 @@ export default function MaterialView({ blocks, bookmarkedIds, learningStatuses =
     )
   }
 
-  const vocabularyOnly = blocks.length > 0 && blocks.every((block) => block.kind === 'vocabulary')
+  function renderKanjiBlock(block: ContentBlock, anchorId: string) {
+    const initialStatus = learningStatuses[block.id] || 'not_started'
+    return (
+      <article className="tm-material-card" data-block-id={block.id} id={anchorId} key={block.id}>
+        <BlockContent block={block} />
+        <div className={`tm-material-actions tm-material-actions-status${preview ? ' preview' : ''}`}>
+          {!preview && <MaterialBookmark blockId={block.id} initialBookmarked={bookmarkedIds.has(block.id)} />}
+          <BlockLearningStatusControl blockId={block.id} initialStatus={initialStatus} preview={preview} />
+        </div>
+      </article>
+    )
+  }
 
-  if (vocabularyOnly) {
+  const vocabularyOnly = blocks.length > 0 && blocks.every((block) => block.kind === 'vocabulary')
+  const kanjiOnly = blocks.length > 0 && blocks.every((block) => block.kind === 'kanji')
+
+  if (vocabularyOnly || kanjiOnly) {
     const chapterMap = new Map<number, ContentBlock[]>()
     blocks.forEach((block) => {
-      const chapter = chapterOfVocabulary(block)
+      const chapter = chapterOf(block)
       const current = chapterMap.get(chapter) || []
       current.push(block)
       chapterMap.set(chapter, current)
@@ -343,6 +361,8 @@ export default function MaterialView({ blocks, bookmarkedIds, learningStatuses =
     const chapters = Array.from(chapterMap.entries())
       .sort(([a], [b]) => a - b)
       .map(([chapter, chapterBlocks]) => [chapter, chapterBlocks.sort((a, b) => a.position - b.position)] as [number, ContentBlock[]])
+    const kind = vocabularyOnly ? 'vocabulary' : 'kanji'
+    const itemLabel = vocabularyOnly ? 'kosakata' : 'kanji'
 
     return (
       <div className="tm-vocab-chapter-list">
@@ -350,12 +370,12 @@ export default function MaterialView({ blocks, bookmarkedIds, learningStatuses =
           const learnedCount = chapterBlocks.filter((block) => learningStatuses[block.id] === 'learned').length
           const reviewCount = chapterBlocks.filter((block) => learningStatuses[block.id] === 'review').length
           return (
-            <details className="tm-vocab-chapter" id={index === 0 ? 'vocabulary' : `vocabulary-bab-${chapter}`} open={index === 0} key={chapter}>
+            <details className="tm-vocab-chapter" id={index === 0 ? kind : `${kind}-bab-${chapter}`} open={index === 0} key={chapter}>
               <summary className="tm-vocab-chapter-summary">
                 <div className="tm-vocab-chapter-heading">
                   <span>BAB {String(chapter).padStart(2, '0')}</span>
                   <b>Bab {chapter}</b>
-                  <small>{chapterBlocks.length} kosakata</small>
+                  <small>{chapterBlocks.length} {itemLabel}</small>
                 </div>
                 <div className="tm-vocab-chapter-stats">
                   {learnedCount > 0 && <span className="learned">✓ {learnedCount} dipelajari</span>}
@@ -364,7 +384,9 @@ export default function MaterialView({ blocks, bookmarkedIds, learningStatuses =
                 </div>
               </summary>
               <div className="tm-vocab-chapter-items">
-                {chapterBlocks.map((block) => renderVocabularyBlock(block, `block-${block.id}`))}
+                {chapterBlocks.map((block) => vocabularyOnly
+                  ? renderVocabularyBlock(block, `block-${block.id}`)
+                  : renderKanjiBlock(block, `block-${block.id}`))}
               </div>
             </details>
           )
@@ -381,10 +403,11 @@ export default function MaterialView({ blocks, bookmarkedIds, learningStatuses =
         const initialStatus = learningStatuses[block.id] || 'not_started'
 
         if (block.kind === 'vocabulary') return renderVocabularyBlock(block, anchorId)
+        if (block.kind === 'kanji') return renderKanjiBlock(block, anchorId)
 
         return (
           <article className="tm-material-card" data-block-id={block.id} id={anchorId} key={block.id}>
-            {block.kind !== 'grammar' && block.kind !== 'reading' && block.kind !== 'listening' && block.kind !== 'kanji' && (
+            {block.kind !== 'grammar' && block.kind !== 'reading' && block.kind !== 'listening' && (
               <div className="tm-card-header"><div className="tm-icon-box">{meta.icon}</div><div className="tm-card-title"><small>{meta.label}</small>{block.title && <h2>{block.title}</h2>}</div></div>
             )}
             <BlockContent block={block} />
