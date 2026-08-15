@@ -33,8 +33,12 @@ export default function BlockLearningStatusControl({ blockId, initialStatus, pre
     onStatusChange?.(nextStatus)
   }
 
-  async function updateStatus(nextStatus: BlockLearningStatus) {
-    if (saving || nextStatus === status) return
+  async function updateStatus(actionStatus: Exclude<BlockLearningStatus, 'not_started'>) {
+    if (saving) return
+
+    // Clicking an already-active choice turns it off and returns the material
+    // to the automatic default state: "Belum dipelajari".
+    const nextStatus: BlockLearningStatus = status === actionStatus ? 'not_started' : actionStatus
     setError('')
 
     if (preview) {
@@ -42,7 +46,7 @@ export default function BlockLearningStatusControl({ blockId, initialStatus, pre
       return
     }
 
-    setSaving(nextStatus)
+    setSaving(actionStatus)
     try {
       const response = await fetch('/api/progress/block-status', {
         method: 'POST',
@@ -74,19 +78,24 @@ export default function BlockLearningStatusControl({ blockId, initialStatus, pre
       </div>
 
       <div className="tm-block-status-actions" role="group" aria-label="Ubah status materi">
-        {actions.map((action) => (
-          <button
-            key={action.value}
-            type="button"
-            className={`${action.value}${status === action.value ? ' active' : ''}`}
-            aria-pressed={status === action.value}
-            disabled={Boolean(saving)}
-            onClick={() => updateStatus(action.value)}
-          >
-            <span aria-hidden="true">{action.icon}</span>
-            <b>{saving === action.value ? 'Menyimpan…' : action.label}</b>
-          </button>
-        ))}
+        {actions.map((action) => {
+          const active = status === action.value
+          return (
+            <button
+              key={action.value}
+              type="button"
+              className={`${action.value}${active ? ' active' : ''}`}
+              aria-pressed={active}
+              aria-label={active ? `Nonaktifkan ${action.label}` : action.label}
+              title={active ? 'Klik lagi untuk kembali ke Belum dipelajari' : undefined}
+              disabled={Boolean(saving)}
+              onClick={() => updateStatus(action.value)}
+            >
+              <span aria-hidden="true">{action.icon}</span>
+              <b>{saving === action.value ? 'Menyimpan…' : action.label}</b>
+            </button>
+          )
+        })}
       </div>
 
       {preview && <small className="tm-block-status-preview">Preview admin · perubahan tidak disimpan</small>}
