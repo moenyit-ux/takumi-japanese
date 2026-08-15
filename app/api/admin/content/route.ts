@@ -35,6 +35,8 @@ function errorMessage(message: string) {
     question_has_attempt_history: 'Soal ini sudah memiliki riwayat jawaban siswa sehingga tidak dapat diubah atau dihapus.',
     invalid_block_review_status: 'Status review materi tidak valid.',
     revision_note_required: 'Tuliskan catatan revisi sebelum mengirim materi ke Perlu direvisi.',
+    duplicate_vocabulary_number_in_chapter: 'Nomor materi tersebut sudah digunakan di bab ini. Pilih nomor lain.',
+    invalid_chapter_number: 'Nomor bab tidak valid. Masukkan angka 1 atau lebih.',
   }
   return map[message] || message.replaceAll('_', ' ')
 }
