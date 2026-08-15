@@ -3,10 +3,9 @@
 .banner span{font-size:11px}
 .back{font-weight:900;color:#356b88;white-space:nowrap}
 
-/* Preview keeps the student CTA shape, but removes the live bookmark control. */
-.previewWrap :global(.tm-material-actions>div){display:none!important}
+/* Preview already omits the live bookmark in MaterialView.
+   Keep the per-material learning status visible so the preview matches the student card. */
 .previewWrap :global(.tm-material-actions){grid-template-columns:1fr}
-.previewWrap :global(.tm-material-actions>a){pointer-events:none}
 
 .quizPreview{margin-top:18px}
 .quizHead{display:flex;justify-content:space-between;gap:14px;align-items:center;margin-bottom:12px}
