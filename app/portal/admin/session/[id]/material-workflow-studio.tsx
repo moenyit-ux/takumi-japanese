@@ -246,7 +246,6 @@ export default function MaterialWorkflowStudio({ sessionId, levelCode, role, kin
   const [tab, setTab] = useState<WorkflowTab>(relevant.length ? 'saved' : 'new')
   const nextPosition = blocks.reduce((max, block) => Math.max(max, block.position), 0) + 1
   const visible = tab === 'new' ? [] : groups[tab]
-
   const tabs: Array<{ key: WorkflowTab; label: string; count?: number }> = [
     { key: 'new', label: 'Penambahan materi' },
     { key: 'saved', label: 'Materi tersimpan', count: groups.saved.length },
@@ -256,7 +255,7 @@ export default function MaterialWorkflowStudio({ sessionId, levelCode, role, kin
 
   return <section className={`${admin.panel} ${styles.workspace}`}>
     <div className={styles.head}>
-      <div><div className={admin.eyebrow}>{info.jp} · {levelCode}</div><h2>{info.label} {levelCode}</h2><p>Kelola satu jenis materi saja. Materi dipisahkan berdasarkan status kerja agar review Yozi dan persetujuan akhir tidak bercampur.</p></div>
+      <div><div className={admin.eyebrow}>{info.jp} · {levelCode}</div><h2>{info.label} {levelCode}</h2><p>Kelola satu jenis materi saja. Materi dipisahkan berdasarkan status kerja agar proses review dan persetujuan akhir tidak bercampur.</p></div>
       <div className={styles.total}><b>{relevant.length}</b><span>total {info.label.toLowerCase()}</span></div>
     </div>
 
