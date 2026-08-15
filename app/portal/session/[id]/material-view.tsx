@@ -1,5 +1,5 @@
-import Link from 'next/link'
 import MaterialBookmark from './material-bookmark'
+import BlockLearningStatusControl, { type BlockLearningStatus } from './block-learning-status-control'
 
 export type ContentBlock = {
   id: string
@@ -16,7 +16,8 @@ type RecordValue = Record<string, unknown>
 type Props = {
   blocks: ContentBlock[]
   bookmarkedIds: Set<string>
-  quizHref?: string | null
+  learningStatuses?: Record<string, BlockLearningStatus>
+  preview?: boolean
 }
 
 const kindMeta: Record<string, { label: string; icon: string }> = {
@@ -122,7 +123,7 @@ function SegmentLine({ raw }: { raw: unknown }) {
 }
 
 function Examples({ body }: { body: RecordValue }) {
-  const examples = examplesOf(body)
+  const examples = examplesOf(body).slice(0, 2)
   if (examples.length === 0) return null
   return (
     <div className="tm-examples">
@@ -283,7 +284,7 @@ function BlockContent({ block }: { block: ContentBlock }) {
   return <GenericCard block={block} />
 }
 
-export default function MaterialView({ blocks, bookmarkedIds, quizHref }: Props) {
+export default function MaterialView({ blocks, bookmarkedIds, learningStatuses = {}, preview = false }: Props) {
   const firstByKind = new Set<string>()
   const anchorFor = new Map<string, string>()
   blocks.forEach((block) => {
@@ -295,19 +296,17 @@ export default function MaterialView({ blocks, bookmarkedIds, quizHref }: Props)
 
   return (
     <div className="tm-section-stack">
-      {blocks.map((block, index) => {
-        const next = blocks[index + 1]
+      {blocks.map((block) => {
         const meta = kindMeta[block.kind] || { label: 'Materi', icon: '✦' }
-        const nextHref = next ? `#block-${next.id}` : quizHref || null
         return (
           <article className="tm-material-card" data-block-id={block.id} id={anchorFor.get(block.id) || `block-${block.id}`} key={block.id}>
             {block.kind !== 'grammar' && block.kind !== 'reading' && block.kind !== 'listening' && block.kind !== 'vocabulary' && block.kind !== 'kanji' && (
               <div className="tm-card-header"><div className="tm-icon-box">{meta.icon}</div><div className="tm-card-title"><small>{meta.label}</small>{block.title && <h2>{block.title}</h2>}</div></div>
             )}
             <BlockContent block={block} />
-            <div className="tm-material-actions">
-              <MaterialBookmark blockId={block.id} initialBookmarked={bookmarkedIds.has(block.id)} />
-              {nextHref ? <Link href={nextHref}>Lanjut ke Berikutnya →</Link> : <Link href="/portal/materi">Kembali ke materi →</Link>}
+            <div className={`tm-material-actions tm-material-actions-status${preview ? ' preview' : ''}`}>
+              {!preview && <MaterialBookmark blockId={block.id} initialBookmarked={bookmarkedIds.has(block.id)} />}
+              <BlockLearningStatusControl blockId={block.id} initialStatus={learningStatuses[block.id] || 'not_started'} preview={preview} />
             </div>
           </article>
         )
