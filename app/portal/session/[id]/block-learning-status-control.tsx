@@ -10,8 +10,13 @@ type Props = {
   preview?: boolean
 }
 
-const options: Array<{ value: BlockLearningStatus; label: string; icon: string }> = [
-  { value: 'not_started', label: 'Belum dipelajari', icon: '○' },
+const statusMeta: Record<BlockLearningStatus, { label: string; icon: string }> = {
+  not_started: { label: 'Belum dipelajari', icon: '○' },
+  learned: { label: 'Sudah dipelajari', icon: '✓' },
+  review: { label: 'Ingin dipelajari lagi', icon: '↻' },
+}
+
+const actions: Array<{ value: Exclude<BlockLearningStatus, 'not_started'>; label: string; icon: string }> = [
   { value: 'learned', label: 'Sudah dipelajari', icon: '✓' },
   { value: 'review', label: 'Ingin dipelajari lagi', icon: '↻' },
 ]
@@ -20,6 +25,7 @@ export default function BlockLearningStatusControl({ blockId, initialStatus, pre
   const [status, setStatus] = useState<BlockLearningStatus>(initialStatus)
   const [saving, setSaving] = useState<BlockLearningStatus | null>(null)
   const [error, setError] = useState('')
+  const current = statusMeta[status]
 
   async function updateStatus(nextStatus: BlockLearningStatus) {
     if (saving || nextStatus === status) return
@@ -53,23 +59,31 @@ export default function BlockLearningStatusControl({ blockId, initialStatus, pre
 
   return (
     <div className="tm-block-status-wrap">
-      <div className="tm-block-status-label">Status materi</div>
-      <div className="tm-block-status-options" role="group" aria-label="Status materi">
-        {options.map((option) => (
+      <div className="tm-block-status-current">
+        <span>Status</span>
+        <b className={`tm-block-status-pill ${status}`}>
+          <i aria-hidden="true">{current.icon}</i>
+          {current.label}
+        </b>
+      </div>
+
+      <div className="tm-block-status-actions" role="group" aria-label="Ubah status materi">
+        {actions.map((action) => (
           <button
-            key={option.value}
+            key={action.value}
             type="button"
-            className={`${status === option.value ? 'active ' : ''}${option.value}`}
-            aria-pressed={status === option.value}
+            className={`${action.value}${status === action.value ? ' active' : ''}`}
+            aria-pressed={status === action.value}
             disabled={Boolean(saving)}
-            onClick={() => updateStatus(option.value)}
+            onClick={() => updateStatus(action.value)}
           >
-            <span>{option.icon}</span>
-            <b>{saving === option.value ? 'Menyimpan…' : option.label}</b>
+            <span aria-hidden="true">{action.icon}</span>
+            <b>{saving === action.value ? 'Menyimpan…' : action.label}</b>
           </button>
         ))}
       </div>
-      {preview && <small className="tm-block-status-preview">Preview: perubahan status tidak disimpan.</small>}
+
+      {preview && <small className="tm-block-status-preview">Preview: tombol dapat dicoba, tetapi status tidak disimpan.</small>}
       {error && <small className="tm-learning-status-error" role="alert">{error}</small>}
     </div>
   )
