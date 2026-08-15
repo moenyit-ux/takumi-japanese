@@ -57,6 +57,10 @@ function chapterOf(block: ContentBlock) {
   return numberField(asRecord(block.body), 'chapter_number', 1)
 }
 
+function isChapteredKind(kind: StructuredKind) {
+  return kind === 'vocabulary' || kind === 'kanji'
+}
+
 function listField(body: RecordValue, key: string) {
   const value = body[key]
   return Array.isArray(value) ? value.filter((item): item is string => typeof item === 'string').join('、') : typeof value === 'string' ? value : ''
@@ -155,6 +159,21 @@ function CoreFields({ kind, body, setBody, position, setPosition }: { kind: Stru
   </>
 
   if (kind === 'kanji') return <>
+    <div className={styles.chapterInput}>
+      <div>
+        <div className={admin.eyebrow}>PENGELOMPOKAN MATERI</div>
+        <b>Masukkan kanji ini ke bab berapa?</b>
+        <small>Tentukan bab dan nomor materi. Semua kanji dengan nomor bab yang sama akan tampil sebagai satu kelompok.</small>
+      </div>
+      <div className={styles.chapterControls}>
+        <label className={admin.label}>Bab
+          <input className={admin.input} type="number" min={1} value={numberField(body, 'chapter_number', 1)} onChange={(e) => set('chapter_number', Math.max(1, Number(e.target.value) || 1))} />
+        </label>
+        <label className={admin.label}>Nomor materi
+          <input className={admin.input} type="number" min={1} value={position} onChange={(e) => setPosition(Math.max(1, Number(e.target.value) || 1))} />
+        </label>
+      </div>
+    </div>
     <div className={admin.formGrid}>
       <label className={admin.label}>Kanji<input className={admin.input} value={field(body, 'kanji')} onChange={(e) => set('kanji', e.target.value)} placeholder="家" /></label>
       <label className={admin.label}>Arti<input className={admin.input} value={field(body, 'meaning')} onChange={(e) => set('meaning', e.target.value)} placeholder="rumah, keluarga" /></label>
@@ -202,6 +221,7 @@ function MaterialEditor({ sessionId, kind, block, defaultPosition, role }: { ses
   const [message, setMessage] = useState('')
   const info = meta[kind]
   const manualTitle = kind === 'reading' || kind === 'listening'
+  const chaptered = isChapteredKind(kind)
 
   const automaticTitle = kind === 'vocabulary' ? field(body, 'term') : kind === 'kanji' ? field(body, 'kanji') : kind === 'grammar' ? field(body, 'pattern') : ''
 
@@ -220,7 +240,7 @@ function MaterialEditor({ sessionId, kind, block, defaultPosition, role }: { ses
       if (!block) {
         const currentChapter = numberField(body, 'chapter_number', 1)
         setTitle('')
-        setBody(kind === 'vocabulary' ? { chapter_number: currentChapter } : {})
+        setBody(chaptered ? { chapter_number: currentChapter } : {})
         setAudioUrl('')
         setImageUrl('')
         setPosition((value) => value + 1)
@@ -279,7 +299,7 @@ function MaterialEditor({ sessionId, kind, block, defaultPosition, role }: { ses
 
   const status = block?.review_status || 'saved'
   const statusLabel = status === 'needs_revision' ? 'Perlu direvisi' : status === 'approved' ? 'Disetujui' : 'Tersimpan'
-  const chapterLabel = kind === 'vocabulary' ? `Bab ${numberField(body, 'chapter_number', 1)} · ` : ''
+  const chapterLabel = chaptered ? `Bab ${numberField(body, 'chapter_number', 1)} · ` : ''
 
   return <details className={styles.itemCard} open={!block}>
     <summary>
@@ -292,9 +312,9 @@ function MaterialEditor({ sessionId, kind, block, defaultPosition, role }: { ses
       <CoreFields kind={kind} body={body} setBody={setBody} position={position} setPosition={setPosition} />
 
       <details className={styles.extra}>
-        <summary>{kind === 'vocabulary' ? 'Media & pengaturan' : 'Urutan & media'}</summary>
+        <summary>{chaptered ? 'Media & pengaturan' : 'Urutan & media'}</summary>
         <div className={admin.formGrid}>
-          {kind !== 'vocabulary' && <label className={admin.label}>Urutan<input className={admin.input} type="number" min={1} value={position} onChange={(e) => setPosition(Math.max(1, Number(e.target.value) || 1))} /></label>}
+          {!chaptered && <label className={admin.label}>Urutan<input className={admin.input} type="number" min={1} value={position} onChange={(e) => setPosition(Math.max(1, Number(e.target.value) || 1))} /></label>}
           {!manualTitle && <label className={admin.label}>Judul tampilan (opsional)<input className={admin.input} value={title} onChange={(e) => setTitle(e.target.value)} /></label>}
           <label className={admin.label}>Gambar<input className={styles.fileInput} type="file" accept="image/jpeg,image/png,image/webp,image/gif" disabled={busy} onChange={(e) => { const file = e.target.files?.[0]; if (file) void handleUpload(file, 'image') }} /></label>
           <label className={admin.label}>Audio<input className={styles.fileInput} type="file" accept="audio/mpeg,audio/mp4,audio/x-m4a,audio/wav,audio/ogg" disabled={busy} onChange={(e) => { const file = e.target.files?.[0]; if (file) void handleUpload(file, 'audio') }} /></label>
@@ -334,7 +354,7 @@ export default function MaterialWorkflowStudio({ sessionId, levelCode, role, kin
   ]
 
   const chapterGroups = useMemo(() => {
-    if (kind !== 'vocabulary') return [] as Array<[number, ContentBlock[]]>
+    if (!isChapteredKind(kind)) return [] as Array<[number, ContentBlock[]]>
     const map = new Map<number, ContentBlock[]>()
     visible.forEach((block) => {
       const chapter = chapterOf(block)
@@ -363,13 +383,13 @@ export default function MaterialWorkflowStudio({ sessionId, levelCode, role, kin
     {tab === 'new' ? (
       <MaterialEditor sessionId={sessionId} kind={kind} defaultPosition={nextPosition} role={role} />
     ) : visible.length ? (
-      kind === 'vocabulary' ? (
+      isChapteredKind(kind) ? (
         <div className={styles.chapterList}>
           {chapterGroups.map(([chapter, chapterBlocks], index) => (
             <details className={styles.chapterGroup} open={index === 0} key={chapter}>
               <summary>
                 <div><small>BAB {String(chapter).padStart(2, '0')}</small><b>Bab {chapter}</b></div>
-                <span>{chapterBlocks.length} kosakata</span>
+                <span>{chapterBlocks.length} {kind === 'vocabulary' ? 'kosakata' : 'kanji'}</span>
                 <i>⌄</i>
               </summary>
               <div className={styles.chapterBody}>
