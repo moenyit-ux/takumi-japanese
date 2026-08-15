@@ -52,14 +52,14 @@ export default async function AdminSupportPage() {
         <span className={styles.roleBadge}>{role === 'super_admin' ? 'SUPER ADMIN' : 'CONTENT ADMIN'} · SUPPORT</span>
       </div>
 
-      <header className={support.hero}>
+      <section className={support.hero} aria-labelledby="support-title">
         <div className={support.heroText}>
           <div className={styles.eyebrow}>TAKUMI OPERATIONS</div>
-          <h1>Antrean bantuan siswa</h1>
+          <h1 id="support-title">Antrean bantuan siswa</h1>
           <p>Kelola pertanyaan siswa, masalah akses, pembayaran, dan kebutuhan bantuan lainnya dari satu tempat.</p>
         </div>
-        <div className={support.heroMark}>?</div>
-      </header>
+        <div className={support.heroMark} aria-hidden="true">?</div>
+      </section>
 
       <section className={support.statsGrid} aria-label="Ringkasan tiket bantuan">
         <article className={support.statCard}><span>Tiket aktif</span><b>{open}</b></article>
