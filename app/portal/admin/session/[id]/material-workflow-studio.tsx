@@ -70,7 +70,7 @@ function exampleRecords(body: RecordValue) {
 function TwoExampleFields({ body, setBody }: { body: RecordValue; setBody: (body: RecordValue) => void }) {
   const examples = exampleRecords(body)
 
-  function update(index: number, key: 'example' | 'example_translation', value: string) {
+  function update(index: number, key: 'example' | 'example_reading' | 'example_translation', value: string) {
     const next = exampleRecords(body)
     next[index] = { ...next[index], [key]: value }
     setBody({ ...body, examples: next })
@@ -82,6 +82,7 @@ function TwoExampleFields({ body, setBody }: { body: RecordValue; setBody: (body
       <div className={admin.formGrid} style={{ marginTop: 10 }}>
         {examples.map((item, index) => {
           const sentence = field(item, 'example') || field(item, 'sentence') || field(item, 'japanese')
+          const reading = field(item, 'example_reading') || field(item, 'reading') || field(item, 'furigana')
           const translation = field(item, 'example_translation') || field(item, 'translation') || field(item, 'indonesian')
           return (
             <div className={admin.full} key={index} style={{ padding: 14, border: '1px solid #d9eaf2', borderRadius: 14, background: '#f9fcfe' }}>
@@ -89,6 +90,9 @@ function TwoExampleFields({ body, setBody }: { body: RecordValue; setBody: (body
               <div className={admin.formGrid}>
                 <label className={`${admin.label} ${admin.full}`}>Kalimat Jepang
                   <input className={admin.input} value={sentence} onChange={(e) => update(index, 'example', e.target.value)} placeholder={index === 0 ? '例：先生に会ったら、きちんと挨拶しましょう。' : '例：毎朝、会社の人に挨拶します。'} />
+                </label>
+                <label className={`${admin.label} ${admin.full}`}>Furigana / cara baca
+                  <input className={admin.input} value={reading} onChange={(e) => update(index, 'example_reading', e.target.value)} placeholder={index === 0 ? 'せんせいにあったら、きちんとあいさつしましょう。' : 'まいあさ、かいしゃのひとにあいさつします。'} />
                 </label>
                 <label className={`${admin.label} ${admin.full}`}>Arti Indonesia
                   <input className={admin.input} value={translation} onChange={(e) => update(index, 'example_translation', e.target.value)} placeholder={index === 0 ? 'Kalau bertemu guru, mari menyapa dengan baik.' : 'Setiap pagi, saya menyapa orang-orang di kantor.'} />
