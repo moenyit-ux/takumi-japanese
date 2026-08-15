@@ -110,10 +110,11 @@ function SegmentLine({ raw }: { raw: unknown }) {
   const value = recordOf(raw)
   const segments = meaningfulSegmentsOf(value)
   const sentence = textOf(value, 'example', 'sentence', 'japanese')
+  const reading = textOf(value, 'example_reading', 'reading', 'furigana')
   const translation = textOf(value, 'example_translation', 'translation', 'indonesian')
 
   if (segments.length === 0) {
-    return <><div className="tm-example-jp">{sentence || 'Contoh belum diisi.'}</div>{translation && <div className="tm-example-id">{translation}</div>}</>
+    return <><div className="tm-example-jp">{sentence || 'Contoh belum diisi.'}</div>{reading && <div className="tm-example-reading">{reading}</div>}{translation && <div className="tm-example-id">{translation}</div>}</>
   }
 
   return (
@@ -272,7 +273,7 @@ function ListeningCard({ block }: { block: ContentBlock }) {
   return (
     <>
       <div className="tm-card-header"><div className="tm-icon-box">◉</div><div className="tm-card-title"><h2>{block.title || 'Choukai'}</h2>{target && <small>Target: {target}</small>}</div></div>
-      {prep && <div className="tm-callout" style={{ marginTop: 12 }}><div className="tm-callout-head"><div className="tm-icon-box">☼</div><b>Persiapan Mendengar</b></div><p>{prep}</p></div>}
+      {prep && <div className="tm-callout" style={{ marginTop: 12 }}><div className="tm-callout-head"><div className="tm-icon-box">☼</div><b>Persiapan Mendengar</b></div><p>{prep}</div>}
       <div className="tm-callout" style={{ marginTop: 12 }}><div className="tm-callout-head"><div className="tm-icon-box">i</div><b>Kosakata Bantu</b></div><HelperItems body={body} /></div>
       {block.audio_url && <div className="tm-audio-panel"><p className="tm-audio-note">Dengarkan audio sesuai petunjuk materi.</p><audio controls preload="none" src={block.audio_url}>Browser Anda tidak mendukung audio.</audio>{script && <details><summary>Lihat skrip</summary><p className="tm-generic-text">{script}</p></details>}</div>}
       {takeaway && <div className="tm-callout" style={{ marginTop: 12 }}><div className="tm-callout-head"><div className="tm-icon-box">☆</div><b>Inti Pemahaman</b></div><p className="tm-generic-text">{takeaway}</p></div>}
