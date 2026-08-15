@@ -52,6 +52,46 @@ function listField(body: RecordValue, key: string) {
   return Array.isArray(value) ? value.filter((item): item is string => typeof item === 'string').join('、') : typeof value === 'string' ? value : ''
 }
 
+function exampleRecords(body: RecordValue) {
+  const source = Array.isArray(body.examples) ? body.examples : []
+  return [0, 1].map((index) => asRecord(source[index]))
+}
+
+function TwoExampleFields({ body, setBody }: { body: RecordValue; setBody: (body: RecordValue) => void }) {
+  const examples = exampleRecords(body)
+
+  function update(index: number, key: 'example' | 'example_translation', value: string) {
+    const next = exampleRecords(body)
+    next[index] = { ...next[index], [key]: value }
+    setBody({ ...body, examples: next })
+  }
+
+  return (
+    <div style={{ marginTop: 16 }}>
+      <div className={admin.eyebrow}>2 CONTOH KALIMAT</div>
+      <div className={admin.formGrid} style={{ marginTop: 10 }}>
+        {examples.map((item, index) => {
+          const sentence = field(item, 'example') || field(item, 'sentence') || field(item, 'japanese')
+          const translation = field(item, 'example_translation') || field(item, 'translation') || field(item, 'indonesian')
+          return (
+            <div className={admin.full} key={index} style={{ padding: 14, border: '1px solid #d9eaf2', borderRadius: 14, background: '#f9fcfe' }}>
+              <div style={{ fontWeight: 800, marginBottom: 10 }}>Contoh {index + 1}</div>
+              <div className={admin.formGrid}>
+                <label className={`${admin.label} ${admin.full}`}>Kalimat Jepang
+                  <input className={admin.input} value={sentence} onChange={(e) => update(index, 'example', e.target.value)} placeholder={index === 0 ? '例：先生に会ったら、きちんと挨拶しましょう。' : '例：毎朝、会社の人に挨拶します。'} />
+                </label>
+                <label className={`${admin.label} ${admin.full}`}>Arti Indonesia
+                  <input className={admin.input} value={translation} onChange={(e) => update(index, 'example_translation', e.target.value)} placeholder={index === 0 ? 'Kalau bertemu guru, mari menyapa dengan baik.' : 'Setiap pagi, saya menyapa orang-orang di kantor.'} />
+                </label>
+              </div>
+            </div>
+          )
+        })}
+      </div>
+    </div>
+  )
+}
+
 async function callAdmin(payload: Record<string, unknown>) {
   const response = await fetch('/api/admin/content', {
     method: 'POST',
@@ -75,28 +115,37 @@ async function uploadAsset(sessionId: string, file: File) {
 function CoreFields({ kind, body, setBody }: { kind: StructuredKind; body: RecordValue; setBody: (body: RecordValue) => void }) {
   const set = (key: string, value: unknown) => setBody({ ...body, [key]: value })
 
-  if (kind === 'vocabulary') return <div className={admin.formGrid}>
-    <label className={admin.label}>Kosakata<input className={admin.input} value={field(body, 'term')} onChange={(e) => set('term', e.target.value)} placeholder="予定" /></label>
-    <label className={admin.label}>Furigana<input className={admin.input} value={field(body, 'reading')} onChange={(e) => set('reading', e.target.value)} placeholder="よてい" /></label>
-    <label className={`${admin.label} ${admin.full}`}>Arti Indonesia<input className={admin.input} value={field(body, 'meaning')} onChange={(e) => set('meaning', e.target.value)} placeholder="rencana / jadwal" /></label>
-    <label className={`${admin.label} ${admin.full}`}>Penjelasan<textarea className={admin.textarea} value={field(body, 'description')} onChange={(e) => set('description', e.target.value)} /></label>
-  </div>
+  if (kind === 'vocabulary') return <>
+    <div className={admin.formGrid}>
+      <label className={admin.label}>Kosakata<input className={admin.input} value={field(body, 'term')} onChange={(e) => set('term', e.target.value)} placeholder="予定" /></label>
+      <label className={admin.label}>Furigana<input className={admin.input} value={field(body, 'reading')} onChange={(e) => set('reading', e.target.value)} placeholder="よてい" /></label>
+      <label className={`${admin.label} ${admin.full}`}>Arti Indonesia<input className={admin.input} value={field(body, 'meaning')} onChange={(e) => set('meaning', e.target.value)} placeholder="rencana / jadwal" /></label>
+      <label className={`${admin.label} ${admin.full}`}>Penjelasan<textarea className={admin.textarea} value={field(body, 'description')} onChange={(e) => set('description', e.target.value)} /></label>
+    </div>
+    <TwoExampleFields body={body} setBody={setBody} />
+  </>
 
-  if (kind === 'kanji') return <div className={admin.formGrid}>
-    <label className={admin.label}>Kanji<input className={admin.input} value={field(body, 'kanji')} onChange={(e) => set('kanji', e.target.value)} placeholder="家" /></label>
-    <label className={admin.label}>Arti<input className={admin.input} value={field(body, 'meaning')} onChange={(e) => set('meaning', e.target.value)} placeholder="rumah, keluarga" /></label>
-    <label className={admin.label}>Onyomi<input className={admin.input} value={listField(body, 'onyomi')} onChange={(e) => set('onyomi', e.target.value.split(/[、,]/).map((v) => v.trim()).filter(Boolean))} /></label>
-    <label className={admin.label}>Kunyomi<input className={admin.input} value={listField(body, 'kunyomi')} onChange={(e) => set('kunyomi', e.target.value.split(/[、,]/).map((v) => v.trim()).filter(Boolean))} /></label>
-    <label className={`${admin.label} ${admin.full}`}>Catatan pemakaian<textarea className={admin.textarea} value={field(body, 'description')} onChange={(e) => set('description', e.target.value)} /></label>
-  </div>
+  if (kind === 'kanji') return <>
+    <div className={admin.formGrid}>
+      <label className={admin.label}>Kanji<input className={admin.input} value={field(body, 'kanji')} onChange={(e) => set('kanji', e.target.value)} placeholder="家" /></label>
+      <label className={admin.label}>Arti<input className={admin.input} value={field(body, 'meaning')} onChange={(e) => set('meaning', e.target.value)} placeholder="rumah, keluarga" /></label>
+      <label className={admin.label}>Onyomi<input className={admin.input} value={listField(body, 'onyomi')} onChange={(e) => set('onyomi', e.target.value.split(/[、,]/).map((v) => v.trim()).filter(Boolean))} /></label>
+      <label className={admin.label}>Kunyomi<input className={admin.input} value={listField(body, 'kunyomi')} onChange={(e) => set('kunyomi', e.target.value.split(/[、,]/).map((v) => v.trim()).filter(Boolean))} /></label>
+      <label className={`${admin.label} ${admin.full}`}>Catatan pemakaian<textarea className={admin.textarea} value={field(body, 'description')} onChange={(e) => set('description', e.target.value)} /></label>
+    </div>
+    <TwoExampleFields body={body} setBody={setBody} />
+  </>
 
-  if (kind === 'grammar') return <div className={admin.formGrid}>
-    <label className={`${admin.label} ${admin.full}`}>Pola Bunpou<input className={admin.input} value={field(body, 'pattern')} onChange={(e) => set('pattern', e.target.value)} placeholder="〜なさい" /></label>
-    <label className={`${admin.label} ${admin.full}`}>Makna<input className={admin.input} value={field(body, 'core_meaning')} onChange={(e) => set('core_meaning', e.target.value)} /></label>
-    <label className={`${admin.label} ${admin.full}`}>Penjelasan<textarea className={admin.textarea} value={field(body, 'explanation')} onChange={(e) => set('explanation', e.target.value)} /></label>
-    <label className={admin.label}>Target belajar<input className={admin.input} value={field(body, 'target')} onChange={(e) => set('target', e.target.value)} /></label>
-    <label className={admin.label}>Catatan penting<input className={admin.input} value={field(body, 'important')} onChange={(e) => set('important', e.target.value)} /></label>
-  </div>
+  if (kind === 'grammar') return <>
+    <div className={admin.formGrid}>
+      <label className={`${admin.label} ${admin.full}`}>Pola Bunpou<input className={admin.input} value={field(body, 'pattern')} onChange={(e) => set('pattern', e.target.value)} placeholder="〜なさい" /></label>
+      <label className={`${admin.label} ${admin.full}`}>Makna<input className={admin.input} value={field(body, 'core_meaning')} onChange={(e) => set('core_meaning', e.target.value)} /></label>
+      <label className={`${admin.label} ${admin.full}`}>Penjelasan<textarea className={admin.textarea} value={field(body, 'explanation')} onChange={(e) => set('explanation', e.target.value)} /></label>
+      <label className={admin.label}>Target belajar<input className={admin.input} value={field(body, 'target')} onChange={(e) => set('target', e.target.value)} /></label>
+      <label className={admin.label}>Catatan penting<input className={admin.input} value={field(body, 'important')} onChange={(e) => set('important', e.target.value)} /></label>
+    </div>
+    <TwoExampleFields body={body} setBody={setBody} />
+  </>
 
   if (kind === 'reading') return <div className={admin.formGrid}>
     <label className={`${admin.label} ${admin.full}`}>Bacaan<textarea className={`${admin.textarea} ${styles.longText}`} value={field(body, 'passage')} onChange={(e) => set('passage', e.target.value)} /></label>
