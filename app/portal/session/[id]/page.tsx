@@ -5,7 +5,6 @@ import { createClient } from '../../../../lib/supabase/server'
 import { resolveLearningAsset } from '../../../../lib/supabase/assets'
 import MaterialView, { type ContentBlock } from './material-view'
 import ProgressTracker from './progress-tracker'
-import LearningStatusControl from './learning-status-control'
 
 type StudyKind = 'vocabulary' | 'kanji' | 'grammar' | 'reading' | 'listening'
 type LearningStatus = 'not_started' | 'review' | 'learned'
@@ -21,9 +20,9 @@ function normalizeLearningStatus(status?: string | null): LearningStatus {
   return 'not_started'
 }
 
-function learningStatusLabel(status: LearningStatus) {
-  if (status === 'learned') return 'Sudah dipelajari'
-  if (status === 'review') return 'Perlu dipelajari lagi'
+function overallLearningStatusLabel(statuses: LearningStatus[], total: number) {
+  if (total > 0 && statuses.filter((status) => status === 'learned').length === total) return 'Sudah dipelajari'
+  if (statuses.some((status) => status === 'review')) return 'Ingin dipelajari lagi'
   return 'Belum dipelajari'
 }
 
@@ -58,7 +57,7 @@ export default async function SessionPage({
     supabase.from('levels').select('code, name').eq('id', session.level_id).maybeSingle(),
     supabase.from('entitlements').select('active, starts_at, ends_at').eq('level_id', session.level_id),
     supabase.from('content_blocks').select('id, position, kind, title, body, audio_url, image_url').eq('session_id', session.id).order('position'),
-    supabase.from('session_progress').select('read_percent, status, learning_status, highest_score, last_block_id').eq('session_id', session.id).maybeSingle(),
+    supabase.from('session_progress').select('read_percent, status, highest_score, last_block_id').eq('session_id', session.id).maybeSingle(),
     supabase.from('quizzes').select('id, title, pass_score').eq('session_id', session.id).eq('kind', 'session').eq('published', true).maybeSingle(),
     supabase.from('bookmarks').select('content_block_id').not('content_block_id', 'is', null),
   ])
@@ -94,6 +93,16 @@ export default async function SessionPage({
     image_url: await resolveLearningAsset(supabase, block.image_url),
   })))
 
+  const blockIds = rawBlocks.map((block) => block.id)
+  const statusResult = blockIds.length
+    ? await supabase.from('content_block_learning_statuses').select('content_block_id, learning_status').in('content_block_id', blockIds)
+    : { data: [] as Array<{ content_block_id: string; learning_status: string }> }
+
+  const learningStatuses: Record<string, LearningStatus> = {}
+  for (const row of statusResult.data || []) {
+    learningStatuses[row.content_block_id] = normalizeLearningStatus(row.learning_status)
+  }
+
   const firstStructured = studyKinds.find((kind) => blocks.some((block) => block.kind === kind)) || 'vocabulary'
   let carryKind: StudyKind = firstStructured
   const categorizedBlocks = blocks.map((block) => {
@@ -112,7 +121,8 @@ export default async function SessionPage({
 
   const progress = progressResult.data
   const initialReadPercent = progress?.read_percent || 0
-  const learningStatus = normalizeLearningStatus(progress?.learning_status)
+  const statusList = progressBlocks.map((block) => learningStatuses[block.id] || 'not_started')
+  const overallStatus = overallLearningStatusLabel(statusList, progressBlocks.length)
   const quizHref = quizResult.data ? `/portal/quiz/${quizResult.data.id}` : null
   const bookmarkedIds = new Set((bookmarkResult.data || []).map((item) => item.content_block_id).filter((value): value is string => Boolean(value)))
 
@@ -131,17 +141,13 @@ export default async function SessionPage({
     .map((entry) => entry.block)
     .sort((a, b) => a.position - b.position)
 
-  const currentIndex = availableKinds.indexOf(active)
-  const nextKind = currentIndex >= 0 ? availableKinds[currentIndex + 1] : undefined
-  const nextHref = nextKind ? `${sessionBase}?section=${nextKind}` : quizHref
-
   return (
     <main className="tm-material-page">
       <TakumiStudyHeader
         backHref={`/portal/materi?level=${levelCode}`}
         active={active}
         progressPercent={initialReadPercent}
-        learningStatus={learningStatusLabel(learningStatus)}
+        learningStatus={overallStatus}
         anchors={anchors}
         quizHref={quizHref}
       />
@@ -164,16 +170,14 @@ export default async function SessionPage({
           <p>Pilih kategori lain pada navigasi di atas.</p>
         </section>
       ) : (
-        <MaterialView blocks={visibleBlocks} bookmarkedIds={bookmarkedIds} quizHref={nextHref} />
+        <MaterialView blocks={visibleBlocks} bookmarkedIds={bookmarkedIds} learningStatuses={learningStatuses} />
       )}
 
       <ProgressTracker sessionId={session.id} blockIds={progressBlocks.map((block) => block.id)} initialReadPercent={initialReadPercent} />
 
-      <LearningStatusControl sessionId={session.id} initialStatus={learningStatus} />
-
       <section className="tm-callout" style={{ marginTop: 16 }}>
         <div className="tm-callout-head"><div className="tm-icon-box">✓</div><b>Syarat kelulusan materi</b></div>
-        <p>Status belajar adalah penilaian pribadi dan dapat diubah kapan saja. Kelulusan teknis tetap dihitung dari seluruh materi yang dibaca dan nilai latihan minimal {quizResult.data?.pass_score ?? 70}. Nilai tertinggi saat ini: <b>{progress?.highest_score ?? '—'}</b>.</p>
+        <p>Status pada setiap materi adalah penilaian pribadi dan dapat diubah kapan saja. Kelulusan teknis tetap dihitung dari seluruh materi yang dibaca dan nilai latihan minimal {quizResult.data?.pass_score ?? 70}. Nilai tertinggi saat ini: <b>{progress?.highest_score ?? '—'}</b>.</p>
       </section>
     </main>
   )
