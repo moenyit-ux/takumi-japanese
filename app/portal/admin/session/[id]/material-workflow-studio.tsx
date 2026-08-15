@@ -74,58 +74,64 @@ function readingList(body: RecordValue, key: 'onyomi' | 'kunyomi') {
   return ['']
 }
 
-function KanjiReadingFields({ body, setBody }: { body: RecordValue; setBody: (body: RecordValue) => void }) {
-  function ReadingGroup({ readingKey, label, placeholder }: { readingKey: 'onyomi' | 'kunyomi'; label: string; placeholder: string }) {
-    const values = readingList(body, readingKey)
+function KanjiReadingGroup({ body, setBody, readingKey, label, placeholder }: {
+  body: RecordValue
+  setBody: (body: RecordValue) => void
+  readingKey: 'onyomi' | 'kunyomi'
+  label: string
+  placeholder: string
+}) {
+  const values = readingList(body, readingKey)
 
-    function update(index: number, value: string) {
-      const next = [...values]
-      next[index] = value
-      setBody({ ...body, [readingKey]: next })
-    }
+  function update(index: number, value: string) {
+    const next = [...values]
+    next[index] = value
+    setBody({ ...body, [readingKey]: next })
+  }
 
-    function add() {
-      setBody({ ...body, [readingKey]: [...values, ''] })
-    }
+  function add() {
+    setBody({ ...body, [readingKey]: [...values, ''] })
+  }
 
-    function remove(index: number) {
-      const next = values.filter((_, itemIndex) => itemIndex !== index)
-      setBody({ ...body, [readingKey]: next.length ? next : [''] })
-    }
-
-    return (
-      <div className={styles.readingGroup}>
-        <div className={styles.readingGroupHead}>
-          <div>
-            <b>{label}</b>
-            <small>Tambahkan bacaan lain jika kanji memiliki lebih dari satu {label.toLowerCase()}.</small>
-          </div>
-          <button className={styles.readingAdd} type="button" onClick={add}>+ Tambah {label}</button>
-        </div>
-        <div className={styles.readingRows}>
-          {values.map((value, index) => (
-            <div className={styles.readingRow} key={`${readingKey}-${index}`}>
-              <span className={styles.readingIndex}>{index + 1}</span>
-              <input
-                className={admin.input}
-                value={value}
-                onChange={(event) => update(index, event.target.value)}
-                placeholder={index === 0 ? placeholder : `${label} ${index + 1}`}
-              />
-              {values.length > 1 && (
-                <button className={styles.readingRemove} type="button" onClick={() => remove(index)} aria-label={`Hapus ${label} ${index + 1}`}>Hapus</button>
-              )}
-            </div>
-          ))}
-        </div>
-      </div>
-    )
+  function remove(index: number) {
+    const next = values.filter((_, itemIndex) => itemIndex !== index)
+    setBody({ ...body, [readingKey]: next.length ? next : [''] })
   }
 
   return (
+    <div className={styles.readingGroup}>
+      <div className={styles.readingGroupHead}>
+        <div>
+          <b>{label}</b>
+          <small>Tambahkan bacaan lain jika kanji memiliki lebih dari satu {label.toLowerCase()}.</small>
+        </div>
+        <button className={styles.readingAdd} type="button" onClick={add}>+ Tambah {label}</button>
+      </div>
+      <div className={styles.readingRows}>
+        {values.map((value, index) => (
+          <div className={styles.readingRow} key={`${readingKey}-${index}`}>
+            <span className={styles.readingIndex}>{index + 1}</span>
+            <input
+              className={admin.input}
+              value={value}
+              onChange={(event) => update(index, event.target.value)}
+              placeholder={index === 0 ? placeholder : `${label} ${index + 1}`}
+            />
+            {values.length > 1 && (
+              <button className={styles.readingRemove} type="button" onClick={() => remove(index)} aria-label={`Hapus ${label} ${index + 1}`}>Hapus</button>
+            )}
+          </div>
+        ))}
+      </div>
+    </div>
+  )
+}
+
+function KanjiReadingFields({ body, setBody }: { body: RecordValue; setBody: (body: RecordValue) => void }) {
+  return (
     <div className={styles.readingEditorGrid}>
-      <ReadingGroup readingKey="onyomi" label="Onyomi" placeholder="Contoh: カ" />
-      <ReadingGroup readingKey="kunyomi" label="Kunyomi" placeholder="Contoh: いえ" />
+      <KanjiReadingGroup body={body} setBody={setBody} readingKey="onyomi" label="Onyomi" placeholder="Contoh: カ" />
+      <KanjiReadingGroup body={body} setBody={setBody} readingKey="kunyomi" label="Kunyomi" placeholder="Contoh: いえ" />
     </div>
   )
 }
