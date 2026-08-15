@@ -8,6 +8,7 @@ type Props = {
   blockId: string
   initialStatus: BlockLearningStatus
   preview?: boolean
+  onStatusChange?: (status: BlockLearningStatus) => void
 }
 
 const statusMeta: Record<BlockLearningStatus, { label: string; icon: string }> = {
@@ -21,18 +22,23 @@ const actions: Array<{ value: Exclude<BlockLearningStatus, 'not_started'>; label
   { value: 'review', label: 'Ingin dipelajari lagi', icon: '↻' },
 ]
 
-export default function BlockLearningStatusControl({ blockId, initialStatus, preview = false }: Props) {
+export default function BlockLearningStatusControl({ blockId, initialStatus, preview = false, onStatusChange }: Props) {
   const [status, setStatus] = useState<BlockLearningStatus>(initialStatus)
   const [saving, setSaving] = useState<BlockLearningStatus | null>(null)
   const [error, setError] = useState('')
   const current = statusMeta[status]
+
+  function applyStatus(nextStatus: BlockLearningStatus) {
+    setStatus(nextStatus)
+    onStatusChange?.(nextStatus)
+  }
 
   async function updateStatus(nextStatus: BlockLearningStatus) {
     if (saving || nextStatus === status) return
     setError('')
 
     if (preview) {
-      setStatus(nextStatus)
+      applyStatus(nextStatus)
       return
     }
 
@@ -49,7 +55,7 @@ export default function BlockLearningStatusControl({ blockId, initialStatus, pre
         return
       }
 
-      setStatus(nextStatus)
+      applyStatus(nextStatus)
     } catch {
       setError('Koneksi terputus saat menyimpan status.')
     } finally {
