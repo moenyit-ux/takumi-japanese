@@ -3,6 +3,7 @@ import { redirect } from 'next/navigation'
 import { createClient } from '../../../../lib/supabase/server'
 import AdminSupportClient, { type AdminSupportTicket } from './support-admin-client'
 import styles from '../admin.module.css'
+import support from './admin-support.module.css'
 
 type SupportSettings = {
   whatsapp_number: string | null
@@ -51,20 +52,20 @@ export default async function AdminSupportPage() {
         <span className={styles.roleBadge}>{role === 'super_admin' ? 'SUPER ADMIN' : 'CONTENT ADMIN'} · SUPPORT</span>
       </div>
 
-      <header className={styles.hero}>
-        <div>
+      <header className={support.hero}>
+        <div className={support.heroText}>
           <div className={styles.eyebrow}>TAKUMI OPERATIONS</div>
           <h1>Antrean bantuan siswa</h1>
-          <p>Pembayaran dan akses premium otomatis mendapat prioritas tinggi. Respons tercatat supaya SLA layanan mudah dipantau.</p>
+          <p>Kelola pertanyaan siswa, masalah akses, pembayaran, dan kebutuhan bantuan lainnya dari satu tempat.</p>
         </div>
-        <div className={styles.heroMark}>?</div>
+        <div className={support.heroMark}>?</div>
       </header>
 
-      <section className={styles.stats}>
-        <article><span>Aktif</span><b>{open}</b></article>
-        <article><span>Menunggu jawaban</span><b>{waiting}</b></article>
-        <article><span>Prioritas tinggi</span><b>{priority}</b></article>
-        <article><span>Melewati target</span><b>{overdue}</b></article>
+      <section className={support.statsGrid} aria-label="Ringkasan tiket bantuan">
+        <article className={support.statCard}><span>Tiket aktif</span><b>{open}</b></article>
+        <article className={support.statCard}><span>Perlu dijawab</span><b>{waiting}</b></article>
+        <article className={support.statCard}><span>Prioritas tinggi</span><b>{priority}</b></article>
+        <article className={support.statCard}><span>Lewat SLA</span><b>{overdue}</b></article>
       </section>
 
       <AdminSupportClient tickets={tickets} role={role} settings={settings} />
