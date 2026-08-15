@@ -96,10 +96,6 @@ export default async function AdminPage({ searchParams }: { searchParams: Promis
   const countByKind = new Map<string, number>()
   selectedBlocks.forEach((block) => countByKind.set(block.kind, (countByKind.get(block.kind) || 0) + 1))
 
-  const savedCount = selectedBlocks.filter((block) => !block.review_status || block.review_status === 'saved').length
-  const revisionCount = selectedBlocks.filter((block) => block.review_status === 'needs_revision').length
-  const approvedCount = selectedBlocks.filter((block) => block.review_status === 'approved').length
-
   return (
     <main className={styles.adminShell}>
       <div className={styles.topbar}>
@@ -119,13 +115,6 @@ export default async function AdminPage({ searchParams }: { searchParams: Promis
         </div>
         <div className={styles.heroMark}>匠</div>
       </header>
-
-      <section className={styles.stats}>
-        <article><span>Total materi</span><b>{selectedBlocks.length}</b></article>
-        <article><span>Materi tersimpan</span><b>{savedCount}</b></article>
-        <article><span>Perlu direvisi</span><b>{revisionCount}</b></article>
-        <article><span>Sudah disetujui</span><b>{approvedCount}</b></article>
-      </section>
 
       <div className={styles.categoryHeader}>
         <div>
