@@ -24,6 +24,20 @@ html{scroll-behavior:smooth}
 .tm-audio-panel.tm-audio-compact{max-width:560px;padding:10px 12px;margin-top:12px}
 .tm-audio-panel.tm-audio-compact audio{display:block}
 
+/* Per-item learning status replaces the old next-material CTA. */
+.tm-material-actions-status{grid-template-columns:minmax(180px,.32fr) minmax(0,1fr);align-items:stretch}
+.tm-material-actions-status.preview{grid-template-columns:1fr}
+.tm-block-status-wrap{display:grid;gap:8px;min-width:0}
+.tm-block-status-label{font-size:12px;font-weight:900;color:var(--tm-muted)}
+.tm-block-status-options{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px}
+.tm-block-status-options button{min-height:48px;border:1.5px solid var(--tm-line);border-radius:8px;background:#fff;color:var(--tm-ink);padding:10px 12px;display:flex;align-items:center;justify-content:center;gap:7px;font-weight:900;cursor:pointer;transition:transform .15s ease,border-color .15s ease,background .15s ease}
+.tm-block-status-options button:hover:not(:disabled){transform:translateY(-1px);border-color:#7fb8ff}
+.tm-block-status-options button span{font-size:18px;line-height:1}
+.tm-block-status-options button.not_started.active{background:#eef2f7;border-color:#b9c4d0;color:#425466}
+.tm-block-status-options button.learned.active{background:#dcf8df;border-color:#68c978;color:#246631}
+.tm-block-status-options button.review.active{background:#fff1bd;border-color:#e4bc45;color:#73590d}
+.tm-block-status-preview{color:var(--tm-muted);font-size:11px}
+
 /* Personal learning state is intentionally separate from quiz completion. */
 .tm-learning-status{margin-top:16px;padding:18px;border:1px solid #cfe8f3;border-radius:18px;background:#fff;display:grid;gap:14px}
 .tm-learning-status>div:first-child>p{margin:7px 0 0;color:var(--tm-muted);line-height:1.6}
@@ -42,6 +56,8 @@ html{scroll-behavior:smooth}
 
 @media(max-width:700px){
   .tm-learning-status-options{grid-template-columns:1fr}
+  .tm-material-actions-status{grid-template-columns:1fr}
+  .tm-block-status-options{grid-template-columns:1fr}
 }
 
 @media(max-width:560px){
