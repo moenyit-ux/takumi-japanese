@@ -22,10 +22,10 @@ export default async function AdminUsersPage() {
         <Link href="/portal/admin">← Panel Admin</Link>
         <div className={styles.roleBadge}>SUPER ADMIN</div>
       </div>
-      <header className={styles.hero}>
+      <section className={styles.hero}>
         <div><div className={styles.eyebrow}>AKUN & AKSES</div><h1>Pengguna Takumi</h1><p>Kelola role admin, perangkat aktif, akses premium, dan permintaan penghapusan akun.</p></div>
         <div className={styles.heroMark}>人</div>
-      </header>
+      </section>
       <section className={styles.stats}>
         <article><span>Total pengguna</span><b>{users.length}</b></article>
         <article><span>Student</span><b>{users.filter((item) => item.role === 'student').length}</b></article>
