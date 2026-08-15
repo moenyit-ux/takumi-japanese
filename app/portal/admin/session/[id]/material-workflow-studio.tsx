@@ -47,6 +47,16 @@ function field(body: RecordValue, key: string) {
   return typeof body[key] === 'string' ? body[key] as string : ''
 }
 
+function numberField(body: RecordValue, key: string, fallback = 1) {
+  const value = body[key]
+  const parsed = typeof value === 'number' ? value : typeof value === 'string' ? Number(value) : Number.NaN
+  return Number.isFinite(parsed) && parsed >= 1 ? Math.floor(parsed) : fallback
+}
+
+function chapterOf(block: ContentBlock) {
+  return numberField(asRecord(block.body), 'chapter_number', 1)
+}
+
 function listField(body: RecordValue, key: string) {
   const value = body[key]
   return Array.isArray(value) ? value.filter((item): item is string => typeof item === 'string').join('、') : typeof value === 'string' ? value : ''
@@ -116,6 +126,16 @@ function CoreFields({ kind, body, setBody }: { kind: StructuredKind; body: Recor
   const set = (key: string, value: unknown) => setBody({ ...body, [key]: value })
 
   if (kind === 'vocabulary') return <>
+    <div className={styles.chapterInput}>
+      <div>
+        <div className={admin.eyebrow}>PENGELOMPOKAN MATERI</div>
+        <b>Masukkan kosakata ini ke bab berapa?</b>
+        <small>Semua kosakata dengan nomor bab yang sama akan tampil sebagai satu kelompok.</small>
+      </div>
+      <label className={admin.label}>Bab
+        <input className={admin.input} type="number" min={1} value={numberField(body, 'chapter_number', 1)} onChange={(e) => set('chapter_number', Math.max(1, Number(e.target.value) || 1))} />
+      </label>
+    </div>
     <div className={admin.formGrid}>
       <label className={admin.label}>Kosakata<input className={admin.input} value={field(body, 'term')} onChange={(e) => set('term', e.target.value)} placeholder="予定" /></label>
       <label className={admin.label}>Furigana<input className={admin.input} value={field(body, 'reading')} onChange={(e) => set('reading', e.target.value)} placeholder="よてい" /></label>
@@ -189,8 +209,9 @@ function MaterialEditor({ sessionId, kind, block, defaultPosition, role }: { ses
       setMessage(block ? 'Perubahan tersimpan. Status kembali ke Materi tersimpan untuk pengecekan ulang.' : `${info.label} berhasil ditambahkan.`)
       router.refresh()
       if (!block) {
+        const currentChapter = numberField(body, 'chapter_number', 1)
         setTitle('')
-        setBody({})
+        setBody(kind === 'vocabulary' ? { chapter_number: currentChapter } : {})
         setAudioUrl('')
         setImageUrl('')
         setPosition((value) => value + 1)
@@ -249,10 +270,11 @@ function MaterialEditor({ sessionId, kind, block, defaultPosition, role }: { ses
 
   const status = block?.review_status || 'saved'
   const statusLabel = status === 'needs_revision' ? 'Perlu direvisi' : status === 'approved' ? 'Disetujui' : 'Tersimpan'
+  const chapterLabel = kind === 'vocabulary' ? `Bab ${numberField(body, 'chapter_number', 1)} · ` : ''
 
   return <details className={styles.itemCard} open={!block}>
     <summary>
-      <div className={styles.itemTitle}><span className={`${styles.statusDot} ${styles[status]}`} /><div><b>{block?.title || info.newLabel}</b><small>{block ? statusLabel : 'Penambahan materi baru'}</small></div></div>
+      <div className={styles.itemTitle}><span className={`${styles.statusDot} ${styles[status]}`} /><div><b>{block?.title || info.newLabel}</b><small>{block ? `${chapterLabel}${statusLabel}` : 'Penambahan materi baru'}</small></div></div>
       <span className={styles.chevron}>⌄</span>
     </summary>
     <div className={styles.itemBody}>
@@ -302,6 +324,18 @@ export default function MaterialWorkflowStudio({ sessionId, levelCode, role, kin
     { key: 'approved', label: 'Sudah disetujui', count: groups.approved.length },
   ]
 
+  const chapterGroups = useMemo(() => {
+    if (kind !== 'vocabulary') return [] as Array<[number, ContentBlock[]]>
+    const map = new Map<number, ContentBlock[]>()
+    visible.forEach((block) => {
+      const chapter = chapterOf(block)
+      const current = map.get(chapter) || []
+      current.push(block)
+      map.set(chapter, current)
+    })
+    return Array.from(map.entries()).sort(([a], [b]) => a - b).map(([chapter, chapterBlocks]) => [chapter, chapterBlocks.sort((a, b) => a.position - b.position)] as [number, ContentBlock[]])
+  }, [kind, visible])
+
   return <section className={`${admin.panel} ${styles.workspace}`}>
     <div className={styles.head}>
       <div><div className={admin.eyebrow}>{info.jp} · {levelCode}</div><h2>{info.label} {levelCode}</h2><p>Kelola satu jenis materi saja. Materi dipisahkan berdasarkan status kerja agar proses review dan persetujuan akhir tidak bercampur.</p></div>
@@ -320,7 +354,24 @@ export default function MaterialWorkflowStudio({ sessionId, levelCode, role, kin
     {tab === 'new' ? (
       <MaterialEditor sessionId={sessionId} kind={kind} defaultPosition={nextPosition} role={role} />
     ) : visible.length ? (
-      <div className={styles.list}>{visible.map((block) => <MaterialEditor key={block.id} sessionId={sessionId} kind={kind} block={block} defaultPosition={block.position} role={role} />)}</div>
+      kind === 'vocabulary' ? (
+        <div className={styles.chapterList}>
+          {chapterGroups.map(([chapter, chapterBlocks], index) => (
+            <details className={styles.chapterGroup} open={index === 0} key={chapter}>
+              <summary>
+                <div><small>BAB {String(chapter).padStart(2, '0')}</small><b>Bab {chapter}</b></div>
+                <span>{chapterBlocks.length} kosakata</span>
+                <i>⌄</i>
+              </summary>
+              <div className={styles.chapterBody}>
+                {chapterBlocks.map((block) => <MaterialEditor key={block.id} sessionId={sessionId} kind={kind} block={block} defaultPosition={block.position} role={role} />)}
+              </div>
+            </details>
+          ))}
+        </div>
+      ) : (
+        <div className={styles.list}>{visible.map((block) => <MaterialEditor key={block.id} sessionId={sessionId} kind={kind} block={block} defaultPosition={block.position} role={role} />)}</div>
+      )
     ) : (
       <div className={styles.empty}>Belum ada materi pada kelompok ini.</div>
     )}
