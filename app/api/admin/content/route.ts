@@ -36,6 +36,7 @@ function errorMessage(message: string) {
     invalid_block_review_status: 'Status review materi tidak valid.',
     revision_note_required: 'Tuliskan catatan revisi sebelum mengirim materi ke Perlu direvisi.',
     duplicate_vocabulary_number_in_chapter: 'Nomor materi tersebut sudah digunakan di bab ini. Pilih nomor lain.',
+    duplicate_kanji_number_in_chapter: 'Nomor kanji tersebut sudah digunakan di bab ini. Pilih nomor lain.',
     invalid_chapter_number: 'Nomor bab tidak valid. Masukkan angka 1 atau lebih.',
   }
   return map[message] || message.replaceAll('_', ' ')
