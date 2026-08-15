@@ -122,7 +122,7 @@ async function uploadAsset(sessionId: string, file: File) {
   return data.asset
 }
 
-function CoreFields({ kind, body, setBody }: { kind: StructuredKind; body: RecordValue; setBody: (body: RecordValue) => void }) {
+function CoreFields({ kind, body, setBody, position, setPosition }: { kind: StructuredKind; body: RecordValue; setBody: (body: RecordValue) => void; position: number; setPosition: (value: number) => void }) {
   const set = (key: string, value: unknown) => setBody({ ...body, [key]: value })
 
   if (kind === 'vocabulary') return <>
@@ -130,11 +130,16 @@ function CoreFields({ kind, body, setBody }: { kind: StructuredKind; body: Recor
       <div>
         <div className={admin.eyebrow}>PENGELOMPOKAN MATERI</div>
         <b>Masukkan kosakata ini ke bab berapa?</b>
-        <small>Semua kosakata dengan nomor bab yang sama akan tampil sebagai satu kelompok.</small>
+        <small>Tentukan bab dan nomor materi. Semua kosakata dengan nomor bab yang sama akan tampil sebagai satu kelompok.</small>
       </div>
-      <label className={admin.label}>Bab
-        <input className={admin.input} type="number" min={1} value={numberField(body, 'chapter_number', 1)} onChange={(e) => set('chapter_number', Math.max(1, Number(e.target.value) || 1))} />
-      </label>
+      <div className={styles.chapterControls}>
+        <label className={admin.label}>Bab
+          <input className={admin.input} type="number" min={1} value={numberField(body, 'chapter_number', 1)} onChange={(e) => set('chapter_number', Math.max(1, Number(e.target.value) || 1))} />
+        </label>
+        <label className={admin.label}>Nomor materi
+          <input className={admin.input} type="number" min={1} value={position} onChange={(e) => setPosition(Math.max(1, Number(e.target.value) || 1))} />
+        </label>
+      </div>
     </div>
     <div className={admin.formGrid}>
       <label className={admin.label}>Kosakata<input className={admin.input} value={field(body, 'term')} onChange={(e) => set('term', e.target.value)} placeholder="予定" /></label>
@@ -280,12 +285,12 @@ function MaterialEditor({ sessionId, kind, block, defaultPosition, role }: { ses
     <div className={styles.itemBody}>
       {block?.review_note && <div className={styles.revisionNote}><b>Catatan revisi</b><span>{block.review_note}</span></div>}
       {manualTitle && <label className={`${admin.label} ${admin.full}`}>Judul materi<input className={admin.input} value={title} onChange={(e) => setTitle(e.target.value)} placeholder={kind === 'reading' ? 'Contoh: Jadwal kereta' : 'Contoh: Percakapan di tempat kerja'} /></label>}
-      <CoreFields kind={kind} body={body} setBody={setBody} />
+      <CoreFields kind={kind} body={body} setBody={setBody} position={position} setPosition={setPosition} />
 
       <details className={styles.extra}>
-        <summary>Urutan & media</summary>
+        <summary>{kind === 'vocabulary' ? 'Media & pengaturan' : 'Urutan & media'}</summary>
         <div className={admin.formGrid}>
-          <label className={admin.label}>Urutan<input className={admin.input} type="number" min={1} value={position} onChange={(e) => setPosition(Math.max(1, Number(e.target.value) || 1))} /></label>
+          {kind !== 'vocabulary' && <label className={admin.label}>Urutan<input className={admin.input} type="number" min={1} value={position} onChange={(e) => setPosition(Math.max(1, Number(e.target.value) || 1))} /></label>}
           {!manualTitle && <label className={admin.label}>Judul tampilan (opsional)<input className={admin.input} value={title} onChange={(e) => setTitle(e.target.value)} /></label>}
           <label className={admin.label}>Gambar<input className={styles.fileInput} type="file" accept="image/jpeg,image/png,image/webp,image/gif" disabled={busy} onChange={(e) => { const file = e.target.files?.[0]; if (file) void handleUpload(file, 'image') }} /></label>
           <label className={admin.label}>Audio<input className={styles.fileInput} type="file" accept="audio/mpeg,audio/mp4,audio/x-m4a,audio/wav,audio/ogg" disabled={busy} onChange={(e) => { const file = e.target.files?.[0]; if (file) void handleUpload(file, 'audio') }} /></label>
