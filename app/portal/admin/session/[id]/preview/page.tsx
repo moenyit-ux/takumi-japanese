@@ -121,9 +121,6 @@ export default async function AdminSessionPreviewPage({
   const visibleBlocks = active === 'quiz'
     ? []
     : categorizedBlocks.filter((entry) => entry.pageKind === active).map((entry) => entry.block)
-  const currentIndex = active === 'quiz' ? -1 : availableKinds.indexOf(active)
-  const nextKind = currentIndex >= 0 ? availableKinds[currentIndex + 1] : undefined
-  const nextHref = nextKind ? `${previewBase}?section=${nextKind}` : quizHref
 
   return (
     <main className={`tm-material-page ${styles.previewWrap}`}>
@@ -187,7 +184,7 @@ export default async function AdminSessionPreviewPage({
           <p>Pilih kategori lain di atas atau kembali ke editor untuk menambahkan materi.</p>
         </section>
       ) : (
-        <MaterialView blocks={visibleBlocks} bookmarkedIds={new Set<string>()} quizHref={nextHref} />
+        <MaterialView blocks={visibleBlocks} bookmarkedIds={new Set<string>()} preview />
       )}
     </main>
   )
