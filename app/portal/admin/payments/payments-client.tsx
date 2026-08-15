@@ -2,7 +2,7 @@
 
 import { useRouter } from 'next/navigation'
 import { useState } from 'react'
-import styles from '../../pembayaran/payment.module.css'
+import styles from './admin-payments.module.css'
 
 type PaymentRow = {
   id: string
@@ -64,18 +64,41 @@ function PaymentCard({ payment }: { payment: PaymentRow }) {
   }
 
   return (
-    <article className={styles.history}>
-      <div><b>{payment.full_name || payment.email} · {payment.level_code}</b><small>{payment.email} · {new Date(payment.submitted_at).toLocaleString('id-ID')}</small></div>
-      <strong>¥{payment.amount_yen.toLocaleString('ja-JP')}</strong>
-      <span className={`${styles.status} ${styles[payment.status] || ''}`}>{payment.status}</span>
-      <p>{payment.plan_name} · {payment.payment_method}{payment.reference_no ? ` · Ref: ${payment.reference_no}` : ''}</p>
-      {payment.proof_signed_url && <p><a href={payment.proof_signed_url} target="_blank" rel="noreferrer">Buka bukti pembayaran ↗</a></p>}
-      <label>Catatan admin<input value={note} onChange={(e) => setNote(e.target.value)} placeholder="Opsional; wajib diisi jika perlu menjelaskan penolakan." /></label>
-      {payment.status === 'pending' && <div>
-        <button className={styles.primary} disabled={busy} onClick={() => setStatus('verified')}>Verifikasi & aktifkan premium</button>
-        <button className={styles.primary} disabled={busy} onClick={() => setStatus('rejected')}>Tolak pembayaran</button>
-      </div>}
-      {payment.status === 'verified' && <button className={styles.primary} disabled={busy} onClick={() => setStatus('refunded')}>Tandai refunded</button>}
+    <article className={styles.paymentCard}>
+      <div className={styles.paymentTop}>
+        <div className={styles.paymentIdentity}>
+          <h3>{payment.full_name || payment.email} · {payment.level_code}</h3>
+          <small>{payment.email} · {new Date(payment.submitted_at).toLocaleString('id-ID')}</small>
+        </div>
+        <div className={styles.paymentAside}>
+          <strong className={styles.amount}>¥{payment.amount_yen.toLocaleString('ja-JP')}</strong>
+          <span className={`${styles.status} ${styles[payment.status] || ''}`}>{payment.status}</span>
+        </div>
+      </div>
+
+      <p className={styles.paymentMeta}>{payment.plan_name} · {payment.payment_method}{payment.reference_no ? ` · Ref: ${payment.reference_no}` : ''}</p>
+
+      {payment.proof_signed_url && (
+        <a className={styles.proofLink} href={payment.proof_signed_url} target="_blank" rel="noreferrer">Buka bukti pembayaran ↗</a>
+      )}
+
+      <label className={styles.field}>Catatan admin
+        <input value={note} onChange={(e) => setNote(e.target.value)} placeholder="Opsional; wajib diisi jika perlu menjelaskan penolakan." />
+      </label>
+
+      {payment.status === 'pending' && (
+        <div className={styles.paymentActions}>
+          <button className={styles.primary} disabled={busy} onClick={() => setStatus('verified')}>Verifikasi & aktifkan premium</button>
+          <button className={styles.dangerButton} disabled={busy} onClick={() => setStatus('rejected')}>Tolak pembayaran</button>
+        </div>
+      )}
+
+      {payment.status === 'verified' && (
+        <div className={`${styles.paymentActions} ${styles.paymentActionsSingle}`}>
+          <button className={styles.dangerButton} disabled={busy} onClick={() => setStatus('refunded')}>Tandai refunded</button>
+        </div>
+      )}
+
       {message && <div className={styles.message}>{message}</div>}
     </article>
   )
@@ -106,35 +129,53 @@ function MethodEditor({ method }: { method?: Method }) {
     }
   }
 
-  return <div className={styles.methodBox}>
-    <label>Nama metode<input value={label} onChange={(e) => setLabel(e.target.value)} /></label>
-    <label>Nama bank<input value={bankName} onChange={(e) => setBankName(e.target.value)} /></label>
-    <label>Nama rekening<input value={accountName} onChange={(e) => setAccountName(e.target.value)} /></label>
-    <label>Nomor rekening<input value={accountNumber} onChange={(e) => setAccountNumber(e.target.value)} /></label>
-    <label>Instruksi<input value={instructions} onChange={(e) => setInstructions(e.target.value)} placeholder="Contoh: cantumkan nama siswa pada catatan transfer." /></label>
-    <label><input type="checkbox" checked={active} onChange={(e) => setActive(e.target.checked)} /> Aktif</label>
-    <button className={styles.primary} disabled={busy} onClick={save}>{busy ? 'Menyimpan…' : method ? 'Simpan metode' : 'Tambah metode'}</button>
-    {message && <div className={styles.message}>{message}</div>}
-  </div>
+  return (
+    <div className={styles.methodBox}>
+      <div className={styles.methodFields}>
+        <label>Nama metode<input value={label} onChange={(e) => setLabel(e.target.value)} /></label>
+        <label>Nama bank<input value={bankName} onChange={(e) => setBankName(e.target.value)} /></label>
+        <label>Nama rekening<input value={accountName} onChange={(e) => setAccountName(e.target.value)} /></label>
+        <label>Nomor rekening<input value={accountNumber} onChange={(e) => setAccountNumber(e.target.value)} /></label>
+        <label className={styles.fullField}>Instruksi<input value={instructions} onChange={(e) => setInstructions(e.target.value)} placeholder="Contoh: cantumkan nama siswa pada catatan transfer." /></label>
+      </div>
+      <label className={styles.activeRow}><input type="checkbox" checked={active} onChange={(e) => setActive(e.target.checked)} /> Aktif</label>
+      <div className={styles.methodActions}>
+        <button className={styles.primary} disabled={busy} onClick={save}>{busy ? 'Menyimpan…' : method ? 'Simpan metode' : 'Tambah metode'}</button>
+      </div>
+      {message && <div className={styles.message}>{message}</div>}
+    </div>
+  )
 }
 
 export default function AdminPaymentsClient({ payments, methods }: { payments: PaymentRow[]; methods: Method[] }) {
   const pending = payments.filter((payment) => payment.status === 'pending')
   const others = payments.filter((payment) => payment.status !== 'pending')
 
-  return <div className={styles.grid}>
-    <section className={styles.panel}>
-      <h2>Menunggu verifikasi</h2>
-      {pending.length === 0 ? <div className={styles.empty}>Tidak ada pembayaran yang menunggu.</div> : pending.map((payment) => <PaymentCard payment={payment} key={payment.id} />)}
-      <h2>Riwayat terbaru</h2>
-      {others.slice(0, 30).map((payment) => <PaymentCard payment={payment} key={payment.id} />)}
-    </section>
-    <section className={styles.panel}>
-      <h2>Metode transfer</h2>
-      <p className={styles.hint}>Detail ini ditampilkan kepada siswa. Isi hanya rekening resmi Takumi.</p>
-      {methods.map((method) => <MethodEditor method={method} key={method.id} />)}
-      <h3>Tambah metode</h3>
-      <MethodEditor />
-    </section>
-  </div>
+  return (
+    <div className={styles.grid}>
+      <section className={styles.panel}>
+        <h2>Menunggu verifikasi</h2>
+        {pending.length === 0 ? (
+          <div className={styles.empty}>Tidak ada pembayaran yang menunggu.</div>
+        ) : (
+          <div className={styles.paymentList}>{pending.map((payment) => <PaymentCard payment={payment} key={payment.id} />)}</div>
+        )}
+
+        <h2>Riwayat terbaru</h2>
+        {others.length === 0 ? (
+          <div className={styles.empty}>Belum ada riwayat pembayaran.</div>
+        ) : (
+          <div className={styles.paymentList}>{others.slice(0, 30).map((payment) => <PaymentCard payment={payment} key={payment.id} />)}</div>
+        )}
+      </section>
+
+      <section className={styles.panel}>
+        <h2>Metode transfer</h2>
+        <p className={styles.hint}>Detail ini ditampilkan kepada siswa. Isi hanya rekening resmi Takumi.</p>
+        <div className={styles.methodList}>{methods.map((method) => <MethodEditor method={method} key={method.id} />)}</div>
+        <h3>Tambah metode</h3>
+        <MethodEditor />
+      </section>
+    </div>
+  )
 }
