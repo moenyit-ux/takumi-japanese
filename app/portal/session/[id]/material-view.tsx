@@ -44,6 +44,16 @@ function textOf(value: RecordValue, ...keys: string[]) {
   return null
 }
 
+function numberOf(value: RecordValue, key: string, fallback = 1) {
+  const candidate = value[key]
+  const parsed = typeof candidate === 'number' ? candidate : typeof candidate === 'string' ? Number(candidate) : Number.NaN
+  return Number.isFinite(parsed) && parsed >= 1 ? Math.floor(parsed) : fallback
+}
+
+function chapterOfVocabulary(block: ContentBlock) {
+  return numberOf(recordOf(block.body), 'chapter_number', 1)
+}
+
 function listOf(value: RecordValue, ...keys: string[]): unknown[] {
   for (const key of keys) {
     const candidate = value[key]
@@ -295,6 +305,73 @@ export default function MaterialView({ blocks, bookmarkedIds, learningStatuses =
     }
   })
 
+  function renderVocabularyBlock(block: ContentBlock, anchorId: string) {
+    const body = recordOf(block.body)
+    const term = textOf(body, 'term', 'word', 'japanese') || block.title || 'Kosakata'
+    const reading = textOf(body, 'reading', 'furigana')
+    const positionLabel = textOf(body, 'count_label') || String(block.position).padStart(2, '0')
+    const initialStatus = learningStatuses[block.id] || 'not_started'
+
+    return (
+      <CollapsibleVocabularyCard
+        key={block.id}
+        blockId={block.id}
+        anchorId={anchorId}
+        positionLabel={positionLabel}
+        term={term}
+        reading={reading}
+        initialStatus={initialStatus}
+        bookmarked={bookmarkedIds.has(block.id)}
+        preview={preview}
+      >
+        <BlockContent block={block} />
+      </CollapsibleVocabularyCard>
+    )
+  }
+
+  const vocabularyOnly = blocks.length > 0 && blocks.every((block) => block.kind === 'vocabulary')
+
+  if (vocabularyOnly) {
+    const chapterMap = new Map<number, ContentBlock[]>()
+    blocks.forEach((block) => {
+      const chapter = chapterOfVocabulary(block)
+      const current = chapterMap.get(chapter) || []
+      current.push(block)
+      chapterMap.set(chapter, current)
+    })
+    const chapters = Array.from(chapterMap.entries())
+      .sort(([a], [b]) => a - b)
+      .map(([chapter, chapterBlocks]) => [chapter, chapterBlocks.sort((a, b) => a.position - b.position)] as [number, ContentBlock[]])
+
+    return (
+      <div className="tm-vocab-chapter-list">
+        {chapters.map(([chapter, chapterBlocks], index) => {
+          const learnedCount = chapterBlocks.filter((block) => learningStatuses[block.id] === 'learned').length
+          const reviewCount = chapterBlocks.filter((block) => learningStatuses[block.id] === 'review').length
+          return (
+            <details className="tm-vocab-chapter" id={index === 0 ? 'vocabulary' : `vocabulary-bab-${chapter}`} open={index === 0} key={chapter}>
+              <summary className="tm-vocab-chapter-summary">
+                <div className="tm-vocab-chapter-heading">
+                  <span>BAB {String(chapter).padStart(2, '0')}</span>
+                  <b>Bab {chapter}</b>
+                  <small>{chapterBlocks.length} kosakata</small>
+                </div>
+                <div className="tm-vocab-chapter-stats">
+                  {learnedCount > 0 && <span className="learned">✓ {learnedCount} dipelajari</span>}
+                  {reviewCount > 0 && <span className="review">↻ {reviewCount} ulang</span>}
+                  <i>⌄</i>
+                </div>
+              </summary>
+              <div className="tm-vocab-chapter-items">
+                {chapterBlocks.map((block) => renderVocabularyBlock(block, `block-${block.id}`))}
+              </div>
+            </details>
+          )
+        })}
+      </div>
+    )
+  }
+
   return (
     <div className="tm-section-stack">
       {blocks.map((block) => {
@@ -302,28 +379,7 @@ export default function MaterialView({ blocks, bookmarkedIds, learningStatuses =
         const anchorId = anchorFor.get(block.id) || `block-${block.id}`
         const initialStatus = learningStatuses[block.id] || 'not_started'
 
-        if (block.kind === 'vocabulary') {
-          const body = recordOf(block.body)
-          const term = textOf(body, 'term', 'word', 'japanese') || block.title || 'Kosakata'
-          const reading = textOf(body, 'reading', 'furigana')
-          const positionLabel = textOf(body, 'count_label') || String(block.position).padStart(2, '0')
-
-          return (
-            <CollapsibleVocabularyCard
-              key={block.id}
-              blockId={block.id}
-              anchorId={anchorId}
-              positionLabel={positionLabel}
-              term={term}
-              reading={reading}
-              initialStatus={initialStatus}
-              bookmarked={bookmarkedIds.has(block.id)}
-              preview={preview}
-            >
-              <BlockContent block={block} />
-            </CollapsibleVocabularyCard>
-          )
-        }
+        if (block.kind === 'vocabulary') return renderVocabularyBlock(block, anchorId)
 
         return (
           <article className="tm-material-card" data-block-id={block.id} id={anchorId} key={block.id}>
