@@ -2,7 +2,7 @@ import Link from 'next/link'
 import { redirect } from 'next/navigation'
 import { createClient } from '../../../../lib/supabase/server'
 import AdminPaymentsClient from './payments-client'
-import styles from '../../pembayaran/payment.module.css'
+import styles from './admin-payments.module.css'
 
 type PaymentRow = {
   id: string
@@ -54,14 +54,21 @@ export default async function AdminPaymentsPage() {
         <Link href="/portal/admin">← Content Studio</Link>
         <span>SUPER ADMIN · PEMBAYARAN</span>
       </div>
-      <header className={styles.hero}>
-        <div><small>TAKUMI OPERATIONS</small><h1>Verifikasi pembayaran</h1><p>Periksa bukti transfer sebelum mengaktifkan premium. Verifikasi berhasil akan membuat entitlement N4/N3 secara otomatis.</p></div>
-        <b>✓</b>
-      </header>
-      <section className={styles.accessGrid}>
+
+      <section className={styles.hero}>
+        <div className={styles.heroText}>
+          <small>TAKUMI OPERATIONS</small>
+          <h1>Verifikasi pembayaran</h1>
+          <p>Periksa bukti transfer sebelum mengaktifkan premium. Verifikasi berhasil akan membuat entitlement N4/N3 secara otomatis.</p>
+        </div>
+        <b className={styles.heroMark}>✓</b>
+      </section>
+
+      <section className={styles.accessGrid} aria-label="Ringkasan pembayaran">
         <article className={styles.accessCard}><small>MENUNGGU</small><h2>{pending}</h2><p>Perlu diperiksa</p></article>
         <article className={styles.accessCard}><small>TERVERIFIKASI</small><h2>{verified}</h2><p>Pembayaran berhasil</p></article>
       </section>
+
       <AdminPaymentsClient payments={payments} methods={methodsResult.data || []} />
     </main>
   )
