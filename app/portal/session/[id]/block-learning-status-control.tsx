@@ -60,7 +60,7 @@ export default function BlockLearningStatusControl({ blockId, initialStatus, pre
   return (
     <div className="tm-block-status-wrap">
       <div className="tm-block-status-current">
-        <span>Status</span>
+        <small>Status belajar</small>
         <b className={`tm-block-status-pill ${status}`}>
           <i aria-hidden="true">{current.icon}</i>
           {current.label}
@@ -83,7 +83,7 @@ export default function BlockLearningStatusControl({ blockId, initialStatus, pre
         ))}
       </div>
 
-      {preview && <small className="tm-block-status-preview">Preview: tombol dapat dicoba, tetapi status tidak disimpan.</small>}
+      {preview && <small className="tm-block-status-preview">Preview admin · perubahan tidak disimpan</small>}
       {error && <small className="tm-learning-status-error" role="alert">{error}</small>}
     </div>
   )
