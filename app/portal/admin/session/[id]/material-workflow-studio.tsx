@@ -61,9 +61,73 @@ function isChapteredKind(kind: StructuredKind) {
   return kind === 'vocabulary' || kind === 'kanji'
 }
 
-function listField(body: RecordValue, key: string) {
+function readingList(body: RecordValue, key: 'onyomi' | 'kunyomi') {
   const value = body[key]
-  return Array.isArray(value) ? value.filter((item): item is string => typeof item === 'string').join('、') : typeof value === 'string' ? value : ''
+  if (Array.isArray(value)) {
+    const items = value.filter((item): item is string => typeof item === 'string')
+    return items.length ? items : ['']
+  }
+  if (typeof value === 'string' && value.trim()) {
+    const items = value.split(/[、,]/).map((item) => item.trim()).filter(Boolean)
+    return items.length ? items : ['']
+  }
+  return ['']
+}
+
+function KanjiReadingFields({ body, setBody }: { body: RecordValue; setBody: (body: RecordValue) => void }) {
+  function ReadingGroup({ readingKey, label, placeholder }: { readingKey: 'onyomi' | 'kunyomi'; label: string; placeholder: string }) {
+    const values = readingList(body, readingKey)
+
+    function update(index: number, value: string) {
+      const next = [...values]
+      next[index] = value
+      setBody({ ...body, [readingKey]: next })
+    }
+
+    function add() {
+      setBody({ ...body, [readingKey]: [...values, ''] })
+    }
+
+    function remove(index: number) {
+      const next = values.filter((_, itemIndex) => itemIndex !== index)
+      setBody({ ...body, [readingKey]: next.length ? next : [''] })
+    }
+
+    return (
+      <div className={styles.readingGroup}>
+        <div className={styles.readingGroupHead}>
+          <div>
+            <b>{label}</b>
+            <small>Tambahkan bacaan lain jika kanji memiliki lebih dari satu {label.toLowerCase()}.</small>
+          </div>
+          <button className={styles.readingAdd} type="button" onClick={add}>+ Tambah {label}</button>
+        </div>
+        <div className={styles.readingRows}>
+          {values.map((value, index) => (
+            <div className={styles.readingRow} key={`${readingKey}-${index}`}>
+              <span className={styles.readingIndex}>{index + 1}</span>
+              <input
+                className={admin.input}
+                value={value}
+                onChange={(event) => update(index, event.target.value)}
+                placeholder={index === 0 ? placeholder : `${label} ${index + 1}`}
+              />
+              {values.length > 1 && (
+                <button className={styles.readingRemove} type="button" onClick={() => remove(index)} aria-label={`Hapus ${label} ${index + 1}`}>Hapus</button>
+              )}
+            </div>
+          ))}
+        </div>
+      </div>
+    )
+  }
+
+  return (
+    <div className={styles.readingEditorGrid}>
+      <ReadingGroup readingKey="onyomi" label="Onyomi" placeholder="Contoh: カ" />
+      <ReadingGroup readingKey="kunyomi" label="Kunyomi" placeholder="Contoh: いえ" />
+    </div>
+  )
 }
 
 function exampleRecords(body: RecordValue) {
@@ -177,8 +241,7 @@ function CoreFields({ kind, body, setBody, position, setPosition }: { kind: Stru
     <div className={admin.formGrid}>
       <label className={admin.label}>Kanji<input className={admin.input} value={field(body, 'kanji')} onChange={(e) => set('kanji', e.target.value)} placeholder="家" /></label>
       <label className={admin.label}>Arti<input className={admin.input} value={field(body, 'meaning')} onChange={(e) => set('meaning', e.target.value)} placeholder="rumah, keluarga" /></label>
-      <label className={admin.label}>Onyomi<input className={admin.input} value={listField(body, 'onyomi')} onChange={(e) => set('onyomi', e.target.value.split(/[、,]/).map((v) => v.trim()).filter(Boolean))} /></label>
-      <label className={admin.label}>Kunyomi<input className={admin.input} value={listField(body, 'kunyomi')} onChange={(e) => set('kunyomi', e.target.value.split(/[、,]/).map((v) => v.trim()).filter(Boolean))} /></label>
+      <div className={admin.full}><KanjiReadingFields body={body} setBody={setBody} /></div>
       <label className={`${admin.label} ${admin.full}`}>Catatan pemakaian<textarea className={admin.textarea} value={field(body, 'description')} onChange={(e) => set('description', e.target.value)} /></label>
     </div>
     <TwoExampleFields body={body} setBody={setBody} />
