@@ -1,5 +1,6 @@
 import MaterialBookmark from './material-bookmark'
 import BlockLearningStatusControl, { type BlockLearningStatus } from './block-learning-status-control'
+import CollapsibleVocabularyCard from './collapsible-vocabulary-card'
 
 export type ContentBlock = {
   id: string
@@ -298,15 +299,41 @@ export default function MaterialView({ blocks, bookmarkedIds, learningStatuses =
     <div className="tm-section-stack">
       {blocks.map((block) => {
         const meta = kindMeta[block.kind] || { label: 'Materi', icon: '✦' }
+        const anchorId = anchorFor.get(block.id) || `block-${block.id}`
+        const initialStatus = learningStatuses[block.id] || 'not_started'
+
+        if (block.kind === 'vocabulary') {
+          const body = recordOf(block.body)
+          const term = textOf(body, 'term', 'word', 'japanese') || block.title || 'Kosakata'
+          const reading = textOf(body, 'reading', 'furigana')
+          const positionLabel = textOf(body, 'count_label') || String(block.position).padStart(2, '0')
+
+          return (
+            <CollapsibleVocabularyCard
+              key={block.id}
+              blockId={block.id}
+              anchorId={anchorId}
+              positionLabel={positionLabel}
+              term={term}
+              reading={reading}
+              initialStatus={initialStatus}
+              bookmarked={bookmarkedIds.has(block.id)}
+              preview={preview}
+            >
+              <BlockContent block={block} />
+            </CollapsibleVocabularyCard>
+          )
+        }
+
         return (
-          <article className="tm-material-card" data-block-id={block.id} id={anchorFor.get(block.id) || `block-${block.id}`} key={block.id}>
-            {block.kind !== 'grammar' && block.kind !== 'reading' && block.kind !== 'listening' && block.kind !== 'vocabulary' && block.kind !== 'kanji' && (
+          <article className="tm-material-card" data-block-id={block.id} id={anchorId} key={block.id}>
+            {block.kind !== 'grammar' && block.kind !== 'reading' && block.kind !== 'listening' && block.kind !== 'kanji' && (
               <div className="tm-card-header"><div className="tm-icon-box">{meta.icon}</div><div className="tm-card-title"><small>{meta.label}</small>{block.title && <h2>{block.title}</h2>}</div></div>
             )}
             <BlockContent block={block} />
             <div className={`tm-material-actions tm-material-actions-status${preview ? ' preview' : ''}`}>
               {!preview && <MaterialBookmark blockId={block.id} initialBookmarked={bookmarkedIds.has(block.id)} />}
-              <BlockLearningStatusControl blockId={block.id} initialStatus={learningStatuses[block.id] || 'not_started'} preview={preview} />
+              <BlockLearningStatusControl blockId={block.id} initialStatus={initialStatus} preview={preview} />
             </div>
           </article>
         )
