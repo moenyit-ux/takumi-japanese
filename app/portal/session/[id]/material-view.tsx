@@ -2,6 +2,7 @@ import MaterialBookmark from './material-bookmark'
 import BlockLearningStatusControl, { type BlockLearningStatus } from './block-learning-status-control'
 import CollapsibleVocabularyCard from './collapsible-vocabulary-card'
 import CollapsibleGrammarCard from './collapsible-grammar-card'
+import CollapsibleLessonCard from './collapsible-lesson-card'
 
 export type ContentBlock = {
   id: string
@@ -407,6 +408,28 @@ export default function MaterialView({ blocks, bookmarkedIds, learningStatuses =
     )
   }
 
+  function renderLessonBlock(block: ContentBlock, anchorId: string, kindLabel: 'Dokkai' | 'Choukai') {
+    const positionLabel = String(block.position).padStart(2, '0')
+    const title = block.title || `${kindLabel} ${positionLabel}`
+    const initialStatus = learningStatuses[block.id] || 'not_started'
+
+    return (
+      <CollapsibleLessonCard
+        key={block.id}
+        blockId={block.id}
+        anchorId={anchorId}
+        positionLabel={positionLabel}
+        title={title}
+        kindLabel={kindLabel}
+        initialStatus={initialStatus}
+        bookmarked={bookmarkedIds.has(block.id)}
+        preview={preview}
+      >
+        <BlockContent block={block} />
+      </CollapsibleLessonCard>
+    )
+  }
+
   function renderMaterialBlock(block: ContentBlock, anchorId: string) {
     const initialStatus = learningStatuses[block.id] || 'not_started'
     return (
@@ -480,13 +503,13 @@ export default function MaterialView({ blocks, bookmarkedIds, learningStatuses =
 
         if (block.kind === 'vocabulary') return renderVocabularyBlock(block, anchorId)
         if (block.kind === 'grammar') return renderGrammarBlock(block, anchorId)
+        if (block.kind === 'reading') return renderLessonBlock(block, anchorId, 'Dokkai')
+        if (block.kind === 'listening') return renderLessonBlock(block, anchorId, 'Choukai')
         if (block.kind === 'kanji') return renderMaterialBlock(block, anchorId)
 
         return (
           <article className="tm-material-card" data-block-id={block.id} id={anchorId} key={block.id}>
-            {block.kind !== 'grammar' && block.kind !== 'reading' && block.kind !== 'listening' && (
-              <div className="tm-card-header"><div className="tm-icon-box">{meta.icon}</div><div className="tm-card-title"><small>{meta.label}</small>{block.title && <h2>{block.title}</h2>}</div></div>
-            )}
+            <div className="tm-card-header"><div className="tm-icon-box">{meta.icon}</div><div className="tm-card-title"><small>{meta.label}</small>{block.title && <h2>{block.title}</h2>}</div></div>
             <BlockContent block={block} />
             <div className={`tm-material-actions tm-material-actions-status${preview ? ' preview' : ''}`}>
               {!preview && <MaterialBookmark blockId={block.id} initialBookmarked={bookmarkedIds.has(block.id)} />}
