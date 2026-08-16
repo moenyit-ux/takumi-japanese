@@ -81,7 +81,7 @@ function QuestionCard({ quizId, question, defaultPosition, defaultKind, locked }
 }) {
   const router = useRouter()
   const [position, setPosition] = useState(question?.position || defaultPosition)
-  const [kind, setKind] = useState<SectionKind>(question?.kind || defaultKind)
+  const kind: SectionKind = question?.kind || defaultKind
   const [prompt, setPrompt] = useState(question?.prompt || '')
   const [passage, setPassage] = useState(question?.passage || '')
   const [audioUrl, setAudioUrl] = useState(question?.audio_url || '')
@@ -194,7 +194,7 @@ function QuestionCard({ quizId, question, defaultPosition, defaultKind, locked }
       <summary>
         <span className={jlpt.questionNumber}>{String(position).padStart(2, '0')}</span>
         <div className={jlpt.questionHeading}>
-          <small>{question ? `${section.jp} · SOAL ${String(position).padStart(2, '0')}` : 'TAMBAH SOAL'}</small>
+          <small>{question ? `${section.jp} · SOAL ${String(position).padStart(2, '0')}` : `TAMBAH SOAL · ${section.jp}`}</small>
           <b>{title}</b>
         </div>
         <span className={jlpt.chevron}>⌄</span>
@@ -204,11 +204,6 @@ function QuestionCard({ quizId, question, defaultPosition, defaultKind, locked }
         <div className={jlpt.questionGrid}>
           <label className={jlpt.field}>Nomor soal
             <input className={jlpt.input} type="number" min={1} value={position} disabled={locked} onChange={(event) => setPosition(Math.max(1, Number(event.target.value) || 1))} />
-          </label>
-          <label className={jlpt.field}>Bagian ujian
-            <select className={jlpt.select} value={kind} disabled={locked} onChange={(event) => setKind(event.target.value as SectionKind)}>
-              {sections.map((item) => <option value={item.key} key={item.key}>{item.jp} · {item.label}</option>)}
-            </select>
           </label>
           <label className={jlpt.field}>Poin
             <input className={jlpt.input} type="number" min={1} step="0.5" value={points} disabled={locked} onChange={(event) => setPoints(Math.max(.5, Number(event.target.value) || 1))} />
