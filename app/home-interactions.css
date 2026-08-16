@@ -323,6 +323,116 @@ header nav a:focus-visible,
   font-size: 14px;
 }
 
+.coursePacePanel {
+  margin-top: 22px;
+  padding: 28px;
+  border: 1px solid #cfe8f3;
+  border-radius: 22px;
+  background: linear-gradient(155deg, rgba(255,255,255,0.96), rgba(239,249,253,0.94));
+  box-shadow: 0 12px 30px rgba(37, 84, 110, 0.05);
+}
+
+.coursePaceIntro {
+  display: flex;
+  align-items: end;
+  justify-content: space-between;
+  gap: 28px;
+}
+
+.coursePaceIntro h3 {
+  margin: 8px 0 0;
+  font-size: 26px;
+  letter-spacing: -0.03em;
+}
+
+.coursePaceIntro > p {
+  max-width: 590px;
+  margin: 0;
+  color: var(--muted);
+  font-size: 14px;
+  line-height: 1.7;
+}
+
+.coursePaceGrid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 12px;
+  margin-top: 24px;
+}
+
+.coursePaceGrid article {
+  display: flex;
+  align-items: center;
+  gap: 13px;
+  min-width: 0;
+  padding: 17px;
+  border: 1px solid #d8edf6;
+  border-radius: 16px;
+  background: #fff;
+}
+
+.coursePaceGrid article > span {
+  width: 44px;
+  height: 44px;
+  flex: 0 0 44px;
+  display: grid;
+  place-items: center;
+  border-radius: 12px;
+  background: var(--deep);
+  color: #fff;
+  font-size: 14px;
+  font-weight: 900;
+}
+
+.coursePaceGrid strong,
+.coursePaceGrid small {
+  display: block;
+}
+
+.coursePaceGrid strong {
+  color: var(--ink);
+  font-size: 20px;
+  line-height: 1.15;
+}
+
+.coursePaceGrid small {
+  margin-top: 4px;
+  color: var(--muted);
+  font-size: 12px;
+  font-weight: 700;
+}
+
+.acceleratedCourse {
+  display: grid;
+  grid-template-columns: minmax(220px, 0.7fr) minmax(0, 1.6fr);
+  gap: 24px;
+  align-items: center;
+  margin-top: 16px;
+  padding: 20px 22px;
+  border: 1px dashed #abdced;
+  border-radius: 16px;
+  background: rgba(255, 255, 255, 0.74);
+}
+
+.acceleratedCourse small {
+  color: var(--deep);
+  font-size: 10px;
+  font-weight: 900;
+  letter-spacing: 0.12em;
+}
+
+.acceleratedCourse h4 {
+  margin: 4px 0 0;
+  font-size: 18px;
+}
+
+.acceleratedCourse p {
+  margin: 0;
+  color: var(--muted);
+  font-size: 13px;
+  line-height: 1.7;
+}
+
 /* Homepage one-time pricing */
 .price > h2 {
   margin: 10px 0 6px;
@@ -417,6 +527,21 @@ header nav a:focus-visible,
     grid-template-columns: 1fr;
   }
 
+  .coursePaceIntro {
+    display: grid;
+    align-items: start;
+    gap: 12px;
+  }
+
+  .coursePaceIntro > p {
+    max-width: none;
+  }
+
+  .acceleratedCourse {
+    grid-template-columns: 1fr;
+    gap: 10px;
+  }
+
   .publicProfile {
     padding-top: 58px;
     padding-bottom: 62px;
@@ -424,7 +549,8 @@ header nav a:focus-visible,
 }
 
 @media (max-width: 700px) {
-  .priceGrid {
+  .priceGrid,
+  .coursePaceGrid {
     grid-template-columns: 1fr;
   }
 
@@ -438,7 +564,8 @@ header nav a:focus-visible,
   }
 
   .coursePublicCard,
-  .profileGrid article {
+  .profileGrid article,
+  .coursePacePanel {
     padding: 22px;
   }
 
