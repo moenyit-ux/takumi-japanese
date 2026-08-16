@@ -2,6 +2,7 @@ import Link from 'next/link'
 import { redirect } from 'next/navigation'
 import { createClient } from '../../../../lib/supabase/server'
 import styles from '../admin.module.css'
+import overview from '../admin-overview.module.css'
 import jlpt from './jlpt.module.css'
 
 type PackageRow = {
@@ -48,7 +49,7 @@ export default async function JlptAdminPage({ searchParams }: { searchParams: Pr
         <span className={styles.roleBadge}>SIMULASI JLPT</span>
       </div>
 
-      <header className={styles.hero}>
+      <header className={`${styles.hero} ${overview.heroFix}`}>
         <div>
           <div className={styles.eyebrow}>模擬試験 · {editor.level.code}</div>
           <h1>Simulasi JLPT {editor.level.code}</h1>
