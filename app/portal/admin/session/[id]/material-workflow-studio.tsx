@@ -58,7 +58,7 @@ function chapterOf(block: ContentBlock) {
 }
 
 function isChapteredKind(kind: StructuredKind) {
-  return kind === 'vocabulary' || kind === 'kanji'
+  return kind === 'vocabulary' || kind === 'kanji' || kind === 'grammar'
 }
 
 function readingList(body: RecordValue, key: 'onyomi' | 'kunyomi') {
@@ -200,25 +200,38 @@ async function uploadAsset(sessionId: string, file: File) {
   return data.asset
 }
 
-function CoreFields({ kind, body, setBody, position, setPosition }: { kind: StructuredKind; body: RecordValue; setBody: (body: RecordValue) => void; position: number; setPosition: (value: number) => void }) {
-  const set = (key: string, value: unknown) => setBody({ ...body, [key]: value })
-
-  if (kind === 'vocabulary') return <>
+function ChapterFields({ kind, body, setBody, position, setPosition }: {
+  kind: 'vocabulary' | 'kanji' | 'grammar'
+  body: RecordValue
+  setBody: (body: RecordValue) => void
+  position: number
+  setPosition: (value: number) => void
+}) {
+  const label = kind === 'vocabulary' ? 'kosakata' : kind === 'kanji' ? 'kanji' : 'bunpou'
+  return (
     <div className={styles.chapterInput}>
       <div>
         <div className={admin.eyebrow}>PENGELOMPOKAN MATERI</div>
-        <b>Masukkan kosakata ini ke bab berapa?</b>
-        <small>Tentukan bab dan nomor materi. Semua kosakata dengan nomor bab yang sama akan tampil sebagai satu kelompok.</small>
+        <b>Masukkan {label} ini ke bab berapa?</b>
+        <small>Tentukan bab dan nomor materi. Semua {label} dengan nomor bab yang sama akan tampil sebagai satu kelompok.</small>
       </div>
       <div className={styles.chapterControls}>
         <label className={admin.label}>Bab
-          <input className={admin.input} type="number" min={1} value={numberField(body, 'chapter_number', 1)} onChange={(e) => set('chapter_number', Math.max(1, Number(e.target.value) || 1))} />
+          <input className={admin.input} type="number" min={1} value={numberField(body, 'chapter_number', 1)} onChange={(e) => setBody({ ...body, chapter_number: Math.max(1, Number(e.target.value) || 1) })} />
         </label>
         <label className={admin.label}>Nomor materi
           <input className={admin.input} type="number" min={1} value={position} onChange={(e) => setPosition(Math.max(1, Number(e.target.value) || 1))} />
         </label>
       </div>
     </div>
+  )
+}
+
+function CoreFields({ kind, body, setBody, position, setPosition }: { kind: StructuredKind; body: RecordValue; setBody: (body: RecordValue) => void; position: number; setPosition: (value: number) => void }) {
+  const set = (key: string, value: unknown) => setBody({ ...body, [key]: value })
+
+  if (kind === 'vocabulary') return <>
+    <ChapterFields kind="vocabulary" body={body} setBody={setBody} position={position} setPosition={setPosition} />
     <div className={admin.formGrid}>
       <label className={admin.label}>Kosakata<input className={admin.input} value={field(body, 'term')} onChange={(e) => set('term', e.target.value)} placeholder="予定" /></label>
       <label className={admin.label}>Furigana<input className={admin.input} value={field(body, 'reading')} onChange={(e) => set('reading', e.target.value)} placeholder="よてい" /></label>
@@ -229,21 +242,7 @@ function CoreFields({ kind, body, setBody, position, setPosition }: { kind: Stru
   </>
 
   if (kind === 'kanji') return <>
-    <div className={styles.chapterInput}>
-      <div>
-        <div className={admin.eyebrow}>PENGELOMPOKAN MATERI</div>
-        <b>Masukkan kanji ini ke bab berapa?</b>
-        <small>Tentukan bab dan nomor materi. Semua kanji dengan nomor bab yang sama akan tampil sebagai satu kelompok.</small>
-      </div>
-      <div className={styles.chapterControls}>
-        <label className={admin.label}>Bab
-          <input className={admin.input} type="number" min={1} value={numberField(body, 'chapter_number', 1)} onChange={(e) => set('chapter_number', Math.max(1, Number(e.target.value) || 1))} />
-        </label>
-        <label className={admin.label}>Nomor materi
-          <input className={admin.input} type="number" min={1} value={position} onChange={(e) => setPosition(Math.max(1, Number(e.target.value) || 1))} />
-        </label>
-      </div>
-    </div>
+    <ChapterFields kind="kanji" body={body} setBody={setBody} position={position} setPosition={setPosition} />
     <div className={admin.formGrid}>
       <label className={admin.label}>Kanji<input className={admin.input} value={field(body, 'kanji')} onChange={(e) => set('kanji', e.target.value)} placeholder="家" /></label>
       <label className={admin.label}>Arti<input className={admin.input} value={field(body, 'meaning')} onChange={(e) => set('meaning', e.target.value)} placeholder="rumah, keluarga" /></label>
@@ -254,6 +253,7 @@ function CoreFields({ kind, body, setBody, position, setPosition }: { kind: Stru
   </>
 
   if (kind === 'grammar') return <>
+    <ChapterFields kind="grammar" body={body} setBody={setBody} position={position} setPosition={setPosition} />
     <div className={admin.formGrid}>
       <label className={`${admin.label} ${admin.full}`}>Pola Bunpou<input className={admin.input} value={field(body, 'pattern')} onChange={(e) => set('pattern', e.target.value)} placeholder="〜なさい" /></label>
       <label className={`${admin.label} ${admin.full}`}>Makna<input className={admin.input} value={field(body, 'core_meaning')} onChange={(e) => set('core_meaning', e.target.value)} /></label>
@@ -434,6 +434,8 @@ export default function MaterialWorkflowStudio({ sessionId, levelCode, role, kin
     return Array.from(map.entries()).sort(([a], [b]) => a - b).map(([chapter, chapterBlocks]) => [chapter, chapterBlocks.sort((a, b) => a.position - b.position)] as [number, ContentBlock[]])
   }, [kind, visible])
 
+  const chapterItemLabel = kind === 'vocabulary' ? 'kosakata' : kind === 'kanji' ? 'kanji' : 'bunpou'
+
   return <section className={`${admin.panel} ${styles.workspace}`}>
     <div className={styles.head}>
       <div><div className={admin.eyebrow}>{info.jp} · {levelCode}</div><h2>{info.label} {levelCode}</h2><p>Kelola satu jenis materi saja. Materi dipisahkan berdasarkan status kerja agar proses review dan persetujuan akhir tidak bercampur.</p></div>
@@ -458,7 +460,7 @@ export default function MaterialWorkflowStudio({ sessionId, levelCode, role, kin
             <details className={styles.chapterGroup} key={chapter}>
               <summary>
                 <div><small>BAB {String(chapter).padStart(2, '0')}</small><b>Bab {chapter}</b></div>
-                <span>{chapterBlocks.length} {kind === 'vocabulary' ? 'kosakata' : 'kanji'}</span>
+                <span>{chapterBlocks.length} {chapterItemLabel}</span>
                 <i>⌄</i>
               </summary>
               <div className={styles.chapterBody}>
