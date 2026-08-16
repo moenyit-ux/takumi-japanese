@@ -222,21 +222,62 @@ function GrammarCard({ block }: { block: ContentBlock }) {
   const body = recordOf(block.body)
   const title = block.title || textOf(body, 'pattern', 'title') || 'Bunpou'
   const target = textOf(body, 'target')
-  const core = textOf(body, 'core_meaning', 'meaning', 'translation')
+  const meaning = textOf(body, 'core_meaning', 'meaning', 'translation')
   const explanation = textOf(body, 'explanation', 'text', 'description')
   const important = textOf(body, 'important', 'note', 'warning')
-  const pattern = textOf(body, 'pattern', 'formula')
+  const pattern = textOf(body, 'pattern', 'formula') || title
   const groups = listOf(body, 'groups', 'conjugation_groups')
 
   return (
     <>
       <div className="tm-card-header">
         <div className="tm-icon-box">▧</div>
-        <div className="tm-card-title"><h2>{title}</h2>{target && <small>Target: {target}</small>}</div>
+        <div className="tm-card-title"><h2>{title}</h2>{target && <small>Target belajar: {target}</small>}</div>
       </div>
-      {(core || explanation) && <div className="tm-callout" style={{ marginTop: 12 }}><div className="tm-callout-head"><div className="tm-icon-box">☼</div><b>Penjelasan Inti</b></div>{core && <div className="tm-meaning">{core}</div>}{explanation && <p>{explanation}</p>}</div>}
-      {important && <div className="tm-callout" style={{ marginTop: 12 }}><div className="tm-callout-head"><div className="tm-icon-box">☆</div><b>Penting</b></div><p>{important}</p></div>}
-      {(pattern || groups.length > 0) && <div className="tm-grammar-pattern"><h3>{pattern || 'Pola Kalimat'}</h3>{groups.map((raw, index) => { const group = recordOf(raw); const label = textOf(group, 'label', 'group') || `Grup ${index + 1}`; const from = textOf(group, 'from', 'base', 'example'); const to = textOf(group, 'to', 'result'); return <div className="tm-pattern-row" key={index}><span>{label}</span><b>{from || '—'}{to ? ` → ${to}` : ''}</b></div> })}</div>}
+
+      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit,minmax(260px,1fr))', gap: 12, marginTop: 14 }}>
+        <div className="tm-callout" style={{ margin: 0 }}>
+          <div className="tm-callout-head"><div className="tm-icon-box">◇</div><b>Makna</b></div>
+          <div style={{ marginTop: 10, padding: '14px 16px', border: '1px solid #d6e7fb', borderRadius: 10, background: '#f6faff', fontSize: 18, fontWeight: 900, lineHeight: 1.5 }}>
+            {meaning || 'Makna belum diisi.'}
+          </div>
+        </div>
+
+        <div className="tm-callout" style={{ margin: 0 }}>
+          <div className="tm-callout-head"><div className="tm-icon-box">≡</div><b>Pola Kalimat</b></div>
+          <div style={{ marginTop: 10, padding: '14px 16px', border: '1px solid #d6e7fb', borderRadius: 10, background: '#f6faff', fontSize: 18, fontWeight: 900, lineHeight: 1.55 }}>
+            {pattern}
+          </div>
+        </div>
+      </div>
+
+      {explanation && (
+        <div className="tm-callout" style={{ marginTop: 14 }}>
+          <div className="tm-callout-head"><div className="tm-icon-box">▤</div><b>Penjelasan</b></div>
+          <p style={{ marginTop: 10, whiteSpace: 'pre-line' }}>{explanation}</p>
+        </div>
+      )}
+
+      {important && (
+        <div className="tm-callout" style={{ marginTop: 14 }}>
+          <div className="tm-callout-head"><div className="tm-icon-box">☆</div><b>Catatan Penting</b></div>
+          <p>{important}</p>
+        </div>
+      )}
+
+      {groups.length > 0 && (
+        <div className="tm-grammar-pattern">
+          <h3>Perubahan Bentuk</h3>
+          {groups.map((raw, index) => {
+            const group = recordOf(raw)
+            const label = textOf(group, 'label', 'group') || `Grup ${index + 1}`
+            const from = textOf(group, 'from', 'base', 'example')
+            const to = textOf(group, 'to', 'result')
+            return <div className="tm-pattern-row" key={index}><span>{label}</span><b>{from || '—'}{to ? ` → ${to}` : ''}</b></div>
+          })}
+        </div>
+      )}
+
       {usesSegmentColors(body) && <TagStrip />}
       <Examples body={body} />
     </>
