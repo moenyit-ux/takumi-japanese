@@ -370,7 +370,7 @@ export default function MaterialView({ blocks, bookmarkedIds, learningStatuses =
           const learnedCount = chapterBlocks.filter((block) => learningStatuses[block.id] === 'learned').length
           const reviewCount = chapterBlocks.filter((block) => learningStatuses[block.id] === 'review').length
           return (
-            <details className="tm-vocab-chapter" id={index === 0 ? kind : `${kind}-bab-${chapter}`} open={index === 0} key={chapter}>
+            <details className="tm-vocab-chapter" id={index === 0 ? kind : `${kind}-bab-${chapter}`} open={!preview && index === 0} key={chapter}>
               <summary className="tm-vocab-chapter-summary">
                 <div className="tm-vocab-chapter-heading">
                   <span>BAB {String(chapter).padStart(2, '0')}</span>
