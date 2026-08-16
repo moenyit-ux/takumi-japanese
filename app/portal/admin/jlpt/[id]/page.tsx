@@ -91,12 +91,12 @@ export default async function SimulationPackagePage({ params }: { params: Promis
       </header>
 
       {packages.length > 0 && (
-        <nav className={jlpt.packageSwitcher} aria-label={`Pilih paket simulasi ${editor.level.code}`}>
-          <span className={jlpt.packageSwitcherLabel}>PILIH PAKET</span>
-          <div className={jlpt.packageSwitcherLinks}>
+        <nav aria-label={`Pilih paket simulasi ${editor.level.code}`} style={{ marginTop: 18 }}>
+          <div className={styles.eyebrow} style={{ marginBottom: 8 }}>PILIH PAKET</div>
+          <div className={jlpt.levelTabs}>
             {packages.map((item) => (
               <Link
-                className={item.id === editor.quiz.id ? jlpt.currentPackage : ''}
+                className={item.id === editor.quiz.id ? jlpt.active : ''}
                 href={`/portal/admin/jlpt/${item.id}`}
                 aria-current={item.id === editor.quiz.id ? 'page' : undefined}
                 key={item.id}
