@@ -82,7 +82,7 @@ export default function Home() {
           <div className="publicSectionHeading">
             <div className="eyebrow">KURSUS TATAP MUKA</div>
             <h2>Belajar langsung bersama pengajar.</h2>
-            <p>Informasi materi, ritme program reguler, durasi, dan biaya ditampilkan langsung pada setiap kelas agar pilihan belajarmu lebih jelas.</p>
+            <p>Informasi materi, ritme program reguler, durasi, dan biaya ditampilkan langsung pada setiap kelas agar pilihan belajarmu lebih jelas. Setiap peserta kursus tatap muka juga mendapatkan akses Website Premium Takumi tanpa biaya tambahan.</p>
           </div>
 
           <div className="coursePublicGrid coursePublicGridFour">
@@ -97,7 +97,7 @@ export default function Home() {
                 </div>
                 <div className="courseTuition">
                   <div><small>Biaya kelas</small><strong>Rp250.000 <span>/bulan</span></strong></div>
-                  <p>Pembayaran seluruh program sekaligus di awal mendapat potongan harga.</p>
+                  <p>Termasuk akses Website Premium Takumi tanpa biaya tambahan. Pembayaran seluruh program sekaligus di awal mendapat potongan harga.</p>
                 </div>
               </div>
             </article>
@@ -118,7 +118,7 @@ export default function Home() {
                 </div>
                 <div className="courseTuition">
                   <div><small>Biaya kelas</small><strong>Rp350.000 <span>/bulan</span></strong></div>
-                  <p>Pembayaran seluruh program sekaligus di awal mendapat potongan harga.</p>
+                  <p>Termasuk akses Website Premium Takumi tanpa biaya tambahan. Pembayaran seluruh program sekaligus di awal mendapat potongan harga.</p>
                 </div>
               </div>
             </article>
@@ -139,7 +139,7 @@ export default function Home() {
                 </div>
                 <div className="courseTuition">
                   <div><small>Biaya kelas</small><strong>Rp450.000 <span>/bulan</span></strong></div>
-                  <p>Pembayaran seluruh program sekaligus di awal mendapat potongan harga.</p>
+                  <p>Termasuk akses Website Premium Takumi tanpa biaya tambahan. Pembayaran seluruh program sekaligus di awal mendapat potongan harga.</p>
                 </div>
               </div>
             </article>
@@ -160,7 +160,7 @@ export default function Home() {
                 </div>
                 <div className="courseTuition">
                   <div><small>Biaya kelas</small><strong>Rp550.000 <span>/bulan</span></strong></div>
-                  <p>Pembayaran seluruh program sekaligus di awal mendapat potongan harga.</p>
+                  <p>Termasuk akses Website Premium Takumi tanpa biaya tambahan. Pembayaran seluruh program sekaligus di awal mendapat potongan harga.</p>
                 </div>
               </div>
             </article>
