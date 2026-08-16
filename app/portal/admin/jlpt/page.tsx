@@ -5,6 +5,8 @@ import styles from '../admin.module.css'
 import overview from '../admin-overview.module.css'
 import jlpt from './jlpt.module.css'
 
+type ReviewStatus = 'saved' | 'needs_revision' | 'approved'
+
 type PackageRow = {
   id: string
   title: string
@@ -12,6 +14,8 @@ type PackageRow = {
   time_limit_minutes: number | null
   section_label: string | null
   published: boolean
+  review_status: ReviewStatus
+  review_note: string | null
   question_count: number
   language_count: number
   reading_count: number
@@ -26,6 +30,12 @@ type PackageData = {
 function packageNumber(title: string, index: number) {
   const match = title.match(/Paket\s+(\d+)/i)
   return match ? Number(match[1]) : index + 1
+}
+
+function reviewLabel(status: ReviewStatus) {
+  if (status === 'approved') return 'Disetujui'
+  if (status === 'needs_revision') return 'Perlu direvisi'
+  return 'Tersimpan'
 }
 
 export default async function JlptAdminPage({ searchParams }: { searchParams: Promise<{ level?: string }> }) {
@@ -62,7 +72,7 @@ export default async function JlptAdminPage({ searchParams }: { searchParams: Pr
         <div>
           <div className={styles.eyebrow}>PAKET SIMULASI</div>
           <h2>{editor.level.name}</h2>
-          <p>Pilih paket yang ingin diisi. Semua paket tetap draft sampai siap dipublikasikan.</p>
+          <p>Paket tersimpan sampai ditinjau dan disetujui Super Admin. Hanya paket yang sudah disetujui yang dapat diterbitkan.</p>
         </div>
         <div className={jlpt.levelTabs}>
           <Link className={editor.level.code === 'N4' ? jlpt.active : ''} href="/portal/admin/jlpt?level=N4">N4</Link>
@@ -82,7 +92,7 @@ export default async function JlptAdminPage({ searchParams }: { searchParams: Pr
                   <h3>{item.title}</h3>
                   <p>{item.section_label || 'Pembagian waktu belum diatur.'}</p>
                 </div>
-                <span className={`${jlpt.status} ${item.published ? jlpt.published : ''}`}>{item.published ? 'Dipublikasikan' : 'Draft'}</span>
+                <span className={`${jlpt.status} ${item.review_status === 'approved' ? jlpt.published : ''} ${item.review_status === 'needs_revision' ? jlpt.needsRevision : ''}`}>{reviewLabel(item.review_status)}</span>
               </div>
 
               <div className={jlpt.stats}>
@@ -90,6 +100,10 @@ export default async function JlptAdminPage({ searchParams }: { searchParams: Pr
                 <div className={jlpt.stat}><b>{item.reading_count}</b><span>文法・読解</span></div>
                 <div className={jlpt.stat}><b>{item.listening_count}</b><span>聴解</span></div>
               </div>
+
+              {item.review_status === 'needs_revision' && item.review_note && (
+                <div className={jlpt.packageRevisionNote}><b>Catatan revisi:</b> {item.review_note}</div>
+              )}
 
               <div className={jlpt.packageMeta}>
                 <span>{item.question_count} soal</span>
