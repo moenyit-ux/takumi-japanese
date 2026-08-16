@@ -44,7 +44,6 @@ export default function Home() {
               <a href="#kursus">N1</a>
             </div>
           </details>
-          <a href="#cara">Cara belajar</a>
           <a href="#harga">Harga</a>
         </nav>
         <Link className="btn ghost" href="/login">Masuk</Link>
@@ -57,7 +56,6 @@ export default function Home() {
           <p>Materi ringkas, latihan terarah, dan simulasi JLPT yang dibuat agar tetap realistis dipelajari setelah bekerja.</p>
           <div className="actions">
             <Link className="btn primary" href="/login">Mulai gratis →</Link>
-            <a className="btn ghost" href="#cara">Cara belajar</a>
           </div>
           <div className="trust">
             <span>✓ 15% materi gratis</span>
@@ -151,22 +149,6 @@ export default function Home() {
               <a className="btn ghost full" href="#harga">Lihat kursus N3</a>
             </article>
           </div>
-        </div>
-      </section>
-
-      <section id="cara" className="band">
-        <div className="split">
-          <div>
-            <div className="eyebrow">CARA BELAJAR</div>
-            <h2>Belajar tanpa dikejar jumlah sesi.</h2>
-            <p>Pilih materi yang kamu butuhkan, belajar sesuai ritmemu, lalu tandai statusnya sebagai belum dipelajari, perlu dipelajari lagi, atau sudah dipelajari. Progres membaca dan hasil latihan tetap tersimpan terpisah.</p>
-          </div>
-          <ol>
-            <li><b>01</b> Pilih materi yang ingin dipelajari</li>
-            <li><b>02</b> Pelajari materi dan kerjakan latihan</li>
-            <li><b>03</b> Tandai status belajarmu</li>
-            <li><b>04</b> Ulangi bagian lemah dan ukur kesiapan dengan simulasi</li>
-          </ol>
         </div>
       </section>
 
