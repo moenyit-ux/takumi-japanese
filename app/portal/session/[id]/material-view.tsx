@@ -298,10 +298,14 @@ function ReadingCard({ block }: { block: ContentBlock }) {
   const prep = textOf(body, 'preparation', 'tip', 'intro')
   const passage = textOf(body, 'passage', 'text')
   const takeaway = textOf(body, 'takeaway', 'summary', 'key_points')
+  const numberLabel = String(block.position).padStart(2, '0')
 
   return (
     <>
-      <div className="tm-card-header"><div className="tm-icon-box">▥</div><div className="tm-card-title"><h2>{block.title || 'Dokkai'}</h2>{target && <small>Target: {target}</small>}</div></div>
+      <div className="tm-card-header">
+        <div className="tm-icon-box">{numberLabel}</div>
+        <div className="tm-card-title"><small>Dokkai {numberLabel}</small><h2>{block.title || `Dokkai ${numberLabel}`}</h2>{target && <small>Target: {target}</small>}</div>
+      </div>
       {prep && <div className="tm-callout" style={{ marginTop: 12 }}><div className="tm-callout-head"><div className="tm-icon-box">☼</div><b>Persiapan Membaca</b></div><p>{prep}</p></div>}
       <div className="tm-callout" style={{ marginTop: 12 }}><div className="tm-callout-head"><div className="tm-icon-box">i</div><b>Kosakata Bantu</b></div><HelperItems body={body} /></div>
       {passage && <div className="tm-passage">{passage}</div>}
