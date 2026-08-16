@@ -106,10 +106,10 @@ export default function Home() {
               <div className="coursePublicHead"><b>N5</b><div><small>KURSUS JLPT N5</small><h3>Mulai level pemula</h3></div></div>
               <div className="coursePublicStats">
                 <span><b>±770</b> kosakata</span>
-                <span><b>119</b> kanji</span>
-                <span><b>75</b> bunpou</span>
+                <span><b>119</b> huruf kanji</span>
+                <span><b>75</b> tata bahasa</span>
               </div>
-              <p>Kelas N5 untuk membangun kemampuan dasar JLPT dengan ritme belajar yang terarah dan cukup waktu untuk review.</p>
+              <p>Kelas N5 untuk membangun kemampuan dasar JLPT dengan ritme belajar yang terarah dan cukup waktu untuk mengulang materi.</p>
               <div className="courseProgramInfo">
                 <div className="courseProgramLabel">PROGRAM REGULER</div>
                 <div className="courseProgramFacts">
@@ -127,8 +127,8 @@ export default function Home() {
               <div className="coursePublicHead"><b>N4</b><div><small>KURSUS JLPT N4</small><h3>Bangun pondasi yang kuat</h3></div></div>
               <div className="coursePublicStats">
                 <span><b>1.000</b> kosakata</span>
-                <span><b>200</b> kanji</span>
-                <span><b>100</b> bunpou</span>
+                <span><b>200</b> huruf kanji</span>
+                <span><b>100</b> tata bahasa</span>
               </div>
               <p>Kelas tatap muka untuk siswa yang ingin mempelajari materi N4 secara terarah dengan pendampingan pengajar.</p>
               <div className="courseProgramInfo">
@@ -148,8 +148,8 @@ export default function Home() {
               <div className="coursePublicHead"><b>N3</b><div><small>KURSUS JLPT N3</small><h3>Lanjut ke level menengah</h3></div></div>
               <div className="coursePublicStats">
                 <span><b>2.000</b> kosakata</span>
-                <span><b>350</b> kanji</span>
-                <span><b>130</b> bunpou</span>
+                <span><b>350</b> huruf kanji</span>
+                <span><b>130</b> tata bahasa</span>
               </div>
               <p>Kelas tatap muka untuk siswa yang ingin memperkuat kemampuan N3 melalui pembelajaran langsung, latihan, dan evaluasi bersama pengajar.</p>
               <div className="courseProgramInfo">
@@ -185,12 +185,12 @@ export default function Home() {
                 <span>N4</span>
                 <div>
                   <h3>Belajar Mandiri N4</h3>
-                  <p>1.000 kosakata · 200 kanji · 100 bunpou</p>
+                  <p>1.000 kosakata · 200 huruf kanji · 100 tata bahasa</p>
                 </div>
               </div>
               <div className="priceAmount">Rp299.000</div>
               <div className="priceOnce">Sekali bayar</div>
-              <p className="priceDesc">Termasuk 25 dokkai, 25 choukai, 5 simulasi JLPT, latihan dan kuis yang terus di-update, bookmark, serta statistik belajar.</p>
+              <p className="priceDesc">Termasuk 25 latihan membaca, 25 latihan mendengarkan, 5 simulasi ujian JLPT, latihan dan kuis yang terus diperbarui, bookmark, serta statistik belajar.</p>
               <Link className="btn primary full" href="/login">Mulai belajar N4</Link>
             </article>
 
@@ -199,12 +199,12 @@ export default function Home() {
                 <span>N3</span>
                 <div>
                   <h3>Belajar Mandiri N3</h3>
-                  <p>2.000 kosakata · 350 kanji · 130 bunpou</p>
+                  <p>2.000 kosakata · 350 huruf kanji · 130 tata bahasa</p>
                 </div>
               </div>
               <div className="priceAmount">Rp399.000</div>
               <div className="priceOnce">Sekali bayar</div>
-              <p className="priceDesc">Termasuk 25 dokkai, 25 choukai, 5 simulasi JLPT, latihan dan kuis yang terus di-update, bookmark, serta statistik belajar.</p>
+              <p className="priceDesc">Termasuk 25 latihan membaca, 25 latihan mendengarkan, 5 simulasi ujian JLPT, latihan dan kuis yang terus diperbarui, bookmark, serta statistik belajar.</p>
               <Link className="btn primary full" href="/login">Mulai belajar N3</Link>
             </article>
           </div>
