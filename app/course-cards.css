@@ -1,0 +1,151 @@
+/* Course cards: regular program, pricing, and acceleration */
+.coursePublicGridFour {
+  align-items: stretch;
+}
+
+.coursePublicGridFour .coursePublicCard {
+  scroll-margin-top: 110px;
+}
+
+.courseProgramInfo {
+  margin-top: auto;
+  padding-top: 18px;
+  border-top: 1px solid #d8edf6;
+}
+
+.courseProgramLabel {
+  margin-bottom: 10px;
+  color: var(--deep);
+  font-size: 10px;
+  font-weight: 900;
+  letter-spacing: 0.12em;
+}
+
+.courseProgramFacts {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 10px;
+}
+
+.courseProgramFacts span {
+  min-width: 0;
+  padding: 12px 13px;
+  border-radius: 13px;
+  background: var(--soft);
+}
+
+.courseProgramFacts b,
+.courseProgramFacts small {
+  display: block;
+}
+
+.courseProgramFacts b {
+  color: var(--ink);
+  font-size: 17px;
+  line-height: 1.25;
+}
+
+.courseProgramFacts small {
+  margin-top: 3px;
+  color: var(--muted);
+  font-size: 11px;
+  line-height: 1.35;
+}
+
+.courseTuition {
+  display: grid;
+  grid-template-columns: minmax(180px, 0.8fr) minmax(0, 1fr);
+  gap: 16px;
+  align-items: center;
+  margin-top: 12px;
+  padding: 15px 16px;
+  border: 1px solid #cfe8f3;
+  border-radius: 14px;
+  background: #fff;
+}
+
+.courseTuition > div > small {
+  display: block;
+  margin-bottom: 4px;
+  color: var(--muted);
+  font-size: 11px;
+  font-weight: 700;
+}
+
+.courseTuition strong {
+  display: block;
+  color: var(--ink);
+  font-size: 20px;
+  line-height: 1.2;
+  letter-spacing: -0.02em;
+}
+
+.courseTuition strong span {
+  color: var(--muted);
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0;
+}
+
+.courseTuition p {
+  margin: 0;
+  color: var(--deep);
+  font-size: 12px;
+  font-weight: 700;
+  line-height: 1.5;
+}
+
+.courseOptionNote {
+  display: grid;
+  grid-template-columns: minmax(240px, 0.7fr) minmax(0, 1.5fr);
+  gap: 22px;
+  align-items: center;
+  margin-top: 18px;
+  padding: 19px 22px;
+  border: 1px dashed #abdced;
+  border-radius: 16px;
+  background: rgba(255, 255, 255, 0.75);
+}
+
+.courseOptionNote small,
+.courseOptionNote strong {
+  display: block;
+}
+
+.courseOptionNote small {
+  color: var(--deep);
+  font-size: 10px;
+  font-weight: 900;
+  letter-spacing: 0.12em;
+}
+
+.courseOptionNote strong {
+  margin-top: 4px;
+  color: var(--ink);
+  font-size: 18px;
+}
+
+.courseOptionNote p {
+  margin: 0;
+  color: var(--muted);
+  font-size: 13px;
+  line-height: 1.7;
+}
+
+@media (max-width: 850px) {
+  .courseTuition,
+  .courseOptionNote {
+    grid-template-columns: 1fr;
+    gap: 10px;
+  }
+}
+
+@media (max-width: 700px) {
+  .courseProgramFacts {
+    grid-template-columns: 1fr;
+  }
+
+  .courseTuition {
+    padding: 14px;
+  }
+}
