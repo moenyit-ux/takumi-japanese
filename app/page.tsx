@@ -18,7 +18,18 @@ export default function Home() {
       <header>
         <Brand />
         <nav>
-          <a href="#profil">Profil</a>
+          <details className="profileNav">
+            <summary>
+              <span>Profil</span>
+              <i aria-hidden="true">⌄</i>
+            </summary>
+            <div className="profileDropdown">
+              <a href="#visi-misi">Visi &amp; Misi</a>
+              <a href="#profil-pendiri">Profil Pendiri</a>
+              <a href="#pengajar">Pengajar</a>
+              <a href="#testimoni">Testimoni</a>
+            </div>
+          </details>
           <a href="#kursus">Kursus</a>
           <a href="#cara">Cara belajar</a>
           <a href="#harga">Harga</a>
@@ -68,25 +79,30 @@ export default function Home() {
       <section id="profil" className="section publicProfile">
         <div className="publicSectionHeading">
           <div className="eyebrow">PROFIL TAKUMI</div>
-          <h2>Belajar bahasa Jepang yang dekat dengan kehidupan nyata.</h2>
-          <p>Takumi Japanese dibangun untuk membantu pelajar Indonesia belajar secara bertahap, terutama mereka yang harus membagi waktu antara pekerjaan, kehidupan sehari-hari, dan target JLPT.</p>
+          <h2>Mengenal Takumi Japanese lebih dekat.</h2>
+          <p>Takumi Japanese dibangun untuk membantu pelajar Indonesia belajar secara bertahap dengan sistem yang tetap realistis dijalankan di tengah pekerjaan dan kehidupan sehari-hari.</p>
         </div>
 
         <div className="profileGrid">
-          <article>
+          <article id="visi-misi">
             <span>01</span>
-            <h3>Fokus yang jelas</h3>
-            <p>Materi dipusatkan pada JLPT N4 dan N3, tanpa membuat siswa harus mengikuti ritme sesi yang kaku.</p>
+            <h3>Visi &amp; Misi</h3>
+            <p>Membantu pelajar Indonesia meningkatkan kemampuan bahasa Jepang secara terarah, fleksibel, dan relevan dengan target JLPT maupun kehidupan nyata di Jepang.</p>
           </article>
-          <article>
+          <article id="profil-pendiri">
             <span>02</span>
-            <h3>Belajar fleksibel</h3>
-            <p>Siswa dapat memilih materi yang dibutuhkan, menyimpan progres, dan mengulang bagian yang masih lemah.</p>
+            <h3>Profil Pendiri</h3>
+            <p>Takumi lahir dari pengalaman belajar bahasa Jepang secara mandiri dan dari pemahaman bahwa pekerja membutuhkan pola belajar yang ringkas, masuk akal, dan dapat dijalankan secara konsisten.</p>
           </article>
-          <article>
+          <article id="pengajar">
             <span>03</span>
-            <h3>Siap dipakai sehari-hari</h3>
-            <p>Takumi tidak hanya mengejar nilai ujian, tetapi juga membantu bahasa Jepang tetap relevan dengan kehidupan dan pekerjaan.</p>
+            <h3>Pengajar</h3>
+            <p>Tim pengajar Takumi mendampingi proses belajar dengan fokus pada pemahaman materi, latihan yang terarah, serta kebutuhan siswa pada setiap level.</p>
+          </article>
+          <article id="testimoni">
+            <span>04</span>
+            <h3>Testimoni</h3>
+            <p>Cerita dan pengalaman siswa akan ditampilkan di bagian ini setelah mendapat izin untuk dipublikasikan, sehingga testimoni yang tampil benar-benar berasal dari pengalaman belajar nyata.</p>
           </article>
         </div>
       </section>
