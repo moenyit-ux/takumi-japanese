@@ -57,6 +57,10 @@ function chapterOf(block: ContentBlock) {
   return numberField(asRecord(block.body), 'chapter_number', 1)
 }
 
+function chapterTitleOf(block: ContentBlock) {
+  return field(asRecord(block.body), 'chapter_title').trim()
+}
+
 function isChapteredKind(kind: StructuredKind) {
   return kind === 'vocabulary' || kind === 'kanji' || kind === 'grammar'
 }
@@ -213,11 +217,14 @@ function ChapterFields({ kind, body, setBody, position, setPosition }: {
       <div>
         <div className={admin.eyebrow}>PENGELOMPOKAN MATERI</div>
         <b>Masukkan {label} ini ke bab berapa?</b>
-        <small>Tentukan bab dan nomor materi. Semua {label} dengan nomor bab yang sama akan tampil sebagai satu kelompok.</small>
+        <small>Tentukan nomor bab, nama bab, dan nomor materi. Semua {label} dengan nomor bab yang sama akan tampil sebagai satu kelompok.</small>
       </div>
       <div className={styles.chapterControls}>
         <label className={admin.label}>Bab
           <input className={admin.input} type="number" min={1} value={numberField(body, 'chapter_number', 1)} onChange={(e) => setBody({ ...body, chapter_number: Math.max(1, Number(e.target.value) || 1) })} />
+        </label>
+        <label className={admin.label}>Nama bab
+          <input className={admin.input} value={field(body, 'chapter_title')} onChange={(e) => setBody({ ...body, chapter_title: e.target.value })} placeholder="Contoh: Dasar Partikel" />
         </label>
         <label className={admin.label}>Nomor materi
           <input className={admin.input} type="number" min={1} value={position} onChange={(e) => setPosition(Math.max(1, Number(e.target.value) || 1))} />
@@ -330,8 +337,9 @@ function MaterialEditor({ sessionId, kind, block, defaultPosition, role }: { ses
       router.refresh()
       if (!block) {
         const currentChapter = numberField(body, 'chapter_number', 1)
+        const currentChapterTitle = field(body, 'chapter_title')
         setTitle('')
-        setBody(chaptered ? { chapter_number: currentChapter } : {})
+        setBody(chaptered ? { chapter_number: currentChapter, chapter_title: currentChapterTitle } : {})
         setAudioUrl('')
         setImageUrl('')
         setPosition((value) => value + 1)
@@ -390,7 +398,8 @@ function MaterialEditor({ sessionId, kind, block, defaultPosition, role }: { ses
 
   const status = block?.review_status || 'saved'
   const statusLabel = status === 'needs_revision' ? 'Perlu direvisi' : status === 'approved' ? 'Disetujui' : 'Tersimpan'
-  const chapterLabel = chaptered ? `Bab ${numberField(body, 'chapter_number', 1)} · ` : ''
+  const chapterTitle = field(body, 'chapter_title').trim()
+  const chapterLabel = chaptered ? `Bab ${numberField(body, 'chapter_number', 1)}${chapterTitle ? ` · ${chapterTitle}` : ''} · ` : ''
 
   return <details className={styles.itemCard} open={!block}>
     <summary>
@@ -478,18 +487,21 @@ export default function MaterialWorkflowStudio({ sessionId, levelCode, role, kin
     ) : visible.length ? (
       isChapteredKind(kind) ? (
         <div className={styles.chapterList}>
-          {chapterGroups.map(([chapter, chapterBlocks]) => (
-            <details className={styles.chapterGroup} key={chapter}>
-              <summary>
-                <div><small>BAB {String(chapter).padStart(2, '0')}</small><b>Bab {chapter}</b></div>
-                <span>{chapterBlocks.length} {chapterItemLabel}</span>
-                <i>⌄</i>
-              </summary>
-              <div className={styles.chapterBody}>
-                {chapterBlocks.map((block) => <MaterialEditor key={block.id} sessionId={sessionId} kind={kind} block={block} defaultPosition={block.position} role={role} />)}
-              </div>
-            </details>
-          ))}
+          {chapterGroups.map(([chapter, chapterBlocks]) => {
+            const chapterTitle = chapterBlocks.map(chapterTitleOf).find(Boolean) || ''
+            return (
+              <details className={styles.chapterGroup} key={chapter}>
+                <summary>
+                  <div><small>BAB {String(chapter).padStart(2, '0')}</small><b>Bab {chapter}{chapterTitle ? ` · ${chapterTitle}` : ''}</b></div>
+                  <span>{chapterBlocks.length} {chapterItemLabel}</span>
+                  <i>⌄</i>
+                </summary>
+                <div className={styles.chapterBody}>
+                  {chapterBlocks.map((block) => <MaterialEditor key={block.id} sessionId={sessionId} kind={kind} block={block} defaultPosition={block.position} role={role} />)}
+                </div>
+              </details>
+            )
+          })}
         </div>
       ) : (
         <div className={styles.list}>{visible.map((block) => <MaterialEditor key={block.id} sessionId={sessionId} kind={kind} block={block} defaultPosition={block.position} role={role} />)}</div>
