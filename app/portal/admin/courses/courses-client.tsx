@@ -53,6 +53,10 @@ function todayValue() {
   return `${year}-${month}-${day}`
 }
 
+function defaultDraft(): Draft {
+  return { level: 'N4', pace: 'regular', startsAt: todayValue(), endsAt: '' }
+}
+
 function toStartTimestamp(value: string) {
   return `${value}T00:00:00+07:00`
 }
@@ -90,11 +94,14 @@ export default function CoursesClient({ users }: { users: CourseAdminUser[] }) {
   }, [query, users])
 
   function draftFor(userId: string): Draft {
-    return drafts[userId] || { level: 'N4', pace: 'regular', startsAt: todayValue(), endsAt: '' }
+    return drafts[userId] || defaultDraft()
   }
 
   function patchDraft(userId: string, patch: Partial<Draft>) {
-    setDrafts((current) => ({ ...current, [userId]: { ...draftFor(userId), ...patch } }))
+    setDrafts((current) => {
+      const base = current[userId] || defaultDraft()
+      return { ...current, [userId]: { ...base, ...patch } }
+    })
   }
 
   async function enroll(event: FormEvent, user: CourseAdminUser) {
@@ -170,7 +177,11 @@ export default function CoursesClient({ users }: { users: CourseAdminUser[] }) {
                           <b>{enrollment.pace === 'accelerated' ? 'Akselerasi' : 'Reguler'} · {statusLabel[enrollment.status]}</b>
                           <small>{formatDate(enrollment.starts_at)} – {formatDate(enrollment.ends_at)}</small>
                           <small className={enrollment.premium_ready ? styles.premiumReady : styles.premiumPending}>
-                            {enrollment.premium_ready ? `✓ Premium ${enrollment.premium_level} tersambung otomatis` : 'Premium akan tersambung otomatis saat level web tersedia'}
+                            {enrollment.premium_ready
+                              ? enrollment.status === 'paused'
+                                ? `Premium ${enrollment.premium_level} ikut dijeda bersama kursus`
+                                : `✓ Premium ${enrollment.premium_level} aktif otomatis`
+                              : 'Premium akan tersambung otomatis saat level web tersedia'}
                           </small>
                         </div>
                       </div>
