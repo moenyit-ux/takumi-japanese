@@ -102,7 +102,7 @@ export default async function AdminPage({ searchParams }: { searchParams: Promis
         <Link href="/portal/dashboard">← Dashboard siswa</Link>
         <div className={overview.topbarLinks}>
           <Link className={overview.topbarButton} href="/portal/admin/support">Support</Link>
-          {role === 'super_admin' && <><Link className={overview.topbarButton} href="/portal/admin/users">Pengguna</Link><Link className={overview.topbarButton} href="/portal/admin/payments">Pembayaran</Link></>}
+          {role === 'super_admin' && <><Link className={overview.topbarButton} href="/portal/admin/users">Pengguna</Link><Link className={overview.topbarButton} href="/portal/admin/courses">Kursus Siswa</Link><Link className={overview.topbarButton} href="/portal/admin/payments">Pembayaran</Link></>}
           <span className={`${styles.roleBadge} ${overview.topbarRole}`}>{role === 'super_admin' ? 'SUPER ADMIN' : 'CONTENT ADMIN'}</span>
         </div>
       </div>
