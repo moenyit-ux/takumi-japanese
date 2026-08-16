@@ -2,6 +2,7 @@
 header .btn,
 .hero .btn,
 .price .btn,
+.publicCourses .btn,
 header nav a {
   transition:
     transform 160ms ease,
@@ -13,7 +14,8 @@ header nav a {
 
 header .btn:hover,
 .hero .btn:hover,
-.price .btn:hover {
+.price .btn:hover,
+.publicCourses .btn:hover {
   transform: translateY(-2px);
 }
 
@@ -26,7 +28,8 @@ header .primary:hover,
 
 header .ghost:hover,
 .hero .ghost:hover,
-.price .ghost:hover {
+.price .ghost:hover,
+.publicCourses .ghost:hover {
   background: var(--soft);
   border-color: #abdced;
   color: var(--deep);
@@ -35,7 +38,8 @@ header .ghost:hover,
 
 header .btn:active,
 .hero .btn:active,
-.price .btn:active {
+.price .btn:active,
+.publicCourses .btn:active {
   transform: translateY(0) scale(0.97);
   box-shadow: 0 4px 12px rgba(37, 84, 110, 0.12);
 }
@@ -75,9 +79,163 @@ header nav a:active {
 header .btn:focus-visible,
 .hero .btn:focus-visible,
 .price .btn:focus-visible,
+.publicCourses .btn:focus-visible,
 header nav a:focus-visible {
   outline: 3px solid rgba(100, 190, 233, 0.48);
   outline-offset: 3px;
+}
+
+/* Public profile and course sections */
+.publicProfile {
+  padding-top: 72px;
+  padding-bottom: 82px;
+}
+
+.publicSectionHeading {
+  max-width: 720px;
+  margin-bottom: 32px;
+}
+
+.publicSectionHeading h2 {
+  margin: 10px 0 12px;
+  font-size: clamp(32px, 4vw, 46px);
+  line-height: 1.12;
+  letter-spacing: -0.04em;
+}
+
+.publicSectionHeading > p {
+  margin: 0;
+  color: var(--muted);
+  font-size: 16px;
+  line-height: 1.75;
+}
+
+.profileGrid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 16px;
+}
+
+.profileGrid article {
+  min-width: 0;
+  padding: 25px;
+  border: 1px solid var(--line);
+  border-radius: 20px;
+  background: #fff;
+  box-shadow: 0 10px 28px rgba(37, 84, 110, 0.05);
+}
+
+.profileGrid article > span {
+  display: inline-grid;
+  place-items: center;
+  min-width: 38px;
+  height: 38px;
+  padding: 0 10px;
+  border-radius: 11px;
+  background: var(--soft);
+  color: var(--deep);
+  font-size: 13px;
+  font-weight: 900;
+}
+
+.profileGrid h3 {
+  margin: 18px 0 8px;
+  font-size: 20px;
+}
+
+.profileGrid p {
+  margin: 0;
+  color: var(--muted);
+  line-height: 1.7;
+  font-size: 14px;
+}
+
+.publicCourses {
+  border-top: 1px solid #d8edf6;
+  border-bottom: 1px solid #d8edf6;
+}
+
+.courseSectionInner {
+  max-width: 1132px;
+  margin: auto;
+}
+
+.coursePublicGrid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 18px;
+}
+
+.coursePublicCard {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+  padding: 27px;
+  border: 1px solid #cfe8f3;
+  border-radius: 22px;
+  background: rgba(255, 255, 255, 0.9);
+  box-shadow: 0 12px 30px rgba(37, 84, 110, 0.06);
+}
+
+.coursePublicHead {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+
+.coursePublicHead > b {
+  width: 50px;
+  height: 50px;
+  flex: 0 0 50px;
+  display: grid;
+  place-items: center;
+  border-radius: 14px;
+  background: var(--deep);
+  color: #fff;
+  font-size: 17px;
+}
+
+.coursePublicHead small {
+  color: var(--deep);
+  font-size: 10px;
+  font-weight: 900;
+  letter-spacing: 0.12em;
+}
+
+.coursePublicHead h3 {
+  margin: 3px 0 0;
+  font-size: 21px;
+  letter-spacing: -0.02em;
+}
+
+.coursePublicStats {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 9px;
+  margin: 24px 0 18px;
+}
+
+.coursePublicStats span {
+  padding: 12px;
+  border-radius: 13px;
+  background: var(--soft);
+  color: var(--muted);
+  font-size: 12px;
+  line-height: 1.35;
+}
+
+.coursePublicStats b {
+  display: block;
+  color: var(--ink);
+  font-size: 17px;
+}
+
+.coursePublicCard > p {
+  flex: 1;
+  margin: 0 0 22px;
+  color: var(--muted);
+  line-height: 1.7;
+  font-size: 14px;
 }
 
 /* Homepage one-time pricing */
@@ -168,6 +326,18 @@ header nav a:focus-visible {
   font-size: 13px;
 }
 
+@media (max-width: 850px) {
+  .profileGrid,
+  .coursePublicGrid {
+    grid-template-columns: 1fr;
+  }
+
+  .publicProfile {
+    padding-top: 58px;
+    padding-bottom: 62px;
+  }
+}
+
 @media (max-width: 700px) {
   .priceGrid {
     grid-template-columns: 1fr;
@@ -181,12 +351,22 @@ header nav a:focus-visible {
   .priceLead {
     margin-bottom: 24px;
   }
+
+  .coursePublicCard,
+  .profileGrid article {
+    padding: 22px;
+  }
+
+  .coursePublicStats {
+    grid-template-columns: 1fr;
+  }
 }
 
 @media (hover: none) {
   header .btn:hover,
   .hero .btn:hover,
-  .price .btn:hover {
+  .price .btn:hover,
+  .publicCourses .btn:hover {
     transform: none;
   }
 }
@@ -195,6 +375,7 @@ header nav a:focus-visible {
   header .btn,
   .hero .btn,
   .price .btn,
+  .publicCourses .btn,
   header nav a,
   header nav a::after {
     transition: none;
