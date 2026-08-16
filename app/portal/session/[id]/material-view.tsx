@@ -56,6 +56,10 @@ function chapterOf(block: ContentBlock) {
   return numberOf(recordOf(block.body), 'chapter_number', 1)
 }
 
+function chapterTitleOf(block: ContentBlock) {
+  return textOf(recordOf(block.body), 'chapter_title') || ''
+}
+
 function listOf(value: RecordValue, ...keys: string[]): unknown[] {
   for (const key of keys) {
     const candidate = value[key]
@@ -466,12 +470,13 @@ export default function MaterialView({ blocks, bookmarkedIds, learningStatuses =
         {chapters.map(([chapter, chapterBlocks], index) => {
           const learnedCount = chapterBlocks.filter((block) => learningStatuses[block.id] === 'learned').length
           const reviewCount = chapterBlocks.filter((block) => learningStatuses[block.id] === 'review').length
+          const chapterTitle = chapterBlocks.map(chapterTitleOf).find(Boolean) || ''
           return (
             <details className="tm-vocab-chapter" id={index === 0 ? kind : `${kind}-bab-${chapter}`} key={chapter}>
               <summary className="tm-vocab-chapter-summary">
                 <div className="tm-vocab-chapter-heading">
                   <span>BAB {String(chapter).padStart(2, '0')}</span>
-                  <b>Bab {chapter}</b>
+                  <b>Bab {chapter}{chapterTitle ? ` · ${chapterTitle}` : ''}</b>
                   <small>{chapterBlocks.length} {itemLabel}</small>
                 </div>
                 <div className="tm-vocab-chapter-stats">
