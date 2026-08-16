@@ -1,0 +1,53 @@
+:where(button, a[href], [role="button"], summary){
+  transition:
+    transform .16s ease,
+    filter .16s ease,
+    box-shadow .16s ease,
+    border-color .16s ease,
+    background-color .16s ease,
+    color .16s ease;
+}
+
+:where(button:not(:disabled), [role="button"]:not([aria-disabled="true"]), summary){
+  cursor:pointer;
+}
+
+@media (hover:hover) and (pointer:fine){
+  :where(button:not(:disabled), [role="button"]:not([aria-disabled="true"]), summary):hover{
+    transform:translateY(-1px);
+    filter:brightness(.94) saturate(1.08);
+    box-shadow:0 8px 18px rgba(20,111,159,.12);
+  }
+
+  a[href]:hover{
+    filter:brightness(.94) saturate(1.08);
+  }
+}
+
+:where(button:not(:disabled), [role="button"]:not([aria-disabled="true"]), summary):active,
+a[href]:active{
+  transform:translateY(0) scale(.985);
+  filter:brightness(.9) saturate(1.1);
+}
+
+:where(button, a[href], [role="button"], summary):focus-visible{
+  outline:3px solid rgba(100,190,233,.55);
+  outline-offset:3px;
+}
+
+:where(button:disabled, [aria-disabled="true"]){
+  cursor:not-allowed;
+  opacity:.58;
+}
+
+@media (prefers-reduced-motion:reduce){
+  :where(button, a[href], [role="button"], summary){
+    transition:none;
+  }
+
+  :where(button:not(:disabled), [role="button"]:not([aria-disabled="true"]), summary):hover,
+  :where(button:not(:disabled), [role="button"]:not([aria-disabled="true"]), summary):active,
+  a[href]:active{
+    transform:none;
+  }
+}
