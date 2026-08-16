@@ -18,6 +18,8 @@ export default function Home() {
       <header>
         <Brand />
         <nav>
+          <a href="#profil">Profil</a>
+          <a href="#kursus">Kursus</a>
           <a href="#cara">Cara belajar</a>
           <a href="#harga">Harga</a>
         </nav>
@@ -59,6 +61,66 @@ export default function Home() {
                 <span>130 bunpou</span>
               </span>
             </div>
+          </div>
+        </div>
+      </section>
+
+      <section id="profil" className="section publicProfile">
+        <div className="publicSectionHeading">
+          <div className="eyebrow">PROFIL TAKUMI</div>
+          <h2>Belajar bahasa Jepang yang dekat dengan kehidupan nyata.</h2>
+          <p>Takumi Japanese dibangun untuk membantu pelajar Indonesia belajar secara bertahap, terutama mereka yang harus membagi waktu antara pekerjaan, kehidupan sehari-hari, dan target JLPT.</p>
+        </div>
+
+        <div className="profileGrid">
+          <article>
+            <span>01</span>
+            <h3>Fokus yang jelas</h3>
+            <p>Materi dipusatkan pada JLPT N4 dan N3, tanpa membuat siswa harus mengikuti ritme sesi yang kaku.</p>
+          </article>
+          <article>
+            <span>02</span>
+            <h3>Belajar fleksibel</h3>
+            <p>Siswa dapat memilih materi yang dibutuhkan, menyimpan progres, dan mengulang bagian yang masih lemah.</p>
+          </article>
+          <article>
+            <span>03</span>
+            <h3>Siap dipakai sehari-hari</h3>
+            <p>Takumi tidak hanya mengejar nilai ujian, tetapi juga membantu bahasa Jepang tetap relevan dengan kehidupan dan pekerjaan.</p>
+          </article>
+        </div>
+      </section>
+
+      <section id="kursus" className="band publicCourses">
+        <div className="courseSectionInner">
+          <div className="publicSectionHeading">
+            <div className="eyebrow">KURSUS</div>
+            <h2>Pilih level yang memang kamu butuhkan.</h2>
+            <p>N4 dan N3 berdiri sebagai kursus terpisah. Kamu tidak perlu membeli level yang tidak sedang kamu pelajari.</p>
+          </div>
+
+          <div className="coursePublicGrid">
+            <article className="coursePublicCard">
+              <div className="coursePublicHead"><b>N4</b><div><small>JLPT N4</small><h3>Bangun pondasi yang kuat</h3></div></div>
+              <div className="coursePublicStats">
+                <span><b>1.000</b> kosakata</span>
+                <span><b>200</b> kanji</span>
+                <span><b>100</b> bunpou</span>
+              </div>
+              <p>Termasuk 25 dokkai, 25 choukai, 5 simulasi JLPT, latihan, kuis, bookmark, dan progres belajar.</p>
+              <a className="btn ghost full" href="#harga">Lihat kursus N4</a>
+            </article>
+
+            <article className="coursePublicCard">
+              <div className="coursePublicHead"><b>N3</b><div><small>JLPT N3</small><h3>Lanjut ke level menengah</h3></div></div>
+              <div className="coursePublicStats">
+                <span><b>2.000</b> kosakata</span>
+                <span><b>350</b> kanji</span>
+                <span><b>130</b> bunpou</span>
+              </div>
+              <p>Termasuk 25 dokkai, 25 choukai, 5 simulasi JLPT, latihan, kuis, bookmark, dan progres belajar.</p>
+              <a className="btn ghost full" href="#harga">Lihat kursus N3</a>
+            </article>
           </div>
         </div>
       </section>
