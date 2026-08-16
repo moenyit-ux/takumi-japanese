@@ -30,7 +30,20 @@ export default function Home() {
               <a href="#testimoni">Testimoni</a>
             </div>
           </details>
-          <a href="#kursus">Kursus</a>
+          <details className="courseNav">
+            <summary>
+              <span>Kursus</span>
+              <i aria-hidden="true">⌄</i>
+            </summary>
+            <div className="courseDropdown">
+              <a href="#kursus">Dasar</a>
+              <a href="#kursus">N5</a>
+              <a href="#kursus-n4">N4</a>
+              <a href="#kursus-n3">N3</a>
+              <a href="#kursus">N2</a>
+              <a href="#kursus">N1</a>
+            </div>
+          </details>
           <a href="#cara">Cara belajar</a>
           <a href="#harga">Harga</a>
         </nav>
@@ -116,7 +129,7 @@ export default function Home() {
           </div>
 
           <div className="coursePublicGrid">
-            <article className="coursePublicCard">
+            <article className="coursePublicCard" id="kursus-n4">
               <div className="coursePublicHead"><b>N4</b><div><small>JLPT N4</small><h3>Bangun pondasi yang kuat</h3></div></div>
               <div className="coursePublicStats">
                 <span><b>1.000</b> kosakata</span>
@@ -127,7 +140,7 @@ export default function Home() {
               <a className="btn ghost full" href="#harga">Lihat kursus N4</a>
             </article>
 
-            <article className="coursePublicCard">
+            <article className="coursePublicCard" id="kursus-n3">
               <div className="coursePublicHead"><b>N3</b><div><small>JLPT N3</small><h3>Lanjut ke level menengah</h3></div></div>
               <div className="coursePublicStats">
                 <span><b>2.000</b> kosakata</span>
