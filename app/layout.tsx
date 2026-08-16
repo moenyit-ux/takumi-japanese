@@ -1,6 +1,7 @@
 import type { Metadata } from 'next'
 import MaterialNavigationGuard from './components/material-navigation-guard'
 import './globals.css'
+import './global-interactions.css'
 import './home-interactions.css'
 import './learning.css'
 import './takumi-material.css'
