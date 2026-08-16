@@ -36,8 +36,8 @@ export default function Home() {
               <i aria-hidden="true">⌄</i>
             </summary>
             <div className="courseDropdown">
-              <a href="#kursus">Dasar</a>
-              <a href="#kursus">N5</a>
+              <a href="#kursus-dasar">Dasar</a>
+              <a href="#kursus-n5">N5</a>
               <a href="#kursus-n4">N4</a>
               <a href="#kursus-n3">N3</a>
               <a href="#kursus">N2</a>
@@ -105,10 +105,47 @@ export default function Home() {
           <div className="publicSectionHeading">
             <div className="eyebrow">KURSUS TATAP MUKA</div>
             <h2>Belajar langsung bersama pengajar.</h2>
-            <p>Untuk siswa yang ingin penjelasan langsung, tanya jawab, latihan terarah, dan pendampingan. Program kursus disusun bertahap dari Dasar hingga N1.</p>
+            <p>Informasi materi, ritme program reguler, durasi, dan biaya ditampilkan langsung pada setiap kelas agar pilihan belajarmu lebih jelas.</p>
           </div>
 
-          <div className="coursePublicGrid">
+          <div className="coursePublicGrid coursePublicGridFour">
+            <article className="coursePublicCard" id="kursus-dasar">
+              <div className="coursePublicHead"><b>D</b><div><small>KELAS DASAR</small><h3>Mulai dari fondasi</h3></div></div>
+              <p>Kelas untuk siswa yang ingin membangun dasar bahasa Jepang secara bertahap sebelum melanjutkan ke level JLPT.</p>
+              <div className="courseProgramInfo">
+                <div className="courseProgramLabel">PROGRAM REGULER</div>
+                <div className="courseProgramFacts">
+                  <span><b>Disesuaikan</b><small>durasi sesuai kemampuan awal</small></span>
+                  <span><b>8× / bulan</b><small>80 menit / pertemuan</small></span>
+                </div>
+                <div className="courseTuition">
+                  <div><small>Biaya kelas</small><strong>Rp250.000 <span>/bulan</span></strong></div>
+                  <p>Pembayaran seluruh program sekaligus di awal mendapat potongan harga.</p>
+                </div>
+              </div>
+            </article>
+
+            <article className="coursePublicCard" id="kursus-n5">
+              <div className="coursePublicHead"><b>N5</b><div><small>KURSUS JLPT N5</small><h3>Mulai level pemula</h3></div></div>
+              <div className="coursePublicStats">
+                <span><b>±770</b> kosakata</span>
+                <span><b>119</b> kanji</span>
+                <span><b>75</b> bunpou</span>
+              </div>
+              <p>Kelas N5 untuk membangun kemampuan dasar JLPT dengan ritme belajar yang terarah dan cukup waktu untuk review.</p>
+              <div className="courseProgramInfo">
+                <div className="courseProgramLabel">PROGRAM REGULER</div>
+                <div className="courseProgramFacts">
+                  <span><b>6 bulan</b><small>48 pertemuan</small></span>
+                  <span><b>8× / bulan</b><small>80 menit / pertemuan</small></span>
+                </div>
+                <div className="courseTuition">
+                  <div><small>Biaya kelas</small><strong>Rp350.000 <span>/bulan</span></strong></div>
+                  <p>Pembayaran seluruh program sekaligus di awal mendapat potongan harga.</p>
+                </div>
+              </div>
+            </article>
+
             <article className="coursePublicCard" id="kursus-n4">
               <div className="coursePublicHead"><b>N4</b><div><small>KURSUS JLPT N4</small><h3>Bangun pondasi yang kuat</h3></div></div>
               <div className="coursePublicStats">
@@ -117,6 +154,17 @@ export default function Home() {
                 <span><b>100</b> bunpou</span>
               </div>
               <p>Kelas tatap muka untuk siswa yang ingin mempelajari materi N4 secara terarah dengan pendampingan pengajar.</p>
+              <div className="courseProgramInfo">
+                <div className="courseProgramLabel">PROGRAM REGULER</div>
+                <div className="courseProgramFacts">
+                  <span><b>9 bulan</b><small>72 pertemuan</small></span>
+                  <span><b>8× / bulan</b><small>80 menit / pertemuan</small></span>
+                </div>
+                <div className="courseTuition">
+                  <div><small>Biaya kelas</small><strong>Rp450.000 <span>/bulan</span></strong></div>
+                  <p>Pembayaran seluruh program sekaligus di awal mendapat potongan harga.</p>
+                </div>
+              </div>
             </article>
 
             <article className="coursePublicCard" id="kursus-n3">
@@ -127,40 +175,23 @@ export default function Home() {
                 <span><b>130</b> bunpou</span>
               </div>
               <p>Kelas tatap muka untuk siswa yang ingin memperkuat kemampuan N3 melalui pembelajaran langsung, latihan, dan evaluasi bersama pengajar.</p>
+              <div className="courseProgramInfo">
+                <div className="courseProgramLabel">PROGRAM REGULER</div>
+                <div className="courseProgramFacts">
+                  <span><b>12 bulan</b><small>96 pertemuan</small></span>
+                  <span><b>8× / bulan</b><small>80 menit / pertemuan</small></span>
+                </div>
+                <div className="courseTuition">
+                  <div><small>Biaya kelas</small><strong>Rp550.000 <span>/bulan</span></strong></div>
+                  <p>Pembayaran seluruh program sekaligus di awal mendapat potongan harga.</p>
+                </div>
+              </div>
             </article>
           </div>
 
-          <div className="coursePacePanel">
-            <div className="coursePaceIntro">
-              <div>
-                <div className="eyebrow">PROGRAM REGULER</div>
-                <h3>Ritme belajar yang realistis.</h3>
-              </div>
-              <p>Patokan reguler adalah 8 pertemuan per bulan, dengan durasi 80 menit setiap pertemuan. Targetnya bukan sekadar menamatkan materi, tetapi membangun kemampuan yang benar-benar dapat digunakan.</p>
-            </div>
-
-            <div className="coursePaceGrid">
-              <article>
-                <span>N5</span>
-                <div><strong>6 bulan</strong><small>48 pertemuan</small></div>
-              </article>
-              <article>
-                <span>N4</span>
-                <div><strong>9 bulan</strong><small>72 pertemuan</small></div>
-              </article>
-              <article>
-                <span>N3</span>
-                <div><strong>12 bulan</strong><small>96 pertemuan</small></div>
-              </article>
-            </div>
-
-            <div className="acceleratedCourse">
-              <div>
-                <small>KELAS AKSELERASI</small>
-                <h4>Butuh jalur belajar lebih cepat?</h4>
-              </div>
-              <p>Program akselerasi dapat dikonsultasikan terlebih dahulu. Durasi dan ritmenya ditentukan melalui asesmen kemampuan awal, waktu belajar mandiri, frekuensi pertemuan, serta target JLPT siswa. Jika diperlukan, percepatan dilakukan dengan menambah frekuensi kelas tanpa memadatkan materi secara berlebihan.</p>
-            </div>
+          <div className="courseOptionNote">
+            <div><small>KELAS AKSELERASI</small><strong>Butuh jalur belajar lebih cepat?</strong></div>
+            <p>Kelas akselerasi tersedia melalui konsultasi. Durasi dan ritme ditentukan berdasarkan kemampuan awal, waktu belajar mandiri, frekuensi pertemuan, dan target JLPT siswa.</p>
           </div>
         </div>
       </section>
