@@ -82,6 +82,11 @@ export default async function AdminSessionPage({ params, searchParams }: { param
 
   return (
     <main className={styles.editorShell}>
+      <style>{`
+        #session-material-extras { display: none; }
+        #material-studio:has(button[role="tab"]:first-child[aria-selected="true"]) + #session-material-extras { display: contents; }
+      `}</style>
+
       <div className={styles.editorTop}>
         <Link href={`/portal/admin?level=${editorData.session.level_code}`}>← Kembali ke kategori {editorData.session.level_code}</Link>
         <div className={styles.editorTopActions}>
@@ -108,7 +113,7 @@ export default async function AdminSessionPage({ params, searchParams }: { param
         />
       </div>
 
-      <div id="session-material-extras" style={{ display: 'contents' }}>
+      <div id="session-material-extras">
         <details style={compactToolStyle}>
           <summary style={compactSummaryStyle}>
             <span>
