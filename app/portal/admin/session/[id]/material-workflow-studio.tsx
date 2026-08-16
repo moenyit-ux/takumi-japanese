@@ -454,8 +454,8 @@ export default function MaterialWorkflowStudio({ sessionId, levelCode, role, kin
     ) : visible.length ? (
       isChapteredKind(kind) ? (
         <div className={styles.chapterList}>
-          {chapterGroups.map(([chapter, chapterBlocks], index) => (
-            <details className={styles.chapterGroup} open={index === 0} key={chapter}>
+          {chapterGroups.map(([chapter, chapterBlocks]) => (
+            <details className={styles.chapterGroup} key={chapter}>
               <summary>
                 <div><small>BAB {String(chapter).padStart(2, '0')}</small><b>Bab {chapter}</b></div>
                 <span>{chapterBlocks.length} {kind === 'vocabulary' ? 'kosakata' : 'kanji'}</span>
