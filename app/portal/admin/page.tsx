@@ -135,13 +135,13 @@ export default async function AdminPage({ searchParams }: { searchParams: Promis
           const count = countByKind.get(category.key) || 0
           const isQuiz = category.key === 'quiz'
           const isJlpt = category.key === 'jlpt'
-          const href = workspace
-            ? isQuiz
-              ? `/portal/admin/session/${workspace.id}/quiz`
-              : isJlpt
-                ? null
+          const href = isJlpt
+            ? `/portal/admin/jlpt?level=${selectedCode}`
+            : workspace
+              ? isQuiz
+                ? `/portal/admin/session/${workspace.id}/quiz`
                 : `/portal/admin/session/${workspace.id}?kind=${category.key}#material-studio`
-            : null
+              : null
 
           return (
             <article className={`${styles.categoryCard} ${isJlpt ? styles.categoryCardAccent : ''}`} key={category.key}>
@@ -161,10 +161,8 @@ export default async function AdminPage({ searchParams }: { searchParams: Promis
                 </div>
               </div>
               <div className={styles.categoryAction}>
-                {isJlpt ? (
-                  <span className={styles.comingSoon}>Panel simulasi berikutnya</span>
-                ) : href ? (
-                  <Link className={styles.editButton} href={href}>{count > 0 || isQuiz ? 'Buka →' : 'Mulai isi →'}</Link>
+                {href ? (
+                  <Link className={styles.editButton} href={href}>{isJlpt ? 'Buka paket →' : count > 0 || isQuiz ? 'Buka →' : 'Mulai isi →'}</Link>
                 ) : selectedLevel ? (
                   <CreateMaterialButton
                     levelId={selectedLevel.id}
