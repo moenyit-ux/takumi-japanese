@@ -83,6 +83,9 @@ export default async function JlptAdminPage({ searchParams }: { searchParams: Pr
       <section className={jlpt.packageGrid}>
         {editor.packages.map((item, index) => {
           const no = packageNumber(item.title, index)
+          const revisionStyle = item.review_status === 'needs_revision'
+            ? { background: '#fff2ed', color: '#9e4f36' }
+            : undefined
           return (
             <article className={jlpt.packageCard} key={item.id}>
               <div className={jlpt.packageTop}>
@@ -92,7 +95,7 @@ export default async function JlptAdminPage({ searchParams }: { searchParams: Pr
                   <h3>{item.title}</h3>
                   <p>{item.section_label || 'Pembagian waktu belum diatur.'}</p>
                 </div>
-                <span className={`${jlpt.status} ${item.review_status === 'approved' ? jlpt.published : ''} ${item.review_status === 'needs_revision' ? jlpt.needsRevision : ''}`}>{reviewLabel(item.review_status)}</span>
+                <span className={`${jlpt.status} ${item.review_status === 'approved' ? jlpt.published : ''}`} style={revisionStyle}>{reviewLabel(item.review_status)}</span>
               </div>
 
               <div className={jlpt.stats}>
@@ -102,7 +105,7 @@ export default async function JlptAdminPage({ searchParams }: { searchParams: Pr
               </div>
 
               {item.review_status === 'needs_revision' && item.review_note && (
-                <div className={jlpt.packageRevisionNote}><b>Catatan revisi:</b> {item.review_note}</div>
+                <div style={{ padding: '10px 12px', borderRadius: 12, background: '#fff7ef', color: '#8b5729', fontSize: 11, lineHeight: 1.55 }}><b>Catatan revisi:</b> {item.review_note}</div>
               )}
 
               <div className={jlpt.packageMeta}>
