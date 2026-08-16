@@ -44,7 +44,20 @@ export default function Home() {
               <a href="#kursus">N1</a>
             </div>
           </details>
-          <a href="#belajar-mandiri">Belajar mandiri</a>
+          <details className="selfStudyNav">
+            <summary>
+              <span>Belajar mandiri</span>
+              <i aria-hidden="true">⌄</i>
+            </summary>
+            <div className="selfStudyDropdown">
+              <div className="comingSoonItem"><span>Dasar</span><small>Segera hadir</small></div>
+              <div className="comingSoonItem"><span>N5</span><small>Segera hadir</small></div>
+              <a href="#belajar-mandiri-n4">N4</a>
+              <a href="#belajar-mandiri-n3">N3</a>
+              <div className="comingSoonItem"><span>N2</span><small>Segera hadir</small></div>
+              <div className="comingSoonItem"><span>N1</span><small>Segera hadir</small></div>
+            </div>
+          </details>
         </nav>
         <Link className="btn ghost" href="/login">Masuk</Link>
       </header>
@@ -123,10 +136,10 @@ export default function Home() {
         <div className="price">
           <div className="eyebrow">BELAJAR MANDIRI • WEBSITE PREMIUM</div>
           <h2>Belajar sesuai ritmemu sendiri.</h2>
-          <p className="priceLead">Akses materi lengkap, progres belajar, bookmark, kuis, dokkai, choukai, dan simulasi JLPT. Sekali bayar untuk satu level tanpa biaya bulanan.</p>
+          <p className="priceLead">Saat ini tersedia level N4 dan N3. Ke depannya Belajar Mandiri Takumi juga akan tersedia untuk Dasar, N5, N2, dan N1. Akses satu level dengan sekali bayar tanpa biaya bulanan.</p>
 
           <div className="priceGrid">
-            <article className="priceCard">
+            <article className="priceCard" id="belajar-mandiri-n4">
               <div className="priceCardHead">
                 <span>N4</span>
                 <div>
@@ -140,7 +153,7 @@ export default function Home() {
               <Link className="btn primary full" href="/login">Mulai belajar N4</Link>
             </article>
 
-            <article className="priceCard">
+            <article className="priceCard" id="belajar-mandiri-n3">
               <div className="priceCardHead">
                 <span>N3</span>
                 <div>
