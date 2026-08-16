@@ -3,6 +3,7 @@
 import { useState } from 'react'
 import { useRouter } from 'next/navigation'
 import jlpt from '../jlpt.module.css'
+import review from './simulation-review-controls.module.css'
 
 type ReviewStatus = 'saved' | 'needs_revision' | 'approved'
 
@@ -59,8 +60,8 @@ export default function SimulationReviewControls({ quizId, role, reviewStatus, r
   }
 
   return (
-    <section className={jlpt.reviewPanel}>
-      <div className={jlpt.reviewHead}>
+    <section className={review.panel}>
+      <div className={review.head}>
         <div>
           <small>PERSETUJUAN SIMULASI</small>
           <h3>Status: {statusLabel[reviewStatus]}</h3>
@@ -74,17 +75,17 @@ export default function SimulationReviewControls({ quizId, role, reviewStatus, r
                   : 'Paket tersimpan dan menunggu peninjauan Super Admin sebelum dapat diterbitkan.'}
           </p>
         </div>
-        <span className={`${jlpt.reviewStatus} ${reviewStatus === 'approved' ? jlpt.reviewApproved : reviewStatus === 'needs_revision' ? jlpt.reviewRevision : ''}`}>
+        <span className={`${review.status} ${reviewStatus === 'approved' ? review.approved : reviewStatus === 'needs_revision' ? review.revision : ''}`}>
           {statusLabel[reviewStatus]}
         </span>
       </div>
 
       {reviewNote && reviewStatus === 'needs_revision' && (
-        <div className={jlpt.reviewNote}><b>Catatan revisi:</b> {reviewNote}</div>
+        <div className={review.note}><b>Catatan revisi:</b> {reviewNote}</div>
       )}
 
       {reviewStatus === 'approved' && !locked && (
-        <div className={jlpt.reviewInfo}>Jika soal diubah setelah disetujui, paket otomatis kembali ke status Tersimpan dan harus disetujui ulang sebelum diterbitkan.</div>
+        <div className={review.info}>Jika soal diubah setelah disetujui, paket otomatis kembali ke status Tersimpan dan harus disetujui ulang sebelum diterbitkan.</div>
       )}
 
       {locked && (
@@ -102,7 +103,7 @@ export default function SimulationReviewControls({ quizId, role, reviewStatus, r
               placeholder="Isi hanya jika paket perlu dikembalikan untuk direvisi."
             />
           </label>
-          <div className={jlpt.reviewActions}>
+          <div className={review.actions}>
             <button className={jlpt.danger} type="button" disabled={busy} onClick={() => void setReview('needs_revision')}>Perlu direvisi</button>
             <button className={jlpt.save} type="button" disabled={busy} onClick={() => void setReview('approved')}>Setujui & terbitkan</button>
           </div>
