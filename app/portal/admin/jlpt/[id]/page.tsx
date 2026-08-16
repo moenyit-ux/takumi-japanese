@@ -4,6 +4,9 @@ import { createClient } from '../../../../../lib/supabase/server'
 import styles from '../../admin.module.css'
 import jlpt from '../jlpt.module.css'
 import SimulationEditor from './simulation-editor'
+import SimulationReviewControls from './simulation-review-controls'
+
+type ReviewStatus = 'saved' | 'needs_revision' | 'approved'
 
 type EditorData = {
   role: 'content_admin' | 'super_admin'
@@ -15,6 +18,10 @@ type EditorData = {
     time_limit_minutes: number | null
     section_label: string | null
     published: boolean
+    review_status: ReviewStatus
+    review_note: string | null
+    reviewed_by: string | null
+    reviewed_at: string | null
     attempt_count: number
     questions: Array<{
       id: string
@@ -37,18 +44,10 @@ type EditorData = {
   }
 }
 
-type PackageLink = {
-  id: string
-  title: string
-}
-
-type PackageListData = {
-  packages: PackageLink[]
-}
-
-function packageNumber(title: string, index: number) {
-  const match = title.match(/Paket\s+(\d+)/i)
-  return match ? Number(match[1]) : index + 1
+function reviewLabel(status: ReviewStatus) {
+  if (status === 'approved') return 'Disetujui'
+  if (status === 'needs_revision') return 'Perlu direvisi'
+  return 'Tersimpan'
 }
 
 export default async function SimulationPackagePage({ params }: { params: Promise<{ id: string }> }) {
@@ -63,11 +62,7 @@ export default async function SimulationPackagePage({ params }: { params: Promis
   const { data, error } = await supabase.rpc('admin_get_simulation_editor', { p_quiz_id: id })
   if (error || !data) notFound()
   const editor = data as EditorData
-
-  const { data: packageData } = await supabase.rpc('admin_list_simulation_packages', { p_level_code: editor.level.code })
-  const packages = ((packageData as PackageListData | null)?.packages || [])
-    .map((item, index) => ({ ...item, no: packageNumber(item.title, index) }))
-    .sort((a, b) => a.no - b.no)
+  const locked = editor.quiz.attempt_count > 0
 
   return (
     <main className={styles.editorShell}>
@@ -84,34 +79,25 @@ export default async function SimulationPackagePage({ params }: { params: Promis
           <div className={jlpt.editorMeta}>
             <span>{editor.quiz.time_limit_minutes ?? '—'} menit</span>
             <span>Nilai lulus ≥ {editor.quiz.pass_score}</span>
-            <span>{editor.quiz.published ? 'Dipublikasikan' : 'Draft'}</span>
+            <span>{reviewLabel(editor.quiz.review_status)}</span>
           </div>
           {editor.quiz.section_label && <p style={{ marginTop: 12 }}>{editor.quiz.section_label}</p>}
         </div>
       </header>
 
-      {packages.length > 0 && (
-        <nav aria-label={`Pilih paket simulasi ${editor.level.code}`} style={{ marginTop: 18 }}>
-          <div className={styles.eyebrow} style={{ marginBottom: 8 }}>PILIH PAKET</div>
-          <div className={jlpt.levelTabs}>
-            {packages.map((item) => (
-              <Link
-                className={item.id === editor.quiz.id ? jlpt.active : ''}
-                href={`/portal/admin/jlpt/${item.id}`}
-                aria-current={item.id === editor.quiz.id ? 'page' : undefined}
-                key={item.id}
-              >
-                Paket {item.no}
-              </Link>
-            ))}
-          </div>
-        </nav>
-      )}
+      <SimulationReviewControls
+        quizId={editor.quiz.id}
+        role={editor.role}
+        reviewStatus={editor.quiz.review_status}
+        reviewNote={editor.quiz.review_note}
+        published={editor.quiz.published}
+        locked={locked}
+      />
 
       <SimulationEditor
         quizId={editor.quiz.id}
         questions={editor.quiz.questions}
-        locked={editor.quiz.attempt_count > 0}
+        locked={locked}
       />
     </main>
   )
