@@ -34,8 +34,8 @@ type Props = {
 }
 
 const sections: Array<{ key: SectionKind; label: string; jp: string; description: string }> = [
-  { key: 'multiple_choice', label: 'Gengo Chishiki', jp: '言語知識', description: 'Soal huruf, kosakata, tata bahasa, dan penggunaan bahasa.' },
-  { key: 'reading', label: 'Dokkai', jp: '読解', description: 'Soal membaca dengan bacaan atau konteks yang dapat digunakan bersama pertanyaan.' },
+  { key: 'multiple_choice', label: 'Moji · Goi', jp: '文字・語彙', description: 'Soal huruf, kanji, kosakata, dan penggunaan kosakata.' },
+  { key: 'reading', label: 'Bunpou · Dokkai', jp: '文法・読解', description: 'Soal tata bahasa dan membaca. Kolom bacaan dapat dikosongkan untuk soal bunpou yang tidak memerlukan teks.' },
   { key: 'listening', label: 'Choukai', jp: '聴解', description: 'Soal mendengar dengan audio. Skrip dapat disimpan sebagai konteks internal bila diperlukan.' },
 ]
 
@@ -219,8 +219,8 @@ function QuestionCard({ quizId, question, defaultPosition, defaultKind, locked }
           </label>
 
           {(kind === 'reading' || passage) && (
-            <label className={`${jlpt.field} ${jlpt.full}`}>Bacaan / konteks
-              <textarea className={jlpt.textarea} value={passage} disabled={locked} onChange={(event) => setPassage(event.target.value)} placeholder="Masukkan bacaan atau konteks yang diperlukan untuk soal ini." />
+            <label className={`${jlpt.field} ${jlpt.full}`}>Bacaan / konteks (opsional untuk Bunpou)
+              <textarea className={jlpt.textarea} value={passage} disabled={locked} onChange={(event) => setPassage(event.target.value)} placeholder="Kosongkan untuk soal bunpou tanpa teks, atau masukkan bacaan untuk soal dokkai." />
             </label>
           )}
 
