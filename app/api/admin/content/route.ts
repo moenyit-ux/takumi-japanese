@@ -23,6 +23,8 @@ function errorMessage(message: string) {
     admin_required: 'Akun ini tidak memiliki akses editor.',
     super_admin_required: 'Tindakan ini hanya dapat dilakukan Super Admin.',
     level_not_found: 'Level belajar tidak ditemukan.',
+    simulation_not_found: 'Paket simulasi tidak ditemukan.',
+    simulation_has_attempt_history: 'Paket simulasi ini sudah memiliki riwayat pengerjaan siswa sehingga soalnya dikunci.',
     content_admin_transition_not_allowed: 'Admin konten hanya dapat menyimpan draft atau mengirim materi ke review.',
     published_session_requires_super_admin: 'Materi yang sudah dipublikasikan hanya dapat diubah Super Admin.',
     publish_requires_content: 'Tambahkan minimal satu blok materi sebelum dipublikasikan.',
@@ -52,6 +54,7 @@ export async function POST(request: Request) {
 
   const action = text(body.action)
   const sessionId = text(body.sessionId)
+  const quizId = text(body.quizId)
   let result: { data: unknown; error: { message: string } | null } | null = null
 
   if (action === 'create_material') {
@@ -91,7 +94,7 @@ export async function POST(request: Request) {
     })
   } else if (action === 'upsert_question') {
     result = await supabase.rpc('admin_upsert_question', {
-      p_quiz_id: text(body.quizId),
+      p_quiz_id: quizId,
       p_question_id: nullableText(body.questionId),
       p_position: Math.round(numberValue(body.position, 1)),
       p_kind: text(body.kind),
@@ -105,7 +108,26 @@ export async function POST(request: Request) {
     })
   } else if (action === 'delete_question') {
     result = await supabase.rpc('admin_delete_question', {
-      p_quiz_id: text(body.quizId),
+      p_quiz_id: quizId,
+      p_question_id: text(body.questionId),
+    })
+  } else if (action === 'upsert_simulation_question') {
+    result = await supabase.rpc('admin_upsert_simulation_question', {
+      p_quiz_id: quizId,
+      p_question_id: nullableText(body.questionId),
+      p_position: Math.round(numberValue(body.position, 1)),
+      p_kind: text(body.kind),
+      p_prompt: text(body.prompt),
+      p_passage: text(body.passage),
+      p_audio_url: text(body.audioUrl),
+      p_explanation_id: text(body.explanationId),
+      p_explanation_text: text(body.explanationText),
+      p_points: numberValue(body.points, 1),
+      p_options: Array.isArray(body.options) ? body.options : [],
+    })
+  } else if (action === 'delete_simulation_question') {
+    result = await supabase.rpc('admin_delete_simulation_question', {
+      p_quiz_id: quizId,
       p_question_id: text(body.questionId),
     })
   } else if (action === 'set_status') {
@@ -123,6 +145,8 @@ export async function POST(request: Request) {
   }
 
   revalidatePath('/portal/admin')
+  revalidatePath('/portal/admin/jlpt')
+  if (quizId) revalidatePath(`/portal/admin/jlpt/${quizId}`)
   if (sessionId) {
     revalidatePath(`/portal/admin/session/${sessionId}`)
     revalidatePath(`/portal/session/${sessionId}`)
