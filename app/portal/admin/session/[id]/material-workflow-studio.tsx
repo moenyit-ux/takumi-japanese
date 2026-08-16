@@ -227,6 +227,28 @@ function ChapterFields({ kind, body, setBody, position, setPosition }: {
   )
 }
 
+function SequenceFields({ kind, position, setPosition }: {
+  kind: 'reading' | 'listening'
+  position: number
+  setPosition: (value: number) => void
+}) {
+  const label = kind === 'reading' ? 'Dokkai' : 'Choukai'
+  return (
+    <div className={styles.chapterInput}>
+      <div>
+        <div className={admin.eyebrow}>URUTAN MATERI</div>
+        <b>Nomor {label}</b>
+        <small>Tentukan nomor materi agar siswa mudah melihat urutan dan progres belajarnya.</small>
+      </div>
+      <div className={styles.chapterControls}>
+        <label className={admin.label}>Nomor materi
+          <input className={admin.input} type="number" min={1} value={position} onChange={(e) => setPosition(Math.max(1, Number(e.target.value) || 1))} />
+        </label>
+      </div>
+    </div>
+  )
+}
+
 function CoreFields({ kind, body, setBody, position, setPosition }: { kind: StructuredKind; body: RecordValue; setBody: (body: RecordValue) => void; position: number; setPosition: (value: number) => void }) {
   const set = (key: string, value: unknown) => setBody({ ...body, [key]: value })
 
@@ -377,13 +399,13 @@ function MaterialEditor({ sessionId, kind, block, defaultPosition, role }: { ses
     </summary>
     <div className={styles.itemBody}>
       {block?.review_note && <div className={styles.revisionNote}><b>Catatan revisi</b><span>{block.review_note}</span></div>}
+      {manualTitle && <SequenceFields kind={kind as 'reading' | 'listening'} position={position} setPosition={setPosition} />}
       {manualTitle && <label className={`${admin.label} ${admin.full}`}>Judul materi<input className={admin.input} value={title} onChange={(e) => setTitle(e.target.value)} placeholder={kind === 'reading' ? 'Contoh: Jadwal kereta' : 'Contoh: Percakapan di tempat kerja'} /></label>}
       <CoreFields kind={kind} body={body} setBody={setBody} position={position} setPosition={setPosition} />
 
       <details className={styles.extra}>
-        <summary>{chaptered ? 'Media & pengaturan' : 'Urutan & media'}</summary>
+        <summary>Media & pengaturan</summary>
         <div className={admin.formGrid}>
-          {!chaptered && <label className={admin.label}>Urutan<input className={admin.input} type="number" min={1} value={position} onChange={(e) => setPosition(Math.max(1, Number(e.target.value) || 1))} /></label>}
           {!manualTitle && <label className={admin.label}>Judul tampilan (opsional)<input className={admin.input} value={title} onChange={(e) => setTitle(e.target.value)} /></label>}
           <label className={admin.label}>Gambar<input className={styles.fileInput} type="file" accept="image/jpeg,image/png,image/webp,image/gif" disabled={busy} onChange={(e) => { const file = e.target.files?.[0]; if (file) void handleUpload(file, 'image') }} /></label>
           <label className={admin.label}>Audio<input className={styles.fileInput} type="file" accept="audio/mpeg,audio/mp4,audio/x-m4a,audio/wav,audio/ogg" disabled={busy} onChange={(e) => { const file = e.target.files?.[0]; if (file) void handleUpload(file, 'audio') }} /></label>
