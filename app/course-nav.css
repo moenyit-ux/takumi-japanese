@@ -1,10 +1,12 @@
-/* Dropdown navigasi Kursus di beranda */
-.courseNav {
+/* Dropdown navigasi Kursus dan Belajar Mandiri di beranda */
+.courseNav,
+.selfStudyNav {
   position: relative;
   align-self: center;
 }
 
-.courseNav summary {
+.courseNav summary,
+.selfStudyNav summary {
   list-style: none;
   display: inline-flex;
   align-items: center;
@@ -17,11 +19,13 @@
   transition: color 160ms ease, transform 160ms ease;
 }
 
-.courseNav summary::-webkit-details-marker {
+.courseNav summary::-webkit-details-marker,
+.selfStudyNav summary::-webkit-details-marker {
   display: none;
 }
 
-.courseNav summary i {
+.courseNav summary i,
+.selfStudyNav summary i {
   font-style: normal;
   font-size: 14px;
   line-height: 1;
@@ -29,20 +33,24 @@
 }
 
 .courseNav[open] summary,
-.courseNav:hover summary {
+.courseNav:hover summary,
+.selfStudyNav[open] summary,
+.selfStudyNav:hover summary {
   color: var(--deep);
 }
 
-.courseNav[open] summary i {
+.courseNav[open] summary i,
+.selfStudyNav[open] summary i {
   transform: rotate(180deg);
 }
 
-.courseDropdown {
+.courseDropdown,
+.selfStudyDropdown {
   position: absolute;
   z-index: 30;
   top: calc(100% + 5px);
   left: -18px;
-  width: 170px;
+  width: 190px;
   padding: 8px;
   border: 1px solid var(--line);
   border-radius: 16px;
@@ -54,46 +62,97 @@
   transition: opacity 160ms ease, transform 160ms ease, visibility 160ms ease;
 }
 
+.selfStudyDropdown {
+  width: 220px;
+}
+
 .courseNav[open] .courseDropdown,
 .courseNav:hover .courseDropdown,
-.courseNav:focus-within .courseDropdown {
+.courseNav:focus-within .courseDropdown,
+.selfStudyNav[open] .selfStudyDropdown,
+.selfStudyNav:hover .selfStudyDropdown,
+.selfStudyNav:focus-within .selfStudyDropdown {
   opacity: 1;
   visibility: visible;
   transform: translateY(0);
 }
 
-.courseDropdown a {
-  display: block;
-  padding: 11px 12px;
+.courseDropdown a,
+.selfStudyDropdown a,
+.comingSoonItem {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  min-height: 42px;
+  padding: 10px 12px;
   border-radius: 10px;
   color: var(--ink);
   font-size: 14px;
   font-weight: 700;
 }
 
-.courseDropdown a::after {
+.courseDropdown a,
+.selfStudyDropdown a {
+  cursor: pointer;
+}
+
+.courseDropdown a::after,
+.selfStudyDropdown a::after {
   display: none;
 }
 
 .courseDropdown a:hover,
-.courseDropdown a:focus-visible {
+.courseDropdown a:focus-visible,
+.selfStudyDropdown a:hover,
+.selfStudyDropdown a:focus-visible {
   background: var(--soft);
   color: var(--deep);
 }
 
-.courseNav summary:focus-visible {
+.comingSoonItem {
+  color: var(--muted);
+  cursor: default;
+}
+
+.comingSoonItem small {
+  flex: 0 0 auto;
+  padding: 4px 7px;
+  border-radius: 999px;
+  background: var(--soft);
+  color: var(--deep);
+  font-size: 9px;
+  font-weight: 900;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  white-space: nowrap;
+}
+
+.courseNav summary:focus-visible,
+.selfStudyNav summary:focus-visible {
   outline: 3px solid rgba(100, 190, 233, 0.48);
   outline-offset: 3px;
 }
 
-.coursePublicCard {
+.coursePublicCard,
+.priceCard {
   scroll-margin-top: 100px;
+}
+
+@media (max-width: 700px) {
+  .courseDropdown,
+  .selfStudyDropdown {
+    left: 0;
+  }
 }
 
 @media (prefers-reduced-motion: reduce) {
   .courseNav summary,
   .courseNav summary i,
-  .courseDropdown {
+  .courseDropdown,
+  .selfStudyNav summary,
+  .selfStudyNav summary i,
+  .selfStudyDropdown {
     transition: none;
   }
 }
