@@ -62,7 +62,7 @@ export default function Home() {
         <Link className="btn ghost" href="/login">Masuk</Link>
       </header>
 
-      <section className="hero">
+      <section className="hero heroSingle">
         <div>
           <div className="eyebrow">BAHASA JEPANG • JLPT • UNTUK PELAJAR INDONESIA</div>
           <h1>Naik level bahasa Jepang, <em>selangkah demi selangkah.</em></h1>
@@ -73,29 +73,6 @@ export default function Home() {
           <div className="trust">
             <span>✓ Kursus tatap muka bertahap</span>
             <span>✓ Website premium untuk belajar mandiri</span>
-          </div>
-        </div>
-
-        <div className="heroCard">
-          <div className="sun">匠</div>
-          <div>
-            <div className="eyebrow">FILOSOFI TAKUMI</div>
-            <h2>Belajar dari orang yang pernah melewati jalan yang sama.</h2>
-            <p>Pilih pendampingan langsung melalui kelas atau belajar fleksibel secara mandiri tanpa kehilangan arah dan progres.</p>
-            <div className="levelrow">
-              <b>N4</b>
-              <span style={{ display: 'grid', gap: '2px', lineHeight: 1.25 }}>
-                <span>1.000 kosakata</span>
-                <span>200 kanji</span>
-                <span>100 bunpou</span>
-              </span>
-              <b>N3</b>
-              <span style={{ display: 'grid', gap: '2px', lineHeight: 1.25 }}>
-                <span>2.000 kosakata</span>
-                <span>350 kanji</span>
-                <span>130 bunpou</span>
-              </span>
-            </div>
           </div>
         </div>
       </section>
