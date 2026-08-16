@@ -26,6 +26,8 @@ function errorMessage(message: string) {
     simulation_not_found: 'Paket simulasi tidak ditemukan.',
     simulation_has_attempt_history: 'Paket simulasi ini sudah memiliki riwayat pengerjaan siswa sehingga soalnya dikunci.',
     duplicate_simulation_question_number: 'Nomor soal tersebut sudah digunakan dalam paket simulasi ini. Pilih nomor lain.',
+    invalid_simulation_review_status: 'Status persetujuan simulasi tidak valid.',
+    simulation_requires_all_sections: 'Simulasi belum dapat diterbitkan. Isi minimal satu soal pada 文字・語彙, 文法・読解, dan 聴解.',
     invalid_position: 'Nomor soal tidak valid. Masukkan angka 1 atau lebih.',
     invalid_points: 'Poin soal tidak valid. Masukkan angka lebih dari 0.',
     content_admin_transition_not_allowed: 'Admin konten hanya dapat menyimpan draft atau mengirim materi ke review.',
@@ -132,6 +134,12 @@ export async function POST(request: Request) {
     result = await supabase.rpc('admin_delete_simulation_question', {
       p_quiz_id: quizId,
       p_question_id: text(body.questionId),
+    })
+  } else if (action === 'set_simulation_review_status') {
+    result = await supabase.rpc('admin_set_simulation_review_status', {
+      p_quiz_id: quizId,
+      p_status: text(body.status),
+      p_note: text(body.note),
     })
   } else if (action === 'set_status') {
     result = await supabase.rpc('admin_set_content_status', {
