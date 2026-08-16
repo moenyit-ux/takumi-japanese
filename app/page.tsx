@@ -129,6 +129,39 @@ export default function Home() {
               <p>Kelas tatap muka untuk siswa yang ingin memperkuat kemampuan N3 melalui pembelajaran langsung, latihan, dan evaluasi bersama pengajar.</p>
             </article>
           </div>
+
+          <div className="coursePacePanel">
+            <div className="coursePaceIntro">
+              <div>
+                <div className="eyebrow">PROGRAM REGULER</div>
+                <h3>Ritme belajar yang realistis.</h3>
+              </div>
+              <p>Patokan reguler adalah 8 pertemuan per bulan, dengan durasi 80 menit setiap pertemuan. Targetnya bukan sekadar menamatkan materi, tetapi membangun kemampuan yang benar-benar dapat digunakan.</p>
+            </div>
+
+            <div className="coursePaceGrid">
+              <article>
+                <span>N5</span>
+                <div><strong>6 bulan</strong><small>48 pertemuan</small></div>
+              </article>
+              <article>
+                <span>N4</span>
+                <div><strong>9 bulan</strong><small>72 pertemuan</small></div>
+              </article>
+              <article>
+                <span>N3</span>
+                <div><strong>12 bulan</strong><small>96 pertemuan</small></div>
+              </article>
+            </div>
+
+            <div className="acceleratedCourse">
+              <div>
+                <small>KELAS AKSELERASI</small>
+                <h4>Butuh jalur belajar lebih cepat?</h4>
+              </div>
+              <p>Program akselerasi dapat dikonsultasikan terlebih dahulu. Durasi dan ritmenya ditentukan melalui asesmen kemampuan awal, waktu belajar mandiri, frekuensi pertemuan, serta target JLPT siswa. Jika diperlukan, percepatan dilakukan dengan menambah frekuensi kelas tanpa memadatkan materi secara berlebihan.</p>
+            </div>
+          </div>
         </div>
       </section>
 
