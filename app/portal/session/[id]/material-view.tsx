@@ -334,7 +334,7 @@ export default function MaterialView({ blocks, bookmarkedIds, learningStatuses =
     )
   }
 
-  function renderKanjiBlock(block: ContentBlock, anchorId: string) {
+  function renderMaterialBlock(block: ContentBlock, anchorId: string) {
     const initialStatus = learningStatuses[block.id] || 'not_started'
     return (
       <article className="tm-material-card" data-block-id={block.id} id={anchorId} key={block.id}>
@@ -349,8 +349,9 @@ export default function MaterialView({ blocks, bookmarkedIds, learningStatuses =
 
   const vocabularyOnly = blocks.length > 0 && blocks.every((block) => block.kind === 'vocabulary')
   const kanjiOnly = blocks.length > 0 && blocks.every((block) => block.kind === 'kanji')
+  const grammarOnly = blocks.length > 0 && blocks.every((block) => block.kind === 'grammar')
 
-  if (vocabularyOnly || kanjiOnly) {
+  if (vocabularyOnly || kanjiOnly || grammarOnly) {
     const chapterMap = new Map<number, ContentBlock[]>()
     blocks.forEach((block) => {
       const chapter = chapterOf(block)
@@ -361,8 +362,8 @@ export default function MaterialView({ blocks, bookmarkedIds, learningStatuses =
     const chapters = Array.from(chapterMap.entries())
       .sort(([a], [b]) => a - b)
       .map(([chapter, chapterBlocks]) => [chapter, chapterBlocks.sort((a, b) => a.position - b.position)] as [number, ContentBlock[]])
-    const kind = vocabularyOnly ? 'vocabulary' : 'kanji'
-    const itemLabel = vocabularyOnly ? 'kosakata' : 'kanji'
+    const kind = vocabularyOnly ? 'vocabulary' : kanjiOnly ? 'kanji' : 'grammar'
+    const itemLabel = vocabularyOnly ? 'kosakata' : kanjiOnly ? 'kanji' : 'bunpou'
 
     return (
       <div className="tm-vocab-chapter-list">
@@ -386,7 +387,7 @@ export default function MaterialView({ blocks, bookmarkedIds, learningStatuses =
               <div className="tm-vocab-chapter-items">
                 {chapterBlocks.map((block) => vocabularyOnly
                   ? renderVocabularyBlock(block, `block-${block.id}`)
-                  : renderKanjiBlock(block, `block-${block.id}`))}
+                  : renderMaterialBlock(block, `block-${block.id}`))}
               </div>
             </details>
           )
@@ -403,7 +404,7 @@ export default function MaterialView({ blocks, bookmarkedIds, learningStatuses =
         const initialStatus = learningStatuses[block.id] || 'not_started'
 
         if (block.kind === 'vocabulary') return renderVocabularyBlock(block, anchorId)
-        if (block.kind === 'kanji') return renderKanjiBlock(block, anchorId)
+        if (block.kind === 'kanji' || block.kind === 'grammar') return renderMaterialBlock(block, anchorId)
 
         return (
           <article className="tm-material-card" data-block-id={block.id} id={anchorId} key={block.id}>
