@@ -53,7 +53,7 @@ export default async function JlptAdminPage({ searchParams }: { searchParams: Pr
         <div>
           <div className={styles.eyebrow}>模擬試験 · {editor.level.code}</div>
           <h1>Simulasi JLPT {editor.level.code}</h1>
-          <p>Kelola lima paket simulasi sebagai ujian penuh. Soal dibagi menjadi 言語知識, 読解, dan 聴解 agar pengisian materi tetap rapi dan mudah ditinjau.</p>
+          <p>Kelola lima paket simulasi sebagai ujian penuh. Soal dibagi menjadi 文字・語彙, 文法・読解, dan 聴解 agar pengisian materi mengikuti struktur ujian.</p>
         </div>
         <div className={styles.heroMark}>模</div>
       </header>
@@ -86,8 +86,8 @@ export default async function JlptAdminPage({ searchParams }: { searchParams: Pr
               </div>
 
               <div className={jlpt.stats}>
-                <div className={jlpt.stat}><b>{item.language_count}</b><span>言語知識</span></div>
-                <div className={jlpt.stat}><b>{item.reading_count}</b><span>読解</span></div>
+                <div className={jlpt.stat}><b>{item.language_count}</b><span>文字・語彙</span></div>
+                <div className={jlpt.stat}><b>{item.reading_count}</b><span>文法・読解</span></div>
                 <div className={jlpt.stat}><b>{item.listening_count}</b><span>聴解</span></div>
               </div>
 
