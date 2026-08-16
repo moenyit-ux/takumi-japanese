@@ -52,6 +52,14 @@ function normalizeOptions(question?: Question): Option[] {
   return source.slice(0, 4)
 }
 
+function nextFreePosition(questions: Question[], currentPosition: number) {
+  const used = new Set(questions.map((item) => item.position))
+  used.add(currentPosition)
+  let candidate = currentPosition + 1
+  while (used.has(candidate)) candidate += 1
+  return candidate
+}
+
 async function callAdmin(payload: Record<string, unknown>) {
   const response = await fetch('/api/admin/content', {
     method: 'POST',
@@ -72,25 +80,33 @@ async function uploadAudio(quizId: string, file: File) {
   return data.asset
 }
 
-function QuestionCard({ quizId, question, defaultPosition, defaultKind, locked }: {
+function QuestionCard({ quizId, question, defaultPosition, defaultKind, allQuestions, locked }: {
   quizId: string
   question?: Question
   defaultPosition: number
   defaultKind: SectionKind
+  allQuestions: Question[]
   locked?: boolean
 }) {
   const router = useRouter()
-  const [position, setPosition] = useState(question?.position || defaultPosition)
+  const [positionInput, setPositionInput] = useState(String(question?.position ?? defaultPosition))
   const kind: SectionKind = question?.kind || defaultKind
   const [prompt, setPrompt] = useState(question?.prompt || '')
   const [passage, setPassage] = useState(question?.passage || '')
   const [audioUrl, setAudioUrl] = useState(question?.audio_url || '')
   const [explanationId, setExplanationId] = useState(question?.explanation_id || '')
   const [explanationText, setExplanationText] = useState(question?.explanation_text || '')
-  const [points, setPoints] = useState(question?.points || 1)
+  const [pointsInput, setPointsInput] = useState(String(question?.points ?? 1))
   const [options, setOptions] = useState<Option[]>(normalizeOptions(question))
   const [message, setMessage] = useState('')
   const [busy, setBusy] = useState(false)
+
+  const positionNumber = Number(positionInput)
+  const positionValid = positionInput.trim() !== '' && Number.isInteger(positionNumber) && positionNumber >= 1
+  const positionConflict = positionValid && allQuestions.some((item) => item.position === positionNumber && item.id !== question?.id)
+  const pointsNumber = Number(pointsInput)
+  const pointsValid = pointsInput.trim() !== '' && Number.isFinite(pointsNumber) && pointsNumber > 0
+  const displayPosition = positionValid ? String(positionNumber).padStart(2, '0') : '—'
 
   function updateOption(index: number, value: string) {
     setOptions((current) => current.map((option, optionIndex) => optionIndex === index ? { ...option, option_text: value } : option))
@@ -116,6 +132,20 @@ function QuestionCard({ quizId, question, defaultPosition, defaultKind, locked }
 
   async function save() {
     if (locked) return
+
+    if (!positionValid) {
+      setMessage('Isi nomor soal dengan angka 1 atau lebih.')
+      return
+    }
+    if (positionConflict) {
+      setMessage(`Nomor soal ${positionNumber} sudah digunakan. Pilih nomor lain.`)
+      return
+    }
+    if (!pointsValid) {
+      setMessage('Isi poin dengan angka lebih dari 0.')
+      return
+    }
+
     const filled = options
       .filter((option) => option.option_text.trim())
       .map((option, index) => ({
@@ -144,14 +174,14 @@ function QuestionCard({ quizId, question, defaultPosition, defaultKind, locked }
         action: 'upsert_simulation_question',
         quizId,
         questionId: question?.id || null,
-        position,
+        position: positionNumber,
         kind,
         prompt: prompt.trim(),
         passage,
         audioUrl,
         explanationId,
         explanationText,
-        points,
+        points: pointsNumber,
         options: filled,
       })
       setMessage(question ? 'Perubahan soal tersimpan.' : 'Soal simulasi berhasil ditambahkan.')
@@ -161,9 +191,9 @@ function QuestionCard({ quizId, question, defaultPosition, defaultKind, locked }
         setAudioUrl('')
         setExplanationId('')
         setExplanationText('')
-        setPoints(1)
+        setPointsInput('1')
         setOptions(normalizeOptions())
-        setPosition((value) => value + 1)
+        setPositionInput(String(nextFreePosition(allQuestions, positionNumber)))
       }
       router.refresh()
     } catch (error) {
@@ -192,23 +222,46 @@ function QuestionCard({ quizId, question, defaultPosition, defaultKind, locked }
   return (
     <details className={jlpt.questionCard} open={!question}>
       <summary>
-        <span className={jlpt.questionNumber}>{String(position).padStart(2, '0')}</span>
+        <span className={jlpt.questionNumber}>{displayPosition}</span>
         <div className={jlpt.questionHeading}>
-          <small>{question ? `${section.jp} · SOAL ${String(position).padStart(2, '0')}` : `TAMBAH SOAL · ${section.jp}`}</small>
+          <small>{question ? `${section.jp} · SOAL ${displayPosition}` : `TAMBAH SOAL · ${section.jp}`}</small>
           <b>{title}</b>
         </div>
         <span className={jlpt.chevron}>⌄</span>
       </summary>
 
       <div className={jlpt.questionBody}>
-        <div className={jlpt.questionGrid}>
+        <div className={jlpt.questionSetupGrid}>
           <label className={jlpt.field}>Nomor soal
-            <input className={jlpt.input} type="number" min={1} value={position} disabled={locked} onChange={(event) => setPosition(Math.max(1, Number(event.target.value) || 1))} />
+            <input
+              className={`${jlpt.input} ${positionConflict ? jlpt.inputError : ''}`}
+              type="number"
+              min={1}
+              inputMode="numeric"
+              value={positionInput}
+              disabled={locked}
+              aria-invalid={positionConflict || !positionValid}
+              onChange={(event) => setPositionInput(event.target.value)}
+              placeholder="Contoh: 12"
+            />
+            {positionConflict && <small className={jlpt.fieldError}>Nomor ini sudah digunakan.</small>}
           </label>
           <label className={jlpt.field}>Poin
-            <input className={jlpt.input} type="number" min={1} step="0.5" value={points} disabled={locked} onChange={(event) => setPoints(Math.max(.5, Number(event.target.value) || 1))} />
+            <input
+              className={jlpt.input}
+              type="number"
+              min={0.5}
+              step="0.5"
+              inputMode="decimal"
+              value={pointsInput}
+              disabled={locked}
+              onChange={(event) => setPointsInput(event.target.value)}
+              placeholder="1"
+            />
           </label>
+        </div>
 
+        <div className={jlpt.questionGrid}>
           <label className={`${jlpt.field} ${jlpt.full}`}>Pertanyaan
             <textarea className={jlpt.textarea} value={prompt} disabled={locked} onChange={(event) => setPrompt(event.target.value)} placeholder="Tuliskan pertanyaan seperti pada format JLPT." />
           </label>
@@ -294,9 +347,9 @@ export default function SimulationEditor({ quizId, questions, locked = false }: 
 
       <div className={jlpt.questionList}>
         {visible.length ? visible.map((question) => (
-          <QuestionCard key={question.id} quizId={quizId} question={question} defaultPosition={question.position} defaultKind={activeSection} locked={locked} />
+          <QuestionCard key={question.id} quizId={quizId} question={question} defaultPosition={question.position} defaultKind={activeSection} allQuestions={questions} locked={locked} />
         )) : <div className={jlpt.empty}>Belum ada soal di bagian {activeMeta.jp}.</div>}
-        {!locked && <QuestionCard quizId={quizId} defaultPosition={nextPosition} defaultKind={activeSection} />}
+        {!locked && <QuestionCard quizId={quizId} defaultPosition={nextPosition} defaultKind={activeSection} allQuestions={questions} />}
       </div>
     </>
   )
