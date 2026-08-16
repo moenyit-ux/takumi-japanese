@@ -1,6 +1,7 @@
 import MaterialBookmark from './material-bookmark'
 import BlockLearningStatusControl, { type BlockLearningStatus } from './block-learning-status-control'
 import CollapsibleVocabularyCard from './collapsible-vocabulary-card'
+import CollapsibleGrammarCard from './collapsible-grammar-card'
 
 export type ContentBlock = {
   id: string
@@ -227,12 +228,13 @@ function GrammarCard({ block }: { block: ContentBlock }) {
   const important = textOf(body, 'important', 'note', 'warning')
   const pattern = textOf(body, 'pattern', 'formula') || title
   const groups = listOf(body, 'groups', 'conjugation_groups')
+  const numberLabel = String(block.position).padStart(2, '0')
 
   return (
     <>
       <div className="tm-card-header">
         <div className="tm-icon-box">▧</div>
-        <div className="tm-card-title"><h2>{title}</h2>{target && <small>Target belajar: {target}</small>}</div>
+        <div className="tm-card-title"><small>Bunpou {numberLabel}</small><h2>{title}</h2>{target && <small>Target belajar: {target}</small>}</div>
       </div>
 
       <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit,minmax(260px,1fr))', gap: 12, marginTop: 14 }}>
@@ -375,6 +377,28 @@ export default function MaterialView({ blocks, bookmarkedIds, learningStatuses =
     )
   }
 
+  function renderGrammarBlock(block: ContentBlock, anchorId: string) {
+    const body = recordOf(block.body)
+    const title = block.title || textOf(body, 'pattern', 'title') || 'Bunpou'
+    const positionLabel = textOf(body, 'count_label') || String(block.position).padStart(2, '0')
+    const initialStatus = learningStatuses[block.id] || 'not_started'
+
+    return (
+      <CollapsibleGrammarCard
+        key={block.id}
+        blockId={block.id}
+        anchorId={anchorId}
+        positionLabel={positionLabel}
+        title={title}
+        initialStatus={initialStatus}
+        bookmarked={bookmarkedIds.has(block.id)}
+        preview={preview}
+      >
+        <BlockContent block={block} />
+      </CollapsibleGrammarCard>
+    )
+  }
+
   function renderMaterialBlock(block: ContentBlock, anchorId: string) {
     const initialStatus = learningStatuses[block.id] || 'not_started'
     return (
@@ -428,7 +452,9 @@ export default function MaterialView({ blocks, bookmarkedIds, learningStatuses =
               <div className="tm-vocab-chapter-items">
                 {chapterBlocks.map((block) => vocabularyOnly
                   ? renderVocabularyBlock(block, `block-${block.id}`)
-                  : renderMaterialBlock(block, `block-${block.id}`))}
+                  : grammarOnly
+                    ? renderGrammarBlock(block, `block-${block.id}`)
+                    : renderMaterialBlock(block, `block-${block.id}`))}
               </div>
             </details>
           )
@@ -445,7 +471,8 @@ export default function MaterialView({ blocks, bookmarkedIds, learningStatuses =
         const initialStatus = learningStatuses[block.id] || 'not_started'
 
         if (block.kind === 'vocabulary') return renderVocabularyBlock(block, anchorId)
-        if (block.kind === 'kanji' || block.kind === 'grammar') return renderMaterialBlock(block, anchorId)
+        if (block.kind === 'grammar') return renderGrammarBlock(block, anchorId)
+        if (block.kind === 'kanji') return renderMaterialBlock(block, anchorId)
 
         return (
           <article className="tm-material-card" data-block-id={block.id} id={anchorId} key={block.id}>
