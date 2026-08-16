@@ -37,6 +37,20 @@ type EditorData = {
   }
 }
 
+type PackageLink = {
+  id: string
+  title: string
+}
+
+type PackageListData = {
+  packages: PackageLink[]
+}
+
+function packageNumber(title: string, index: number) {
+  const match = title.match(/Paket\s+(\d+)/i)
+  return match ? Number(match[1]) : index + 1
+}
+
 export default async function SimulationPackagePage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = await params
   const supabase = await createClient()
@@ -50,10 +64,15 @@ export default async function SimulationPackagePage({ params }: { params: Promis
   if (error || !data) notFound()
   const editor = data as EditorData
 
+  const { data: packageData } = await supabase.rpc('admin_list_simulation_packages', { p_level_code: editor.level.code })
+  const packages = ((packageData as PackageListData | null)?.packages || [])
+    .map((item, index) => ({ ...item, no: packageNumber(item.title, index) }))
+    .sort((a, b) => a.no - b.no)
+
   return (
     <main className={styles.editorShell}>
       <div className={styles.editorTop}>
-        <Link href={`/portal/admin/jlpt?level=${editor.level.code}`}>← Kembali ke paket {editor.level.code}</Link>
+        <Link href={`/portal/admin/jlpt?level=${editor.level.code}`}>← Kembali ke daftar paket {editor.level.code}</Link>
         <span className={styles.roleBadge}>{editor.role === 'super_admin' ? 'SUPER ADMIN' : 'CONTENT ADMIN'}</span>
       </div>
 
@@ -70,6 +89,24 @@ export default async function SimulationPackagePage({ params }: { params: Promis
           {editor.quiz.section_label && <p style={{ marginTop: 12 }}>{editor.quiz.section_label}</p>}
         </div>
       </header>
+
+      {packages.length > 0 && (
+        <nav className={jlpt.packageSwitcher} aria-label={`Pilih paket simulasi ${editor.level.code}`}>
+          <span className={jlpt.packageSwitcherLabel}>PILIH PAKET</span>
+          <div className={jlpt.packageSwitcherLinks}>
+            {packages.map((item) => (
+              <Link
+                className={item.id === editor.quiz.id ? jlpt.currentPackage : ''}
+                href={`/portal/admin/jlpt/${item.id}`}
+                aria-current={item.id === editor.quiz.id ? 'page' : undefined}
+                key={item.id}
+              >
+                Paket {item.no}
+              </Link>
+            ))}
+          </div>
+        </nav>
+      )}
 
       <SimulationEditor
         quizId={editor.quiz.id}
