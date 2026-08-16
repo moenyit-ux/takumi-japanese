@@ -3,6 +3,7 @@ import { createClient } from '../../../../lib/supabase/server'
 import { LEARNING_ASSET_BUCKET, LEARNING_ASSET_PREFIX } from '../../../../lib/supabase/assets'
 
 const MAX_BYTES = 20 * 1024 * 1024
+const UUID_RE = /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i
 const MIME_TO_EXT: Record<string, string> = {
   'image/jpeg': 'jpg',
   'image/png': 'png',
@@ -27,20 +28,29 @@ export async function POST(request: Request) {
 
   const form = await request.formData()
   const sessionId = String(form.get('sessionId') || '')
+  const quizId = String(form.get('quizId') || '')
   const file = form.get('file')
 
-  if (!/^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i.test(sessionId)) {
-    return NextResponse.json({ error: 'invalid_session' }, { status: 400 })
-  }
   if (!(file instanceof File)) return NextResponse.json({ error: 'file_required' }, { status: 400 })
   if (!MIME_TO_EXT[file.type]) return NextResponse.json({ error: 'unsupported_file_type' }, { status: 400 })
   if (file.size <= 0 || file.size > MAX_BYTES) return NextResponse.json({ error: 'file_too_large' }, { status: 400 })
 
-  const { data: session } = await supabase.from('learning_sessions').select('id').eq('id', sessionId).maybeSingle()
-  if (!session) return NextResponse.json({ error: 'session_not_found' }, { status: 404 })
+  let pathPrefix = ''
+
+  if (UUID_RE.test(sessionId)) {
+    const { data: session } = await supabase.from('learning_sessions').select('id').eq('id', sessionId).maybeSingle()
+    if (!session) return NextResponse.json({ error: 'session_not_found' }, { status: 404 })
+    pathPrefix = `sessions/${sessionId}`
+  } else if (UUID_RE.test(quizId)) {
+    const { data: simulation, error: simulationError } = await supabase.rpc('admin_get_simulation_editor', { p_quiz_id: quizId })
+    if (simulationError || !simulation) return NextResponse.json({ error: 'simulation_not_found' }, { status: 404 })
+    pathPrefix = `simulations/${quizId}`
+  } else {
+    return NextResponse.json({ error: 'invalid_asset_parent' }, { status: 400 })
+  }
 
   const ext = MIME_TO_EXT[file.type]
-  const path = `sessions/${sessionId}/${crypto.randomUUID()}.${ext}`
+  const path = `${pathPrefix}/${crypto.randomUUID()}.${ext}`
   const bytes = await file.arrayBuffer()
   const { error: uploadError } = await supabase.storage
     .from(LEARNING_ASSET_BUCKET)
