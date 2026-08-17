@@ -64,7 +64,7 @@ export default function Home() {
 
       <section className="hero heroSingle">
         <div>
-          <div className="eyebrow">BAHASA JEPANG • JLPT • UNTUK PELAJAR INDONESIA</div>
+          <div className="eyebrow">BELAJAR BAHASA JEPANG • SIAP JLPT • RAIH TARGETMU</div>
           <h1>Naik level bahasa Jepang, <em>selangkah demi selangkah.</em></h1>
           <p>Pilih belajar langsung melalui kursus tatap muka atau belajar mandiri melalui website premium Takumi sesuai ritme dan kebutuhanmu.</p>
           <div className="actions">
