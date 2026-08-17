@@ -88,7 +88,12 @@ export default function Home() {
           <div className="coursePublicGrid coursePublicGridFour">
             <article className="coursePublicCard" id="kursus-dasar">
               <div className="coursePublicHead"><b>D</b><div><small>KELAS DASAR</small><h3>Mulai dari fondasi</h3></div></div>
-              <p>Kelas untuk siswa yang ingin membangun dasar bahasa Jepang secara bertahap sebelum melanjutkan ke level JLPT.</p>
+              <div className="coursePublicStats">
+                <span><b>あ・ア</b> Hiragana &amp; Katakana</span>
+                <span><b>±300</b> kosakata dasar</span>
+                <span><b>30</b> kanji dasar</span>
+              </div>
+              <p>Mulai dari nol dengan pelafalan, salam, angka dan waktu, percakapan sehari-hari, serta pola kalimat dasar sebagai bekal sebelum masuk JLPT N5.</p>
               <div className="courseProgramInfo">
                 <div className="courseProgramLabel">PROGRAM REGULER</div>
                 <div className="courseProgramFacts">
