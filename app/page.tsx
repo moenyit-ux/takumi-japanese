@@ -104,6 +104,10 @@ export default function Home() {
                   <div><small>Biaya kelas</small><strong>Rp250.000 <span>/bulan</span></strong></div>
                   <p>Termasuk akses Website Premium Takumi tanpa biaya tambahan. Pembayaran seluruh program sekaligus di awal mendapat potongan harga.</p>
                 </div>
+                <div className="courseConsultActions">
+                  <Link className="btn primary" href="/portal/support?kelas=dasar&program=reguler">Konsultasi kelas reguler</Link>
+                  <Link className="btn ghost" href="/portal/support?kelas=dasar&program=akselerasi">Konsultasi kelas akselerasi</Link>
+                </div>
               </div>
             </article>
 
@@ -124,6 +128,10 @@ export default function Home() {
                 <div className="courseTuition">
                   <div><small>Biaya kelas</small><strong>Rp350.000 <span>/bulan</span></strong></div>
                   <p>Termasuk akses Website Premium Takumi tanpa biaya tambahan. Pembayaran seluruh program sekaligus di awal mendapat potongan harga.</p>
+                </div>
+                <div className="courseConsultActions">
+                  <Link className="btn primary" href="/portal/support?kelas=n5&program=reguler">Konsultasi kelas reguler</Link>
+                  <Link className="btn ghost" href="/portal/support?kelas=n5&program=akselerasi">Konsultasi kelas akselerasi</Link>
                 </div>
               </div>
             </article>
@@ -146,6 +154,10 @@ export default function Home() {
                   <div><small>Biaya kelas</small><strong>Rp450.000 <span>/bulan</span></strong></div>
                   <p>Termasuk akses Website Premium Takumi tanpa biaya tambahan. Pembayaran seluruh program sekaligus di awal mendapat potongan harga.</p>
                 </div>
+                <div className="courseConsultActions">
+                  <Link className="btn primary" href="/portal/support?kelas=n4&program=reguler">Konsultasi kelas reguler</Link>
+                  <Link className="btn ghost" href="/portal/support?kelas=n4&program=akselerasi">Konsultasi kelas akselerasi</Link>
+                </div>
               </div>
             </article>
 
@@ -166,6 +178,10 @@ export default function Home() {
                 <div className="courseTuition">
                   <div><small>Biaya kelas</small><strong>Rp550.000 <span>/bulan</span></strong></div>
                   <p>Termasuk akses Website Premium Takumi tanpa biaya tambahan. Pembayaran seluruh program sekaligus di awal mendapat potongan harga.</p>
+                </div>
+                <div className="courseConsultActions">
+                  <Link className="btn primary" href="/portal/support?kelas=n3&program=reguler">Konsultasi kelas reguler</Link>
+                  <Link className="btn ghost" href="/portal/support?kelas=n3&program=akselerasi">Konsultasi kelas akselerasi</Link>
                 </div>
               </div>
             </article>
