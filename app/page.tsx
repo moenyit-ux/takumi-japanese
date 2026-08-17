@@ -27,7 +27,7 @@ export default function Home() {
               <Link href="/profil/visi-misi">Visi &amp; Misi</Link>
               <Link href="/profil/profil-pendiri">Profil Pendiri</Link>
               <Link href="/profil/pengajar">Pengajar</Link>
-              <Link href="/profil#testimoni">Testimoni</Link>
+              <Link href="/profil/testimoni">Testimoni</Link>
             </div>
           </details>
           <details className="courseNav">
