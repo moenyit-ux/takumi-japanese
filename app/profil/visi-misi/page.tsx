@@ -35,7 +35,7 @@ export default function VisionMissionPage() {
         <Link href="/" aria-label="Kembali ke beranda"><Brand /></Link>
         <nav>
           <Link href="/profil/visi-misi">Visi &amp; Misi</Link>
-          <Link href="/profil#profil-pendiri">Profil Pendiri</Link>
+          <Link href="/profil/profil-pendiri">Profil Pendiri</Link>
           <Link href="/profil#pengajar">Pengajar</Link>
           <Link href="/profil#testimoni">Testimoni</Link>
         </nav>
