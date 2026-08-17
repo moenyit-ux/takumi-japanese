@@ -21,7 +21,7 @@ export default function ProfilePage() {
           <Link href="/profil/visi-misi">Visi &amp; Misi</Link>
           <Link href="/profil/profil-pendiri">Profil Pendiri</Link>
           <Link href="/profil/pengajar">Pengajar</Link>
-          <a href="#testimoni">Testimoni</a>
+          <Link href="/profil/testimoni">Testimoni</Link>
         </nav>
         <Link className="btn ghost" href="/">Beranda</Link>
       </header>
@@ -58,7 +58,8 @@ export default function ProfilePage() {
           <article id="testimoni">
             <span>04</span>
             <h3>Testimoni</h3>
-            <p>Cerita dan pengalaman siswa akan ditampilkan di bagian ini setelah mendapat izin untuk dipublikasikan, sehingga testimoni yang tampil benar-benar berasal dari pengalaman belajar nyata.</p>
+            <p>Cerita dan pengalaman siswa akan ditampilkan setelah mendapat izin untuk dipublikasikan, sehingga testimoni yang tampil benar-benar berasal dari pengalaman belajar nyata.</p>
+            <Link className="btn ghost" href="/profil/testimoni">Lihat Testimoni →</Link>
           </article>
         </div>
       </section>
