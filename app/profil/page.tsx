@@ -19,7 +19,7 @@ export default function ProfilePage() {
         <Link href="/" aria-label="Kembali ke beranda"><Brand /></Link>
         <nav>
           <Link href="/profil/visi-misi">Visi &amp; Misi</Link>
-          <a href="#profil-pendiri">Profil Pendiri</a>
+          <Link href="/profil/profil-pendiri">Profil Pendiri</Link>
           <a href="#pengajar">Pengajar</a>
           <a href="#testimoni">Testimoni</a>
         </nav>
@@ -34,22 +34,26 @@ export default function ProfilePage() {
         </div>
 
         <div className="profileGrid">
-          <article id="visi-misi">
+          <article>
             <span>01</span>
             <h3>Visi &amp; Misi</h3>
-            <p>Kenali arah Takumi, lima misi yang kami jalankan, serta nilai utama yang menjadi dasar dalam mendampingi siswa.</p>
-            <Link className="btn ghost" href="/profil/visi-misi" style={{ marginTop: 18 }}>Baca Visi &amp; Misi →</Link>
+            <p>Takumi ingin membuka akses pendidikan bahasa Jepang yang terjangkau, terpercaya, profesional, dan berdampak nyata bagi masa depan siswa.</p>
+            <Link className="btn ghost" href="/profil/visi-misi">Baca Visi &amp; Misi →</Link>
           </article>
-          <article id="profil-pendiri">
+
+          <article>
             <span>02</span>
             <h3>Profil Pendiri</h3>
-            <p>Takumi lahir dari pengalaman belajar bahasa Jepang secara mandiri dan dari pemahaman bahwa pekerja membutuhkan pola belajar yang ringkas, masuk akal, dan dapat dijalankan secara konsisten.</p>
+            <p>Kisah Wahyu Imamuddin membentuk arah Takumi: dari kegagalan, perjuangan belajar mandiri, pengalaman mengajar, hingga bekerja dan membangun karier di Jepang.</p>
+            <Link className="btn ghost" href="/profil/profil-pendiri">Baca Profil Pendiri →</Link>
           </article>
+
           <article id="pengajar">
             <span>03</span>
             <h3>Pengajar</h3>
             <p>Tim pengajar Takumi mendampingi proses belajar dengan fokus pada pemahaman materi, latihan yang terarah, serta kebutuhan siswa pada setiap level.</p>
           </article>
+
           <article id="testimoni">
             <span>04</span>
             <h3>Testimoni</h3>
