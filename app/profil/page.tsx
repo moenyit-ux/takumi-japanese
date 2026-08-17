@@ -20,7 +20,7 @@ export default function ProfilePage() {
         <nav>
           <Link href="/profil/visi-misi">Visi &amp; Misi</Link>
           <Link href="/profil/profil-pendiri">Profil Pendiri</Link>
-          <a href="#pengajar">Pengajar</a>
+          <Link href="/profil/pengajar">Pengajar</Link>
           <a href="#testimoni">Testimoni</a>
         </nav>
         <Link className="btn ghost" href="/">Beranda</Link>
@@ -51,7 +51,8 @@ export default function ProfilePage() {
           <article id="pengajar">
             <span>03</span>
             <h3>Pengajar</h3>
-            <p>Tim pengajar Takumi mendampingi proses belajar dengan fokus pada pemahaman materi, latihan yang terarah, serta kebutuhan siswa pada setiap level.</p>
+            <p>Kenali pengajar Takumi yang mendampingi proses belajar dengan fokus pada pemahaman materi, latihan yang terarah, serta kebutuhan siswa pada setiap level.</p>
+            <Link className="btn ghost" href="/profil/pengajar">Lihat Pengajar →</Link>
           </article>
 
           <article id="testimoni">
