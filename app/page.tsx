@@ -89,9 +89,9 @@ export default function Home() {
             <article className="coursePublicCard" id="kursus-dasar">
               <div className="coursePublicHead"><b>D</b><div><small>KELAS DASAR</small><h3>Mulai dari fondasi</h3></div></div>
               <div className="coursePublicStats">
-                <span><b>あ・ア</b> Hiragana &amp; Katakana</span>
+                <span><b>あ・ア</b> huruf Hiragana &amp; huruf Katakana</span>
                 <span><b>±300</b> kosakata dasar</span>
-                <span><b>30</b> kanji dasar</span>
+                <span><b>30</b> huruf kanji dasar</span>
               </div>
               <p>Mulai dari nol dengan pelafalan, salam, angka dan waktu, percakapan sehari-hari, serta pola kalimat dasar sebagai bekal sebelum masuk JLPT N5.</p>
               <div className="courseProgramInfo">
