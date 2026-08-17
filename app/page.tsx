@@ -105,8 +105,8 @@ export default function Home() {
             <article className="coursePublicCard" id="kursus-n5">
               <div className="coursePublicHead"><b>N5</b><div><small>KURSUS JLPT N5</small><h3>Mulai level pemula</h3></div></div>
               <div className="coursePublicStats">
-                <span><b>±770</b> kosakata</span>
-                <span><b>119</b> huruf kanji</span>
+                <span><b>750</b> kosakata</span>
+                <span><b>120</b> huruf kanji</span>
                 <span><b>75</b> tata bahasa</span>
               </div>
               <p>Kelas N5 untuk membangun kemampuan dasar JLPT dengan ritme belajar yang terarah dan cukup waktu untuk mengulang materi.</p>
