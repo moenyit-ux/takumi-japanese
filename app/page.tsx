@@ -97,7 +97,7 @@ export default function Home() {
               <div className="courseProgramInfo">
                 <div className="courseProgramLabel">PROGRAM REGULER</div>
                 <div className="courseProgramFacts">
-                  <span><b>Disesuaikan</b><small>durasi sesuai kemampuan awal</small></span>
+                  <span><b>3 bulan</b><small>24 pertemuan</small></span>
                   <span><b>8× / bulan</b><small>80 menit / pertemuan</small></span>
                 </div>
                 <div className="courseTuition">
