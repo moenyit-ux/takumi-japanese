@@ -36,7 +36,7 @@
 }
 
 .content {
-  max-width: 1080px;
+  max-width: 1160px;
   margin: 0 auto;
   padding: 24px 24px 76px;
 }
@@ -46,7 +46,7 @@
   justify-content: space-between;
   gap: 24px;
   align-items: end;
-  margin-bottom: 22px;
+  margin-bottom: 24px;
 }
 
 .label {
@@ -56,9 +56,9 @@
   letter-spacing: 0.13em;
 }
 
-.sectionHeading h2,
-.emptyState h2 {
+.sectionHeading h2 {
   margin: 7px 0 0;
+  max-width: 680px;
   font-size: clamp(26px, 3.6vw, 38px);
   line-height: 1.12;
   letter-spacing: -0.03em;
@@ -68,14 +68,14 @@
   display: flex;
   align-items: center;
   gap: 9px;
-  max-width: 280px;
+  max-width: 285px;
   padding: 11px 14px;
   border: 1px solid var(--line);
   border-radius: 14px;
   background: #fff;
 }
 
-.verifiedNote span {
+.verifiedNote > span {
   display: grid;
   place-items: center;
   flex: 0 0 24px;
@@ -97,115 +97,105 @@
 
 .testimonialGrid {
   display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: 18px;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 20px;
 }
 
 .testimonialCard {
-  position: relative;
-  min-height: 280px;
+  overflow: hidden;
   display: flex;
+  min-width: 0;
+  flex-direction: column;
+  border: 1px solid var(--line);
+  border-radius: 20px;
+  background: #fff;
+  box-shadow: 0 12px 32px rgba(37, 84, 110, 0.07);
+}
+
+.photoArea {
+  display: grid;
+  place-items: center;
+  width: 100%;
+  aspect-ratio: 4 / 5;
+  background:
+    radial-gradient(circle at 50% 28%, rgba(255, 255, 255, 0.95), transparent 24%),
+    linear-gradient(150deg, #dceff8 0%, #eef8fc 48%, #d6eaf5 100%);
+  color: var(--deep);
+  text-align: center;
+}
+
+.photoArea span {
+  display: grid;
+  place-items: center;
+  width: 92px;
+  height: 92px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.78);
+  border: 1px solid rgba(37, 84, 110, 0.12);
+  font-size: 28px;
+  font-weight: 900;
+  letter-spacing: -0.04em;
+}
+
+.photoArea small {
+  margin-top: -42px;
+  color: var(--muted);
+  font-size: 11px;
+  font-weight: 700;
+}
+
+.cardBody {
+  display: flex;
+  flex: 1;
   flex-direction: column;
   justify-content: space-between;
-  padding: 28px;
-  border: 1px solid var(--line);
-  border-radius: 22px;
-  background: #fff;
-  box-shadow: 0 12px 30px rgba(37, 84, 110, 0.06);
+  padding: 18px 18px 20px;
 }
 
-.quoteMark {
-  position: absolute;
-  top: 16px;
-  right: 24px;
-  color: #d9edf7;
-  font-family: Georgia, serif;
-  font-size: 72px;
-  line-height: 1;
-}
-
-.testimonialCard blockquote {
-  position: relative;
-  z-index: 1;
+.cardBody blockquote {
   margin: 0;
-  padding-right: 36px;
-  color: var(--ink);
-  font-size: 18px;
-  font-weight: 700;
-  line-height: 1.65;
+  color: #6f8799;
+  font-size: 15px;
+  line-height: 1.5;
 }
 
-.studentInfo {
+.studentRow {
   display: flex;
   align-items: center;
+  justify-content: space-between;
   gap: 12px;
-  margin-top: 28px;
+  margin-top: 18px;
 }
 
-.avatar {
-  display: grid;
-  place-items: center;
-  flex: 0 0 46px;
-  width: 46px;
-  height: 46px;
-  border-radius: 50%;
-  background: linear-gradient(145deg, #dff2fb, #f4fbfe);
-  color: var(--deep);
-  font-size: 13px;
-  font-weight: 900;
-}
-
-.studentInfo div:last-child {
-  display: grid;
-  gap: 2px;
-}
-
-.studentInfo strong {
+.studentRow strong {
+  color: var(--ink);
   font-size: 14px;
+  line-height: 1.4;
 }
 
-.studentInfo span,
-.studentInfo small {
-  color: var(--muted);
-  font-size: 12px;
+.studentRow strong span {
+  font-weight: 800;
 }
 
-.emptyState {
-  display: grid;
-  grid-template-columns: 150px minmax(0, 1fr);
-  gap: 28px;
+.levelBadge {
+  display: inline-flex;
   align-items: center;
-  padding: 34px;
-  border: 1px solid var(--line);
-  border-radius: 24px;
-  background: linear-gradient(135deg, #f7fcff, #ffffff);
-  box-shadow: 0 12px 30px rgba(37, 84, 110, 0.05);
-}
-
-.emptyIcon {
-  display: grid;
-  place-items: center;
-  width: 150px;
-  aspect-ratio: 1;
-  border-radius: 22px;
-  background: #eaf6fb;
-  color: var(--deep);
-  font-size: 54px;
+  justify-content: center;
+  min-width: 40px;
+  height: 28px;
+  padding: 0 10px;
+  border-radius: 999px;
+  background: #fff0f0;
+  color: #ef4444;
+  font-size: 12px;
   font-weight: 900;
-}
-
-.emptyState p {
-  max-width: 660px;
-  margin: 12px 0 0;
-  color: var(--muted);
-  line-height: 1.75;
 }
 
 .principles {
   display: grid;
   grid-template-columns: repeat(3, minmax(0, 1fr));
   gap: 16px;
-  margin-top: 20px;
+  margin-top: 28px;
 }
 
 .principles article {
@@ -223,7 +213,7 @@
 }
 
 .principles h3 {
-  margin: 8px 0 8px;
+  margin: 8px 0;
   font-size: 18px;
   letter-spacing: -0.02em;
 }
@@ -235,7 +225,13 @@
   line-height: 1.65;
 }
 
-@media (max-width: 760px) {
+@media (max-width: 920px) {
+  .testimonialGrid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 640px) {
   .hero {
     padding-top: 52px;
   }
@@ -255,14 +251,11 @@
     grid-template-columns: 1fr;
   }
 
-  .emptyState {
-    grid-template-columns: 1fr;
-    padding: 24px;
+  .photoArea {
+    aspect-ratio: 4 / 4.3;
   }
 
-  .emptyIcon {
-    width: 92px;
-    border-radius: 18px;
-    font-size: 38px;
+  .cardBody {
+    padding: 17px 17px 19px;
   }
 }
