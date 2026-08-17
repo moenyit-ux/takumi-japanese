@@ -17,11 +17,75 @@ type Testimonial = {
   name: string
   initials: string
   program: string
-  detail?: string
+  level: 'N3' | 'N4'
   quote: string
 }
 
-const testimonials: Testimonial[] = []
+const testimonials: Testimonial[] = [
+  {
+    name: 'Satata',
+    initials: 'SA',
+    program: 'SSW',
+    level: 'N3',
+    quote: 'Materinya jelas banget. Dari nol sampai paham pola kalimat!',
+  },
+  {
+    name: 'Sendhy',
+    initials: 'SE',
+    program: 'SSW',
+    level: 'N3',
+    quote: 'Senang bisa mendapatkan bimbingan dari senseinya,karena berkat pengalaman dan materi yang di ajarkan saya bisa lolos tes N3 dengan nilai memuaskan tanpa kesulitan.',
+  },
+  {
+    name: 'Tri',
+    initials: 'TR',
+    program: 'SSW',
+    level: 'N3',
+    quote: 'Senseinya baik, sabar, santai. cara penyampaiannya simple, jelas dan mudah dipahami.',
+  },
+  {
+    name: 'Prima',
+    initials: 'PR',
+    program: 'Jisshuusei',
+    level: 'N3',
+    quote: 'Worth it. Karena bikin saya ngerti.',
+  },
+  {
+    name: 'Wisnu',
+    initials: 'WI',
+    program: 'Jisshuusei',
+    level: 'N4',
+    quote: 'Instruktur di LPK Takumi ramah dan profesional, materi yang diberikan jelas dan mudah dipahami. Saya merasa banyak berkembang setelah mengikuti belajar di sini.',
+  },
+  {
+    name: 'Hafidz',
+    initials: 'HA',
+    program: 'Jisshuusei',
+    level: 'N4',
+    quote: 'Pembelajaranya dari Imam sensei sangat mudah dimengerti.',
+  },
+  {
+    name: 'Deky',
+    initials: 'DE',
+    program: 'Jisshuusei',
+    level: 'N4',
+    quote: 'Kesuksesan datang di orang yang mau berusaha .1% skill 99% tekad dan kemauan !!',
+  },
+  {
+    name: 'Hasta',
+    initials: 'HT',
+    program: 'Jisshuusei',
+    level: 'N4',
+    quote: 'Padi yg di panen hari ini ,tidak di tanam kemarin sore .Konsistensi adalah kunci untuk mencapai hasil luar biasa,dan Siswa hebat tentunya lahir dari didikan pembimbing yg hebat.',
+  },
+  {
+    name: 'Nur',
+    initials: 'NU',
+    program: 'Jisshuusei',
+    level: 'N4',
+    quote: 'Langkah kecil menuju mimpi besar di Jepang!',
+  },
+]
 
 export default function TestimonialsPage() {
   return (
@@ -40,7 +104,7 @@ export default function TestimonialsPage() {
       <section className={styles.hero}>
         <div className="eyebrow">PROFIL TAKUMI</div>
         <h1>Cerita dari perjalanan belajar mereka.</h1>
-        <p>Pengalaman siswa membantu kami melihat apa yang benar-benar bermanfaat dalam proses belajar. Testimoni yang tampil di halaman ini hanya akan dipublikasikan setelah mendapat izin dari siswa.</p>
+        <p>Pengalaman nyata dari siswa yang pernah belajar bersama Takumi. Kami menampilkan cerita mereka apa adanya agar calon siswa dapat melihat proses belajar dari sudut pandang peserta sendiri.</p>
         <div className={styles.breadcrumb}>
           <Link href="/">Home</Link>
           <span>/</span>
@@ -56,53 +120,46 @@ export default function TestimonialsPage() {
           </div>
           <div className={styles.verifiedNote}>
             <span>✓</span>
-            <p>Dipublikasikan dengan persetujuan siswa.</p>
+            <p>Testimoni siswa Takumi yang sudah pernah dipublikasikan.</p>
           </div>
         </div>
 
-        {testimonials.length > 0 ? (
-          <div className={styles.testimonialGrid}>
-            {testimonials.map((testimonial) => (
-              <article className={styles.testimonialCard} key={`${testimonial.name}-${testimonial.program}`}>
-                <div className={styles.quoteMark}>“</div>
-                <blockquote>{testimonial.quote}</blockquote>
-                <div className={styles.studentInfo}>
-                  <div className={styles.avatar}>{testimonial.initials}</div>
+        <div className={styles.testimonialGrid}>
+          {testimonials.map((testimonial) => (
+            <article className={styles.testimonialCard} key={`${testimonial.name}-${testimonial.level}`}>
+              <div className={styles.photoArea} aria-label={`Area foto ${testimonial.name}`}>
+                <span>{testimonial.initials}</span>
+                <small>Foto siswa</small>
+              </div>
+
+              <div className={styles.cardBody}>
+                <blockquote>“{testimonial.quote}”</blockquote>
+                <div className={styles.studentRow}>
                   <div>
-                    <strong>{testimonial.name}</strong>
-                    <span>{testimonial.program}</span>
-                    {testimonial.detail ? <small>{testimonial.detail}</small> : null}
+                    <strong>{testimonial.name} <span>/ {testimonial.program}</span></strong>
                   </div>
+                  <span className={styles.levelBadge}>{testimonial.level}</span>
                 </div>
-              </article>
-            ))}
-          </div>
-        ) : (
-          <div className={styles.emptyState}>
-            <div className={styles.emptyIcon}>声</div>
-            <div>
-              <div className={styles.label}>TESTIMONI SEGERA HADIR</div>
-              <h2>Belum ada testimoni yang dipublikasikan.</h2>
-              <p>Kami memilih menunggu cerita nyata dari siswa dan meminta izin terlebih dahulu sebelum menampilkannya di website.</p>
-            </div>
-          </div>
-        )}
+              </div>
+            </article>
+          ))}
+        </div>
 
         <section className={styles.principles}>
           <article>
             <span>01</span>
             <h3>Pengalaman nyata</h3>
-            <p>Testimoni berasal dari siswa yang benar-benar mengikuti proses belajar di Takumi.</p>
+            <p>Testimoni berasal dari siswa yang benar-benar pernah mengikuti proses belajar bersama Takumi.</p>
           </article>
           <article>
             <span>02</span>
             <h3>Konteks yang jelas</h3>
-            <p>Level atau program belajar ditampilkan agar pengalaman siswa tidak terlepas dari konteksnya.</p>
+            <p>Status peserta dan level belajar ditampilkan agar setiap cerita tetap memiliki konteks.</p>
           </article>
           <article>
             <span>03</span>
-            <h3>Dengan persetujuan</h3>
-            <p>Nama, foto, maupun cerita siswa tidak dipublikasikan tanpa izin.</p>
+            <h3>Tidak dibuat-buat</h3>
+            <p>Isi testimoni dipertahankan sesuai cerita yang sebelumnya sudah diberikan oleh siswa.</p>
           </article>
         </section>
       </section>
