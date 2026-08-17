@@ -18,7 +18,7 @@ export default function ProfilePage() {
       <header>
         <Link href="/" aria-label="Kembali ke beranda"><Brand /></Link>
         <nav>
-          <a href="#visi-misi">Visi &amp; Misi</a>
+          <Link href="/profil/visi-misi">Visi &amp; Misi</Link>
           <a href="#profil-pendiri">Profil Pendiri</a>
           <a href="#pengajar">Pengajar</a>
           <a href="#testimoni">Testimoni</a>
@@ -37,7 +37,8 @@ export default function ProfilePage() {
           <article id="visi-misi">
             <span>01</span>
             <h3>Visi &amp; Misi</h3>
-            <p>Membantu pelajar Indonesia meningkatkan kemampuan bahasa Jepang secara terarah, fleksibel, dan relevan dengan target JLPT maupun kehidupan nyata di Jepang.</p>
+            <p>Kenali arah Takumi, lima misi yang kami jalankan, serta nilai utama yang menjadi dasar dalam mendampingi siswa.</p>
+            <Link className="btn ghost" href="/profil/visi-misi" style={{ marginTop: 18 }}>Baca Visi &amp; Misi →</Link>
           </article>
           <article id="profil-pendiri">
             <span>02</span>
