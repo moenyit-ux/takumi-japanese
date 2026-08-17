@@ -1,0 +1,268 @@
+.hero {
+  max-width: 980px;
+  margin: 0 auto;
+  padding: 72px 24px 34px;
+  text-align: center;
+}
+
+.hero h1 {
+  margin: 10px auto 14px;
+  max-width: 760px;
+  font-size: clamp(38px, 5vw, 58px);
+  line-height: 1.08;
+  letter-spacing: -0.045em;
+}
+
+.hero p {
+  max-width: 740px;
+  margin: 0 auto;
+  color: var(--muted);
+  font-size: 16px;
+  line-height: 1.75;
+}
+
+.breadcrumb {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  margin-top: 18px;
+  color: var(--muted);
+  font-size: 13px;
+}
+
+.breadcrumb a {
+  color: var(--deep);
+  font-weight: 700;
+}
+
+.content {
+  max-width: 1080px;
+  margin: 0 auto;
+  padding: 24px 24px 76px;
+}
+
+.sectionHeading {
+  display: flex;
+  justify-content: space-between;
+  gap: 24px;
+  align-items: end;
+  margin-bottom: 22px;
+}
+
+.label {
+  color: var(--deep);
+  font-size: 10px;
+  font-weight: 900;
+  letter-spacing: 0.13em;
+}
+
+.sectionHeading h2,
+.emptyState h2 {
+  margin: 7px 0 0;
+  font-size: clamp(26px, 3.6vw, 38px);
+  line-height: 1.12;
+  letter-spacing: -0.03em;
+}
+
+.verifiedNote {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  max-width: 280px;
+  padding: 11px 14px;
+  border: 1px solid var(--line);
+  border-radius: 14px;
+  background: #fff;
+}
+
+.verifiedNote span {
+  display: grid;
+  place-items: center;
+  flex: 0 0 24px;
+  width: 24px;
+  height: 24px;
+  border-radius: 999px;
+  background: #e8f7ef;
+  color: #267a53;
+  font-size: 12px;
+  font-weight: 900;
+}
+
+.verifiedNote p {
+  margin: 0;
+  color: var(--muted);
+  font-size: 12px;
+  line-height: 1.45;
+}
+
+.testimonialGrid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 18px;
+}
+
+.testimonialCard {
+  position: relative;
+  min-height: 280px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  padding: 28px;
+  border: 1px solid var(--line);
+  border-radius: 22px;
+  background: #fff;
+  box-shadow: 0 12px 30px rgba(37, 84, 110, 0.06);
+}
+
+.quoteMark {
+  position: absolute;
+  top: 16px;
+  right: 24px;
+  color: #d9edf7;
+  font-family: Georgia, serif;
+  font-size: 72px;
+  line-height: 1;
+}
+
+.testimonialCard blockquote {
+  position: relative;
+  z-index: 1;
+  margin: 0;
+  padding-right: 36px;
+  color: var(--ink);
+  font-size: 18px;
+  font-weight: 700;
+  line-height: 1.65;
+}
+
+.studentInfo {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-top: 28px;
+}
+
+.avatar {
+  display: grid;
+  place-items: center;
+  flex: 0 0 46px;
+  width: 46px;
+  height: 46px;
+  border-radius: 50%;
+  background: linear-gradient(145deg, #dff2fb, #f4fbfe);
+  color: var(--deep);
+  font-size: 13px;
+  font-weight: 900;
+}
+
+.studentInfo div:last-child {
+  display: grid;
+  gap: 2px;
+}
+
+.studentInfo strong {
+  font-size: 14px;
+}
+
+.studentInfo span,
+.studentInfo small {
+  color: var(--muted);
+  font-size: 12px;
+}
+
+.emptyState {
+  display: grid;
+  grid-template-columns: 150px minmax(0, 1fr);
+  gap: 28px;
+  align-items: center;
+  padding: 34px;
+  border: 1px solid var(--line);
+  border-radius: 24px;
+  background: linear-gradient(135deg, #f7fcff, #ffffff);
+  box-shadow: 0 12px 30px rgba(37, 84, 110, 0.05);
+}
+
+.emptyIcon {
+  display: grid;
+  place-items: center;
+  width: 150px;
+  aspect-ratio: 1;
+  border-radius: 22px;
+  background: #eaf6fb;
+  color: var(--deep);
+  font-size: 54px;
+  font-weight: 900;
+}
+
+.emptyState p {
+  max-width: 660px;
+  margin: 12px 0 0;
+  color: var(--muted);
+  line-height: 1.75;
+}
+
+.principles {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 16px;
+  margin-top: 20px;
+}
+
+.principles article {
+  padding: 22px;
+  border: 1px solid var(--line);
+  border-radius: 18px;
+  background: #fff;
+}
+
+.principles span {
+  color: var(--deep);
+  font-size: 11px;
+  font-weight: 900;
+  letter-spacing: 0.12em;
+}
+
+.principles h3 {
+  margin: 8px 0 8px;
+  font-size: 18px;
+  letter-spacing: -0.02em;
+}
+
+.principles p {
+  margin: 0;
+  color: var(--muted);
+  font-size: 13px;
+  line-height: 1.65;
+}
+
+@media (max-width: 760px) {
+  .hero {
+    padding-top: 52px;
+  }
+
+  .content {
+    padding-left: 18px;
+    padding-right: 18px;
+  }
+
+  .sectionHeading {
+    align-items: start;
+    flex-direction: column;
+  }
+
+  .testimonialGrid,
+  .principles {
+    grid-template-columns: 1fr;
+  }
+
+  .emptyState {
+    grid-template-columns: 1fr;
+    padding: 24px;
+  }
+
+  .emptyIcon {
+    width: 92px;
+    border-radius: 18px;
+    font-size: 38px;
+  }
+}
