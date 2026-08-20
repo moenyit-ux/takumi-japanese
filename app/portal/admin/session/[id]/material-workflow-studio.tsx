@@ -208,8 +208,8 @@ function ChapterFields({ kind, body, setBody, position, setPosition }: {
   kind: 'vocabulary' | 'kanji' | 'grammar'
   body: RecordValue
   setBody: (body: RecordValue) => void
-  position: number
-  setPosition: (value: number) => void
+  position: string
+  setPosition: (value: string) => void
 }) {
   const label = kind === 'vocabulary' ? 'kosakata' : kind === 'kanji' ? 'kanji' : 'bunpou'
   return (
@@ -227,7 +227,7 @@ function ChapterFields({ kind, body, setBody, position, setPosition }: {
           <input className={admin.input} value={field(body, 'chapter_title')} onChange={(e) => setBody({ ...body, chapter_title: e.target.value })} placeholder="Contoh: Dasar Partikel" />
         </label>
         <label className={admin.label}>Nomor materi
-          <input className={admin.input} type="number" min={1} value={position} onChange={(e) => setPosition(Math.max(1, Number(e.target.value) || 1))} />
+          <input className={admin.input} type="number" min={1} value={position} onChange={(e) => setPosition(e.target.value)} />
         </label>
       </div>
     </div>
@@ -236,8 +236,8 @@ function ChapterFields({ kind, body, setBody, position, setPosition }: {
 
 function SequenceFields({ kind, position, setPosition }: {
   kind: 'reading' | 'listening'
-  position: number
-  setPosition: (value: number) => void
+  position: string
+  setPosition: (value: string) => void
 }) {
   const label = kind === 'reading' ? 'Dokkai' : 'Choukai'
   return (
@@ -249,14 +249,14 @@ function SequenceFields({ kind, position, setPosition }: {
       </div>
       <div className={styles.chapterControls}>
         <label className={admin.label}>Nomor materi
-          <input className={admin.input} type="number" min={1} value={position} onChange={(e) => setPosition(Math.max(1, Number(e.target.value) || 1))} />
+          <input className={admin.input} type="number" min={1} value={position} onChange={(e) => setPosition(e.target.value)} />
         </label>
       </div>
     </div>
   )
 }
 
-function CoreFields({ kind, body, setBody, position, setPosition }: { kind: StructuredKind; body: RecordValue; setBody: (body: RecordValue) => void; position: number; setPosition: (value: number) => void }) {
+function CoreFields({ kind, body, setBody, position, setPosition }: { kind: StructuredKind; body: RecordValue; setBody: (body: RecordValue) => void; position: string; setPosition: (value: string) => void }) {
   const set = (key: string, value: unknown) => setBody({ ...body, [key]: value })
 
   if (kind === 'vocabulary') return <>
@@ -310,7 +310,7 @@ function CoreFields({ kind, body, setBody, position, setPosition }: { kind: Stru
 
 function MaterialEditor({ sessionId, kind, block, defaultPosition, role }: { sessionId: string; kind: StructuredKind; block?: ContentBlock; defaultPosition: number; role: Props['role'] }) {
   const router = useRouter()
-  const [position, setPosition] = useState(block?.position || defaultPosition)
+  const [position, setPosition] = useState(String(block?.position || defaultPosition))
   const [title, setTitle] = useState(block?.title || '')
   const [body, setBody] = useState<RecordValue>(() => asRecord(block?.body))
   const [audioUrl, setAudioUrl] = useState(block?.audio_url || '')
@@ -329,10 +329,15 @@ function MaterialEditor({ sessionId, kind, block, defaultPosition, role }: { ses
       setMessage(manualTitle ? 'Isi judul materi terlebih dahulu.' : `Isi ${info.label.toLowerCase()} terlebih dahulu.`)
       return
     }
+    const parsedPosition = Number(position)
+    if (!Number.isInteger(parsedPosition) || parsedPosition < 1) {
+      setMessage('Nomor materi harus diisi dengan angka 1 atau lebih.')
+      return
+    }
     setBusy(true)
     setMessage('Menyimpan...')
     try {
-      await callAdmin({ action: 'upsert_block', sessionId, blockId: block?.id || null, position, kind, title: finalTitle, contentBody: body, audioUrl, imageUrl })
+      await callAdmin({ action: 'upsert_block', sessionId, blockId: block?.id || null, position: parsedPosition, kind, title: finalTitle, contentBody: body, audioUrl, imageUrl })
       setMessage(block ? 'Perubahan tersimpan. Status kembali ke Materi tersimpan untuk pengecekan ulang.' : `${info.label} berhasil ditambahkan.`)
       router.refresh()
       if (!block) {
@@ -342,7 +347,7 @@ function MaterialEditor({ sessionId, kind, block, defaultPosition, role }: { ses
         setBody(chaptered ? { chapter_number: currentChapter, chapter_title: currentChapterTitle } : {})
         setAudioUrl('')
         setImageUrl('')
-        setPosition((value) => value + 1)
+        setPosition(String(parsedPosition + 1))
       }
     } catch (error) {
       setMessage(error instanceof Error ? error.message : 'Gagal menyimpan materi.')
