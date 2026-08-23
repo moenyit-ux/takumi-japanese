@@ -8,7 +8,6 @@
   --takumi-pink: #ef8fb2;
   --takumi-pink-pale: #fff7fa;
   --takumi-paper: #fbfdfe;
-  --takumi-grid: rgba(131, 190, 218, .09);
 }
 
 .portal:not(.portal-dashboard) {
@@ -67,10 +66,7 @@
   overflow-y: auto;
   padding: 0;
   background-color: var(--takumi-paper);
-  background-image:
-    linear-gradient(var(--takumi-grid) 1px, transparent 1px),
-    linear-gradient(90deg, var(--takumi-grid) 1px, transparent 1px);
-  background-size: 28px 28px;
+  background-image: none;
 }
 
 .portal-section-view {
@@ -290,8 +286,7 @@
   min-height: 100dvh;
   color: var(--takumi-ink);
   background-color: var(--takumi-paper);
-  background-image: linear-gradient(var(--takumi-grid) 1px, transparent 1px), linear-gradient(90deg, var(--takumi-grid) 1px, transparent 1px);
-  background-size: 28px 28px;
+  background-image: none;
 }
 
 .learning-shell {
@@ -388,8 +383,7 @@
   min-height: 100dvh;
   padding: 30px max(18px, calc((100vw - 1080px) / 2)) 100px;
   background-color: var(--takumi-paper);
-  background-image: linear-gradient(var(--takumi-grid) 1px, transparent 1px), linear-gradient(90deg, var(--takumi-grid) 1px, transparent 1px);
-  background-size: 28px 28px;
+  background-image: none;
 }
 
 .tm-study-nav,
@@ -453,8 +447,7 @@
 .auth > aside {
   border-radius: 0;
   background-color: #eef8fc;
-  background-image: linear-gradient(var(--takumi-grid) 1px, transparent 1px), linear-gradient(90deg, var(--takumi-grid) 1px, transparent 1px);
-  background-size: 28px 28px;
+  background-image: none;
 }
 
 .auth > aside h1 { color: var(--takumi-ink); font-family: Georgia, 'Times New Roman', serif; font-weight: 500; }
@@ -522,8 +515,7 @@
   padding: 42px max(20px, calc((100vw - 1180px) / 2)) 96px !important;
   color: var(--takumi-ink) !important;
   background-color: var(--takumi-paper);
-  background-image: linear-gradient(var(--takumi-grid) 1px, transparent 1px), linear-gradient(90deg, var(--takumi-grid) 1px, transparent 1px);
-  background-size: 28px 28px;
+  background-image: none;
 }
 
 .takumi-admin-page :is(header, section, article, details),

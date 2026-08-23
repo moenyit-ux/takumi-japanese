@@ -233,11 +233,7 @@
   min-height: 0;
   grid-template-columns: 268px minmax(0, 1fr);
   overflow: hidden;
-  background:
-    linear-gradient(rgba(100, 190, 233, 0.04) 1px, transparent 1px),
-    linear-gradient(90deg, rgba(100, 190, 233, 0.04) 1px, transparent 1px),
-    #f8fcfe;
-  background-size: 28px 28px;
+  background: #f8fcfe;
   color: var(--dashboard-ink);
 }
 
