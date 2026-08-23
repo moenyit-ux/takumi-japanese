@@ -2,6 +2,7 @@ import Link from 'next/link'
 import { redirect } from 'next/navigation'
 import { createClient } from '../../../lib/supabase/server'
 import DashboardScrollReset from '../../components/dashboard-scroll-reset'
+import PortalNavIcon, { type PortalNavIconName } from '../../components/portal-nav-icon'
 
 type Level = {
   id: string
@@ -65,14 +66,20 @@ type PortalData = {
   entitlements: Entitlement[]
 }
 
-const baseNav = [
-  ['dashboard', 'Beranda', '⌂'],
-  ['materi', 'Materi', '文'],
-  ['bookmark', 'Bookmark', '☆'],
-  ['hasil', 'Hasil', '↗'],
-  ['pembayaran', 'Premium', '¥'],
-  ['settings', 'Pengaturan', '⚙'],
-  ['support', 'Bantuan', '?'],
+type NavItem = {
+  slug: string
+  label: string
+  icon: PortalNavIconName
+}
+
+const baseNav: NavItem[] = [
+  { slug: 'dashboard', label: 'Beranda', icon: 'home' },
+  { slug: 'materi', label: 'Materi', icon: 'material' },
+  { slug: 'bookmark', label: 'Bookmark', icon: 'bookmark' },
+  { slug: 'hasil', label: 'Hasil', icon: 'results' },
+  { slug: 'pembayaran', label: 'Premium', icon: 'premium' },
+  { slug: 'settings', label: 'Pengaturan', icon: 'settings' },
+  { slug: 'support', label: 'Bantuan', icon: 'support' },
 ]
 
 function hasActiveAccess(entitlements: Entitlement[], levelId: string) {
@@ -91,7 +98,9 @@ function getLearningStatus(progress?: Progress) {
 }
 
 function Shell({ section, children, isAdmin, userName }: { section: string; children: React.ReactNode; isAdmin: boolean; userName: string }) {
-  const nav = isAdmin ? [...baseNav, ['admin', 'Admin', '▦']] : baseNav
+  const nav: NavItem[] = isAdmin
+    ? [...baseNav, { slug: 'admin', label: 'Admin', icon: 'admin' }]
+    : baseNav
 
   return (
     <div className={`portal portal-${section}`}>
@@ -99,9 +108,9 @@ function Shell({ section, children, isAdmin, userName }: { section: string; chil
         <div className="brand"><span>匠</span><div><b>Takumi</b><small>Japanese</small></div></div>
         <div className="side-user"><small>MASUK SEBAGAI</small><b>{userName}</b></div>
         <nav>
-          {nav.map(([slug, label, icon]) => (
+          {nav.map(({ slug, label, icon }) => (
             <Link className={section === slug ? 'active' : ''} href={`/portal/${slug}`} key={slug}>
-              <i>{icon}</i>{label}
+              <i><PortalNavIcon name={icon} /></i>{label}
             </Link>
           ))}
         </nav>
@@ -110,8 +119,8 @@ function Shell({ section, children, isAdmin, userName }: { section: string; chil
       </aside>
       <main className="content">{children}</main>
       <nav className="bottom">
-        {baseNav.map(([slug, label, icon]) => (
-          <Link className={section === slug ? 'active' : ''} href={`/portal/${slug}`} key={slug}><i>{icon}</i><small>{label}</small></Link>
+        {baseNav.map(({ slug, label, icon }) => (
+          <Link className={section === slug ? 'active' : ''} href={`/portal/${slug}`} key={slug}><i><PortalNavIcon name={icon} /></i><small>{label}</small></Link>
         ))}
       </nav>
     </div>

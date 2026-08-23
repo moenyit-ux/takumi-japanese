@@ -52,6 +52,38 @@
   color: var(--takumi-ink);
 }
 
+/* One clear, consistent icon language across every portal section. */
+.portal > .side nav a i {
+  display: grid;
+  flex: 0 0 30px;
+  width: 30px;
+  height: 30px;
+  place-items: center;
+  border: 1px solid transparent;
+  color: #719caf;
+  font-style: normal;
+  transition: background-color 120ms ease, border-color 120ms ease, color 120ms ease;
+}
+
+.portal > .side nav a i svg {
+  display: block;
+  width: 18px;
+  height: 18px;
+}
+
+.portal > .side nav a.active i,
+.portal > .side nav a:hover i {
+  border-color: #9fcfe2;
+  background: rgba(255, 255, 255, .9);
+  color: var(--takumi-ink);
+}
+
+.portal > .bottom a i svg {
+  display: block;
+  width: 19px;
+  height: 19px;
+}
+
 .portal:not(.portal-dashboard) > .side .quote {
   border: 0;
   border-top: 1px solid var(--takumi-line);
