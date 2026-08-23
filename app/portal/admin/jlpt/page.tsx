@@ -53,7 +53,7 @@ export default async function JlptAdminPage({ searchParams }: { searchParams: Pr
   const editor = data as PackageData
 
   return (
-    <main className={styles.adminShell}>
+    <main className={`takumi-admin-page ${styles.adminShell}`}>
       <div className={styles.topbar}>
         <Link href={`/portal/admin?level=${editor.level.code}`}>← Kembali ke kategori {editor.level.code}</Link>
         <span className={styles.roleBadge}>SIMULASI JLPT</span>

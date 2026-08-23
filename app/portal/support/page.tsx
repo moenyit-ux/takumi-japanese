@@ -41,7 +41,7 @@ export default async function SupportPage() {
     : null
 
   return (
-    <main className={`learning-shell narrow ${styles.shell}`}>
+    <main className={`learning-shell narrow takumi-support-page ${styles.shell}`}>
       <div className="learning-topbar"><Link className="back-link" href="/portal/dashboard">← Dashboard</Link><span>Bantuan</span></div>
       <header className="learning-header">
         <div className="eyebrow">TAKUMI SUPPORT CENTER</div>

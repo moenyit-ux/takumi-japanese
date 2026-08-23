@@ -46,7 +46,7 @@ export default async function AdminSupportPage() {
   const waiting = tickets.filter((ticket) => ticket.needs_response).length
 
   return (
-    <main className={styles.adminShell}>
+    <main className={`takumi-admin-page ${styles.adminShell}`}>
       <div className={styles.topbar}>
         <Link href="/portal/admin">← Content Studio</Link>
         <span className={styles.roleBadge}>{role === 'super_admin' ? 'SUPER ADMIN' : 'CONTENT ADMIN'} · SUPPORT</span>

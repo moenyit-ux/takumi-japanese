@@ -123,7 +123,7 @@ export default async function AdminSessionPreviewPage({
     : categorizedBlocks.filter((entry) => entry.pageKind === active).map((entry) => entry.block)
 
   return (
-    <main className={`tm-material-page ${styles.previewWrap}`}>
+    <main className={`tm-material-page takumi-admin-page ${styles.previewWrap}`}>
       <div className={styles.banner}>
         <div><b>PREVIEW ADMIN · {editor.session.content_status.toUpperCase()}</b><br /><span>Tidak menyimpan progres, nilai, atau bookmark. Siswa belum melihat draft sebelum publish.</span></div>
         <Link className={styles.back} href={`/portal/admin/session/${editor.session.id}`}>← Kembali ke editor</Link>

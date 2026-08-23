@@ -54,7 +54,7 @@ export default async function QuizOnlyPage({ params }: { params: Promise<{ id: s
   const editorData = data as EditorData
 
   return (
-    <main className={styles.editorShell}>
+    <main className={`takumi-admin-page ${styles.editorShell}`}>
       <div className={styles.editorTop}>
         <Link href={`/portal/admin?level=${editorData.session.level_code}`}>← Kembali ke kategori {editorData.session.level_code}</Link>
         <Link href={`/portal/admin/session/${editorData.session.id}/preview`}>Preview siswa</Link>

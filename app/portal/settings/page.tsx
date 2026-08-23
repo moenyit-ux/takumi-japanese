@@ -15,7 +15,7 @@ export default async function SettingsPage() {
   ])
 
   return (
-    <main className="learning-shell narrow">
+    <main className="learning-shell narrow takumi-settings-page">
       <div className="learning-topbar"><Link className="back-link" href="/portal/dashboard">← Dashboard</Link><span>Pengaturan akun</span></div>
       <header className="learning-header">
         <div className="eyebrow">AKUN TAKUMI</div>

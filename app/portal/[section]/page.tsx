@@ -72,6 +72,7 @@ const baseNav = [
   ['hasil', 'Hasil', '↗'],
   ['pembayaran', 'Premium', '¥'],
   ['settings', 'Pengaturan', '⚙'],
+  ['support', 'Bantuan', '?'],
 ]
 
 function hasActiveAccess(entitlements: Entitlement[], levelId: string) {
@@ -109,11 +110,32 @@ function Shell({ section, children, isAdmin, userName }: { section: string; chil
       </aside>
       <main className="content">{children}</main>
       <nav className="bottom">
-        {baseNav.slice(0, 4).map(([slug, label, icon]) => (
+        {baseNav.map(([slug, label, icon]) => (
           <Link className={section === slug ? 'active' : ''} href={`/portal/${slug}`} key={slug}><i>{icon}</i><small>{label}</small></Link>
         ))}
       </nav>
     </div>
+  )
+}
+
+function PortalSectionHeader({ number, eyebrow, title, description, mark, children }: {
+  number: string
+  eyebrow: string
+  title: string
+  description: string
+  mark: string
+  children?: React.ReactNode
+}) {
+  return (
+    <header className="portal-section-head">
+      <div className="portal-section-copy">
+        <div className="portal-section-kicker"><span>{number}</span>{eyebrow}</div>
+        <h1>{title}</h1>
+        <p>{description}</p>
+        {children}
+      </div>
+      <div className="portal-section-mark" aria-hidden="true"><small>TAKUMI JAPANESE</small><b>{mark}</b></div>
+    </header>
   )
 }
 
@@ -249,15 +271,27 @@ function Materi({ data, selectedCode }: { data: PortalData; selectedCode: string
     .sort((a, b) => a.session_no - b.session_no)
   const progressByMaterial = new Map(data.progress.map((item) => [item.session_id, item]))
   const premium = hasActiveAccess(data.entitlements, selectedLevel.id)
+  const freeCount = materials.filter((material) => material.access_tier === 'free').length
+  const learnedCount = materials.filter((material) => progressByMaterial.get(material.id)?.learning_status === 'learned').length
 
   return (
-    <>
-      <div className="head"><div><div className="eyebrow">MATERI</div><h1>{selectedLevel.name}</h1><p>{materials.length} materi tersedia · pelajari sesuai ritme Anda</p></div><div className="tabs">{data.levels.map((level) => <Link className={level.id === selectedLevel.id ? 'on' : ''} href={`/portal/materi?level=${level.code}`} key={level.id}>{level.code}</Link>)}</div></div>
+    <div className="portal-section-view">
+      <PortalSectionHeader number="01" eyebrow="MATERI BELAJAR" title={selectedLevel.name} description={`${materials.length} materi terarah untuk membangun kemampuan secara bertahap.`} mark="文">
+        <nav className="portal-level-tabs" aria-label="Pilih level">
+          {data.levels.map((level) => <Link className={level.id === selectedLevel.id ? 'on' : ''} href={`/portal/materi?level=${level.code}`} key={level.id}><small>LEVEL</small>{level.code}</Link>)}
+        </nav>
+      </PortalSectionHeader>
+
+      <section className="portal-section-summary" aria-label="Ringkasan materi">
+        <article><small>01</small><span>Total materi</span><b>{materials.length}</b></article>
+        <article><small>02</small><span>Sudah dipelajari</span><b>{learnedCount}</b></article>
+        <article><small>03</small><span>Akses tersedia</span><b>{premium ? 'Penuh' : `${freeCount} gratis`}</b></article>
+      </section>
 
       {materials.length === 0 ? (
-        <section className="panel empty"><h2>Belum ada materi</h2><p>Materi akan muncul di halaman ini setelah Tim Takumi mulai mengisinya.</p></section>
+        <section className="portal-empty-certificate"><small>MATERI · {selectedLevel.code}</small><h2>Belum ada materi yang diterbitkan.</h2><p>Materi akan muncul di halaman ini setelah Tim Takumi mulai mengisinya.</p><b aria-hidden="true">準</b></section>
       ) : (
-        <div className="sessiongrid">
+        <section className="portal-material-list" aria-label={`Daftar materi ${selectedLevel.code}`}>
           {materials.map((material, index) => {
             const progress = progressByMaterial.get(material.id)
             const isFree = material.access_tier === 'free'
@@ -268,15 +302,19 @@ function Materi({ data, selectedCode }: { data: PortalData; selectedCode: string
             const learned = progress?.learning_status === 'learned'
             const review = progress?.learning_status === 'review'
 
-            return <article key={material.id} className={!canOpen ? 'locked' : ''}>
-              <b className="num">{String(index + 1).padStart(2, '0')}</b>
-              <div><small>MATERI {index + 1}</small><h3>{material.title}</h3><p>{learningStatus} · {accessStatus}{progress?.read_percent ? ` · baca ${progress.read_percent}%` : ''}</p></div>
-              <strong>{learned ? '✓' : review ? '↻' : canOpen ? <Link aria-label={`Buka materi ${index + 1}`} href={`/portal/session/${material.id}`}>▶</Link> : '🔒'}</strong>
-            </article>
+            const body = <>
+              <div className="portal-material-index"><small>{selectedLevel.code}</small><b>{String(index + 1).padStart(2, '0')}</b></div>
+              <div className="portal-material-copy"><small>MATERI {String(index + 1).padStart(2, '0')} · {material.estimated_minutes || 0} MENIT</small><h3>{material.title}</h3><p>{learningStatus} · {accessStatus}{progress?.read_percent ? ` · baca ${progress.read_percent}%` : ''}</p></div>
+              <div className="portal-material-state"><span>{learned ? 'SELESAI' : review ? 'ULANGI' : canOpen ? 'MULAI' : 'TERKUNCI'}</span><b aria-hidden="true">{learned ? '✓' : review ? '↻' : canOpen ? '→' : '—'}</b></div>
+            </>
+
+            return canOpen ? (
+              <Link className="portal-material-card" aria-label={`Buka materi ${index + 1}: ${material.title}`} href={`/portal/session/${material.id}`} key={material.id}>{body}</Link>
+            ) : <article className="portal-material-card locked" key={material.id}>{body}</article>
           })}
-        </div>
+        </section>
       )}
-    </>
+    </div>
   )
 }
 
@@ -288,11 +326,22 @@ function Bookmark({ data }: { data: PortalData }) {
   ]
 
   return (
-    <>
-      <div className="head"><div><div className="eyebrow">BOOKMARK</div><h1>Dipelajari Lagi</h1><p>Soal salah masuk otomatis ke sini setelah latihan dinilai.</p></div></div>
-      <div className="stats">{groups.map(([key, label]) => <article key={key}><span>{label}</span><b>{data.bookmarks.filter((item) => item.category === key).length}</b></article>)}</div>
-      {data.bookmarks.length === 0 && <section className="panel empty"><h2>Belum ada bookmark</h2><p>Setelah Anda mengerjakan latihan, soal yang salah akan muncul di sini secara otomatis.</p></section>}
-    </>
+    <div className="portal-section-view">
+      <PortalSectionHeader number="02" eyebrow="BOOKMARK" title="Dipelajari lagi" description="Satu tempat untuk mengulang bagian yang masih ragu dan menguatkan yang sudah dipahami." mark="復" />
+      <section className="portal-section-summary portal-bookmark-summary" aria-label="Ringkasan bookmark">
+        {groups.map(([key, label], index) => <article key={key}><small>{String(index + 1).padStart(2, '0')}</small><span>{label}</span><b>{data.bookmarks.filter((item) => item.category === key).length}</b></article>)}
+      </section>
+      {data.bookmarks.length === 0 ? (
+        <section className="portal-empty-certificate"><small>REVIEW · AUTOMATIS</small><h2>Belum ada yang perlu diulang.</h2><p>Soal yang belum tepat akan tersimpan otomatis di sini setelah latihan dinilai.</p><b aria-hidden="true">復</b></section>
+      ) : (
+        <section className="portal-ledger">
+          <div className="portal-ledger-head"><div><small>DAFTAR ULANGAN</small><h2>Bookmark terbaru</h2></div><b>{data.bookmarks.length} item</b></div>
+          {data.bookmarks.slice(0, 20).map((item, index) => (
+            <article key={item.id}><small>{String(index + 1).padStart(2, '0')}</small><div><b>{groups.find(([key]) => key === item.category)?.[1] || 'Tersimpan'}</b><span>{item.source || 'Latihan Takumi'}</span></div><time dateTime={item.created_at}>{new Date(item.created_at).toLocaleDateString('id-ID')}</time></article>
+          ))}
+        </section>
+      )}
+    </div>
   )
 }
 
@@ -300,13 +349,23 @@ function Hasil({ data }: { data: PortalData }) {
   const scored = data.attempts.filter((item) => item.score != null)
   const latest = scored[0]?.score ?? null
   const highest = scored.reduce<number | null>((max, item) => item.score == null ? max : Math.max(max ?? item.score, item.score), null)
+  const passed = scored.filter((item) => item.result_status === 'passed').length
 
   return (
-    <>
-      <div className="head"><div><div className="eyebrow">HASIL BELAJAR</div><h1>Perkembangan Anda</h1><p>Seluruh percobaan disimpan; nilai tertinggi menentukan kelulusan latihan.</p></div></div>
-      <div className="stats"><article><span>Nilai terbaru</span><b>{latest ?? '—'}</b></article><article><span>Nilai tertinggi</span><b>{highest ?? '—'}</b></article><article><span>Total percobaan</span><b>{data.attempts.length}</b></article></div>
-      <section className="panel"><h2>Riwayat nilai</h2>{scored.length === 0 ? <p>Belum ada hasil latihan. Riwayat akan muncul setelah soal dipublikasikan dan dikerjakan.</p> : scored.slice(0, 10).map((item, index) => <div className="row" key={`${item.submitted_at}-${index}`}><b>Percobaan {data.attempts.length - index}</b><span>{item.score} · {item.result_status === 'passed' ? 'Lulus' : 'Belum lulus'}</span></div>)}</section>
-    </>
+    <div className="portal-section-view">
+      <PortalSectionHeader number="03" eyebrow="HASIL BELAJAR" title="Perkembangan Anda" description="Setiap percobaan disimpan agar kemajuan terlihat, bukan sekadar terasa." mark="績" />
+      <section className="portal-section-summary" aria-label="Ringkasan hasil belajar">
+        <article><small>01</small><span>Nilai terbaru</span><b>{latest ?? '—'}</b></article>
+        <article><small>02</small><span>Nilai tertinggi</span><b>{highest ?? '—'}</b></article>
+        <article><small>03</small><span>Latihan lulus</span><b>{passed}</b></article>
+      </section>
+      <section className="portal-ledger portal-result-ledger">
+        <div className="portal-ledger-head"><div><small>ARSIP NILAI</small><h2>Riwayat percobaan</h2></div><b>{scored.length} tercatat</b></div>
+        {scored.length === 0 ? <p className="portal-ledger-empty">Belum ada hasil latihan. Riwayat akan muncul setelah soal dipublikasikan dan dikerjakan.</p> : scored.slice(0, 10).map((item, index) => (
+          <article key={`${item.submitted_at}-${index}`}><small>{String(index + 1).padStart(2, '0')}</small><div><b>Percobaan {data.attempts.length - index}</b><span>{item.submitted_at ? new Date(item.submitted_at).toLocaleDateString('id-ID') : 'Tanggal belum tersedia'}</span></div><strong className={item.result_status === 'passed' ? 'passed' : ''}>{item.score}<small>{item.result_status === 'passed' ? 'LULUS' : 'ULANGI'}</small></strong></article>
+        ))}
+      </section>
+    </div>
   )
 }
 

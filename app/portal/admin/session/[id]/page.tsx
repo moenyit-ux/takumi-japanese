@@ -46,7 +46,7 @@ type EditorData = {
 const compactToolStyle = {
   marginTop: 14,
   border: '1px solid #d9eaf2',
-  borderRadius: 18,
+  borderRadius: 0,
   background: '#fff',
   overflow: 'hidden',
 } as const
@@ -81,7 +81,7 @@ export default async function AdminSessionPage({ params, searchParams }: { param
   const nextPosition = editorData.blocks.reduce((max, block) => Math.max(max, block.position), 0) + 1
 
   return (
-    <main className={styles.editorShell}>
+    <main className={`takumi-admin-page ${styles.editorShell}`}>
       <style>{`
         #session-material-extras { display: none; }
         #material-studio:has(button[role="tab"]:first-child[aria-selected="true"]) + #session-material-extras { display: contents; }

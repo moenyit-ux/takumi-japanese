@@ -14,7 +14,7 @@ export default async function DeviceLimitPage({ searchParams }: { searchParams: 
     .order('last_seen_at', { ascending: false })
 
   return (
-    <main className="learning-shell narrow">
+    <main className="learning-shell narrow takumi-device-page">
       <header className="learning-header">
         <div className="eyebrow">KEAMANAN AKUN</div>
         <h1>Akses perangkat perlu diperiksa</h1>

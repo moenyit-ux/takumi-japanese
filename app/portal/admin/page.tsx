@@ -97,7 +97,7 @@ export default async function AdminPage({ searchParams }: { searchParams: Promis
   selectedBlocks.forEach((block) => countByKind.set(block.kind, (countByKind.get(block.kind) || 0) + 1))
 
   return (
-    <main className={styles.adminShell}>
+    <main className={`takumi-admin-page ${styles.adminShell}`}>
       <div className={styles.topbar}>
         <Link href="/portal/dashboard">← Dashboard siswa</Link>
         <div className={overview.topbarLinks}>

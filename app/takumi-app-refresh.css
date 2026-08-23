@@ -1,0 +1,593 @@
+/* Takumi 2026 application language: editorial hierarchy, certificate lines, calm blue/pink. */
+:root {
+  --takumi-ink: #153f5a;
+  --takumi-muted: #647f91;
+  --takumi-line: #b9deef;
+  --takumi-blue: #61b7dc;
+  --takumi-blue-pale: #eaf7fc;
+  --takumi-pink: #ef8fb2;
+  --takumi-pink-pale: #fff7fa;
+  --takumi-paper: #fbfdfe;
+  --takumi-grid: rgba(131, 190, 218, .09);
+}
+
+.portal:not(.portal-dashboard) {
+  min-height: 100dvh;
+  background: var(--takumi-paper);
+  color: var(--takumi-ink);
+}
+
+.portal:not(.portal-dashboard) > .side {
+  border-right: 1px solid var(--takumi-line);
+  background: rgba(247, 252, 254, .96);
+  box-shadow: none;
+}
+
+.portal:not(.portal-dashboard) > .side .brand {
+  padding-bottom: 30px;
+  border-bottom: 1px solid var(--takumi-line);
+}
+
+.portal:not(.portal-dashboard) > .side .brand > span {
+  border: 1px solid var(--takumi-blue);
+  border-radius: 0;
+  background: #fff;
+}
+
+.portal:not(.portal-dashboard) > .side .side-user {
+  padding: 16px 0 20px;
+  border-bottom: 1px solid var(--takumi-line);
+}
+
+.portal:not(.portal-dashboard) > .side nav a {
+  min-height: 45px;
+  border-left: 2px solid transparent;
+  border-radius: 0;
+  color: var(--takumi-muted);
+}
+
+.portal:not(.portal-dashboard) > .side nav a.active,
+.portal:not(.portal-dashboard) > .side nav a:hover {
+  border-left-color: var(--takumi-pink);
+  background: #dff3fb;
+  color: var(--takumi-ink);
+}
+
+.portal:not(.portal-dashboard) > .side .quote {
+  border: 0;
+  border-top: 1px solid var(--takumi-line);
+  border-bottom: 1px solid var(--takumi-line);
+  border-radius: 0;
+  background: transparent;
+}
+
+.portal:not(.portal-dashboard) > .content {
+  min-width: 0;
+  height: 100dvh;
+  overflow-y: auto;
+  padding: 0;
+  background-color: var(--takumi-paper);
+  background-image:
+    linear-gradient(var(--takumi-grid) 1px, transparent 1px),
+    linear-gradient(90deg, var(--takumi-grid) 1px, transparent 1px);
+  background-size: 28px 28px;
+}
+
+.portal-section-view {
+  width: min(1120px, calc(100% - 56px));
+  margin: 0 auto;
+  padding: 76px 0 96px;
+}
+
+.portal-section-head {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 245px;
+  min-height: 292px;
+  border: 1px solid var(--takumi-line);
+  background: rgba(255, 255, 255, .9);
+}
+
+.portal-section-copy {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  padding: 42px;
+}
+
+.portal-section-kicker {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  color: var(--takumi-pink);
+  font-size: 10px;
+  font-weight: 900;
+  letter-spacing: .2em;
+}
+
+.portal-section-kicker span {
+  color: var(--takumi-muted);
+  letter-spacing: .08em;
+}
+
+.portal-section-head h1 {
+  max-width: 760px;
+  margin: 15px 0 12px;
+  color: var(--takumi-ink);
+  font-family: Georgia, 'Times New Roman', serif;
+  font-size: clamp(42px, 6vw, 74px);
+  font-weight: 500;
+  letter-spacing: -.045em;
+  line-height: .98;
+}
+
+.portal-section-head p {
+  max-width: 650px;
+  margin: 0;
+  color: var(--takumi-muted);
+  font-size: 14px;
+  line-height: 1.75;
+}
+
+.portal-section-mark {
+  position: relative;
+  display: grid;
+  place-items: center;
+  overflow: hidden;
+  border-left: 1px solid var(--takumi-line);
+  background: var(--takumi-pink-pale);
+}
+
+.portal-section-mark small {
+  position: absolute;
+  top: 18px;
+  right: 14px;
+  color: var(--takumi-muted);
+  font-size: 8px;
+  font-weight: 900;
+  letter-spacing: .22em;
+  writing-mode: vertical-rl;
+}
+
+.portal-section-mark b {
+  color: #e2f2f9;
+  font-family: 'Yu Mincho', 'Hiragino Mincho ProN', serif;
+  font-size: 142px;
+  font-weight: 500;
+  line-height: 1;
+}
+
+.portal-level-tabs {
+  display: flex;
+  gap: 0;
+  margin-top: 26px;
+}
+
+.portal-level-tabs a {
+  display: grid;
+  min-width: 92px;
+  padding: 10px 16px;
+  border: 1px solid var(--takumi-line);
+  color: var(--takumi-muted);
+  font-family: Georgia, 'Times New Roman', serif;
+  font-size: 20px;
+  font-weight: 700;
+}
+
+.portal-level-tabs a + a { border-left: 0; }
+.portal-level-tabs a small { font-family: inherit; font-size: 8px; letter-spacing: .14em; }
+.portal-level-tabs a.on { background: var(--takumi-blue); color: #fff; }
+
+.portal-section-summary {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  border: 1px solid var(--takumi-line);
+  border-top: 0;
+  background: rgba(255, 255, 255, .86);
+}
+
+.portal-section-summary article {
+  display: grid;
+  grid-template-columns: 34px 1fr auto;
+  align-items: center;
+  gap: 12px;
+  min-height: 96px;
+  padding: 20px 24px;
+  border-right: 1px solid var(--takumi-line);
+}
+
+.portal-section-summary article:last-child { border-right: 0; }
+.portal-section-summary small { color: var(--takumi-pink); font-size: 10px; font-weight: 900; }
+.portal-section-summary span { color: var(--takumi-muted); font-size: 12px; font-weight: 800; }
+.portal-section-summary b { color: var(--takumi-ink); font-family: Georgia, 'Times New Roman', serif; font-size: 28px; }
+
+.portal-material-list,
+.portal-ledger,
+.portal-empty-certificate {
+  margin-top: 22px;
+  border: 1px solid var(--takumi-line);
+  background: rgba(255, 255, 255, .94);
+}
+
+.portal-material-card {
+  display: grid;
+  grid-template-columns: 92px minmax(0, 1fr) 118px;
+  min-height: 124px;
+  border-bottom: 1px solid var(--takumi-line);
+  color: var(--takumi-ink);
+  transition: background-color .2s ease, color .2s ease;
+}
+
+.portal-material-card:last-child { border-bottom: 0; }
+.portal-material-card:not(.locked):hover { background: var(--takumi-blue-pale); }
+.portal-material-card.locked { background: #fbfcfd; color: #8da1ad; }
+
+.portal-material-index {
+  display: grid;
+  align-content: center;
+  justify-items: center;
+  border-right: 1px solid var(--takumi-line);
+}
+
+.portal-material-index small { color: var(--takumi-pink); font-size: 9px; font-weight: 900; letter-spacing: .12em; }
+.portal-material-index b { font-family: Georgia, 'Times New Roman', serif; font-size: 34px; font-weight: 500; }
+.portal-material-copy { align-self: center; padding: 22px 28px; }
+.portal-material-copy small { color: var(--takumi-muted); font-size: 9px; font-weight: 900; letter-spacing: .14em; }
+.portal-material-copy h3 { margin: 7px 0 5px; font-family: Georgia, 'Times New Roman', serif; font-size: 25px; font-weight: 600; }
+.portal-material-copy p { margin: 0; color: var(--takumi-muted); font-size: 12px; }
+
+.portal-material-state {
+  display: grid;
+  align-content: center;
+  justify-items: center;
+  gap: 7px;
+  border-left: 1px solid var(--takumi-line);
+}
+
+.portal-material-state span { color: var(--takumi-muted); font-size: 8px; font-weight: 900; letter-spacing: .16em; }
+.portal-material-state b { font-family: Georgia, 'Times New Roman', serif; font-size: 28px; }
+
+.portal-empty-certificate {
+  position: relative;
+  min-height: 270px;
+  overflow: hidden;
+  padding: 56px 45% 48px 42px;
+}
+
+.portal-empty-certificate > small { color: var(--takumi-pink); font-size: 9px; font-weight: 900; letter-spacing: .18em; }
+.portal-empty-certificate h2 { margin: 13px 0 12px; font-family: Georgia, 'Times New Roman', serif; font-size: clamp(32px, 4vw, 48px); font-weight: 500; line-height: 1.08; }
+.portal-empty-certificate p { color: var(--takumi-muted); line-height: 1.7; }
+.portal-empty-certificate > b { position: absolute; right: 7%; bottom: -25px; color: #e2f2f9; font-family: 'Yu Mincho', serif; font-size: 190px; font-weight: 500; }
+
+.portal-ledger-head {
+  display: flex;
+  align-items: end;
+  justify-content: space-between;
+  gap: 24px;
+  min-height: 112px;
+  padding: 26px 32px;
+  border-bottom: 1px solid var(--takumi-line);
+  background: var(--takumi-pink-pale);
+}
+
+.portal-ledger-head small { color: var(--takumi-pink); font-size: 9px; font-weight: 900; letter-spacing: .18em; }
+.portal-ledger-head h2 { margin: 7px 0 0; font-family: Georgia, 'Times New Roman', serif; font-size: 31px; font-weight: 500; }
+.portal-ledger-head > b { color: var(--takumi-muted); font-size: 11px; }
+.portal-ledger > article { display: grid; grid-template-columns: 42px 1fr auto; align-items: center; gap: 20px; min-height: 76px; padding: 14px 28px; border-bottom: 1px solid var(--takumi-line); }
+.portal-ledger > article:last-child { border-bottom: 0; }
+.portal-ledger > article > small { color: var(--takumi-pink); font-size: 9px; font-weight: 900; }
+.portal-ledger > article > div { display: grid; gap: 4px; }
+.portal-ledger > article > div b { font-family: Georgia, 'Times New Roman', serif; font-size: 18px; }
+.portal-ledger > article > div span,
+.portal-ledger time { color: var(--takumi-muted); font-size: 11px; }
+.portal-ledger > article > strong { display: flex; align-items: center; gap: 14px; font-family: Georgia, 'Times New Roman', serif; font-size: 30px; }
+.portal-ledger > article > strong small { color: var(--takumi-pink); font-family: Arial, sans-serif; font-size: 8px; letter-spacing: .12em; }
+.portal-ledger > article > strong.passed small { color: #2c8661; }
+.portal-ledger-empty { margin: 0; padding: 34px 32px; color: var(--takumi-muted); }
+
+/* Shared authenticated utility pages */
+.learning-shell,
+.takumi-premium-page {
+  min-height: 100dvh;
+  color: var(--takumi-ink);
+  background-color: var(--takumi-paper);
+  background-image: linear-gradient(var(--takumi-grid) 1px, transparent 1px), linear-gradient(90deg, var(--takumi-grid) 1px, transparent 1px);
+  background-size: 28px 28px;
+}
+
+.learning-shell {
+  max-width: none;
+  margin: 0;
+  padding: 56px max(24px, calc((100vw - 980px) / 2)) 100px;
+}
+
+.learning-shell.narrow { max-width: none; }
+.learning-topbar { margin-bottom: 28px; padding-bottom: 16px; border-bottom: 1px solid var(--takumi-line); }
+.learning-topbar .back-link { color: var(--takumi-ink); }
+.learning-topbar > span { color: var(--takumi-muted); font-size: 9px; font-weight: 900; letter-spacing: .16em; text-transform: uppercase; }
+
+.learning-header {
+  position: relative;
+  min-height: 220px;
+  overflow: hidden;
+  margin: 0 0 22px;
+  padding: 38px 38% 38px 38px;
+  border: 1px solid var(--takumi-line);
+  background: rgba(255,255,255,.94);
+}
+
+.learning-header::after {
+  content: '学';
+  position: absolute;
+  right: 7%;
+  bottom: -35px;
+  color: #e2f2f9;
+  font-family: 'Yu Mincho', serif;
+  font-size: 190px;
+  line-height: 1;
+}
+
+.learning-header .eyebrow { color: var(--takumi-pink); }
+.learning-header h1 { position: relative; z-index: 1; margin: 12px 0; color: var(--takumi-ink); font-family: Georgia, 'Times New Roman', serif; font-size: clamp(38px, 6vw, 62px); font-weight: 500; line-height: 1; }
+.learning-header p { position: relative; z-index: 1; margin: 0; color: var(--takumi-muted); }
+
+.learning-shell .panel,
+.learning-shell .learning-block,
+.learning-shell .question-card,
+.learning-shell .quiz-meta,
+.learning-shell .reading-passage,
+.learning-shell .option-list label,
+.learning-shell .save-state {
+  border-color: var(--takumi-line);
+  border-radius: 0;
+  box-shadow: none;
+  background: rgba(255,255,255,.94);
+}
+
+.learning-shell .panel { margin-top: 18px; padding: 28px; }
+.learning-shell .panel h2,
+.learning-shell .learning-block h2 { font-family: Georgia, 'Times New Roman', serif; font-weight: 600; }
+.learning-shell .row { border-color: var(--takumi-line); }
+
+.learning-shell input,
+.learning-shell select,
+.learning-shell textarea,
+.takumi-premium-page input,
+.takumi-premium-page select,
+.takumi-premium-page textarea {
+  border-color: var(--takumi-line);
+  border-radius: 0;
+  background: #fff;
+}
+
+.takumi-settings-page label,
+.takumi-device-page label { display: grid; gap: 7px; margin-top: 15px; color: var(--takumi-muted); font-size: 12px; font-weight: 800; }
+.takumi-settings-page textarea { min-height: 110px; padding: 12px; resize: vertical; }
+.takumi-settings-page input { min-height: 44px; padding: 10px 12px; }
+
+.btn,
+.learning-shell .btn {
+  min-height: 44px;
+  border-radius: 0;
+  box-shadow: none;
+}
+
+.btn.primary,
+.learning-shell .btn.primary { background: var(--takumi-blue); color: #fff; }
+.btn.ghost,
+.learning-shell .btn.ghost { border-color: var(--takumi-line); background: transparent; color: var(--takumi-ink); }
+
+/* Study, material and quiz surfaces */
+.tm-material-page {
+  --tm-blue: var(--takumi-blue);
+  --tm-blue-dark: var(--takumi-ink);
+  --tm-blue-soft: var(--takumi-blue-pale);
+  --tm-line: var(--takumi-line);
+  --tm-ink: var(--takumi-ink);
+  --tm-muted: var(--takumi-muted);
+  max-width: none;
+  min-height: 100dvh;
+  padding: 30px max(18px, calc((100vw - 1080px) / 2)) 100px;
+  background-color: var(--takumi-paper);
+  background-image: linear-gradient(var(--takumi-grid) 1px, transparent 1px), linear-gradient(90deg, var(--takumi-grid) 1px, transparent 1px);
+  background-size: 28px 28px;
+}
+
+.tm-study-nav,
+.tm-session-progress,
+.tm-material-card,
+.tm-reading-box,
+.tm-callout,
+.tm-grammar-pattern,
+.tm-pattern-row,
+.tm-examples,
+.tm-example,
+.tm-helper-item,
+.tm-passage,
+.tm-audio-panel,
+.tm-quiz-intro-card,
+.tm-quiz-instruction,
+.tm-question-map,
+.tm-time-box,
+.tm-quiz-question-card,
+.tm-answer-list label,
+.tm-quiz-submitbar,
+.tm-result-hero,
+.tm-score-card,
+.tm-result-stats article,
+.tm-review-panel,
+.tm-review-item,
+.tm-material-actions button,
+.tm-material-actions a,
+.tm-result-actions a,
+.tm-result-actions button {
+  border-radius: 0;
+  box-shadow: none;
+}
+
+.tm-wordmark,
+.tm-card-title h1,
+.tm-card-title h2,
+.tm-word-main,
+.tm-kanji-character,
+.tm-quiz-intro-card h1,
+.tm-score-card b { font-family: Georgia, 'Times New Roman', 'Yu Mincho', serif; }
+
+.tm-back,
+.tm-header-bookmark { border: 1px solid var(--takumi-line); border-radius: 0; color: var(--takumi-ink); }
+.tm-study-tab.active,
+.tm-icon-box,
+.tm-count-pill,
+.tm-quiz-meta-box,
+.tm-question-kind,
+.tm-material-actions button,
+.tm-quiz-submitbar button,
+.tm-result-actions a,
+.tm-result-actions button { background: var(--takumi-blue); }
+
+/* Password recovery follows the current login composition. */
+.auth {
+  min-height: 100dvh;
+  background: var(--takumi-paper);
+}
+
+.auth > aside {
+  border-radius: 0;
+  background-color: #eef8fc;
+  background-image: linear-gradient(var(--takumi-grid) 1px, transparent 1px), linear-gradient(90deg, var(--takumi-grid) 1px, transparent 1px);
+  background-size: 28px 28px;
+}
+
+.auth > aside h1 { color: var(--takumi-ink); font-family: Georgia, 'Times New Roman', serif; font-weight: 500; }
+.auth > aside .eyebrow { color: var(--takumi-pink); }
+.auth > section { border-radius: 0; box-shadow: none; }
+.auth label input { border-radius: 0; border-color: var(--takumi-line); }
+
+/* Premium and support pages keep their data modules, but share the same visual grammar. */
+.takumi-premium-page {
+  max-width: none !important;
+  margin: 0 !important;
+  padding: 56px max(24px, calc((100vw - 1120px) / 2)) 100px !important;
+}
+
+.takumi-premium-page > section,
+.takumi-premium-page article,
+.takumi-premium-page > div:not(:first-child) > section,
+.takumi-support-page article,
+.takumi-support-page [class*='bubble'] {
+  border-radius: 0 !important;
+  box-shadow: none !important;
+  border-color: var(--takumi-line) !important;
+}
+
+.takumi-premium-page [class],
+.takumi-support-page [class],
+.takumi-settings-page [class],
+.takumi-device-page [class],
+.tm-material-page [class^='tm-'] {
+  border-radius: 0 !important;
+}
+
+.takumi-premium-page > section:first-of-type {
+  position: relative;
+  overflow: hidden;
+  min-height: 245px;
+  padding: 42px !important;
+  background: rgba(255,255,255,.94) !important;
+}
+
+.takumi-premium-page > section:first-of-type::after {
+  content: '極';
+  position: absolute;
+  right: 8%;
+  bottom: -42px;
+  color: #e2f2f9;
+  font-family: 'Yu Mincho', serif;
+  font-size: 180px;
+  line-height: 1;
+}
+
+.takumi-premium-page > section:first-of-type > div { position: relative; z-index: 1; }
+.takumi-premium-page > section:first-of-type > b { position: relative; z-index: 1; color: var(--takumi-pink) !important; }
+.takumi-premium-page h1,
+.takumi-premium-page h2,
+.takumi-support-page h1,
+.takumi-support-page h2 { color: var(--takumi-ink); font-family: Georgia, 'Times New Roman', serif; font-weight: 500; }
+.takumi-premium-page button { border-radius: 0 !important; background: var(--takumi-blue) !important; color: #fff !important; }
+
+/* Content Studio and all nested admin tools. */
+.takumi-admin-page {
+  max-width: none !important;
+  min-height: 100dvh;
+  margin: 0 !important;
+  padding: 42px max(20px, calc((100vw - 1180px) / 2)) 96px !important;
+  color: var(--takumi-ink) !important;
+  background-color: var(--takumi-paper);
+  background-image: linear-gradient(var(--takumi-grid) 1px, transparent 1px), linear-gradient(90deg, var(--takumi-grid) 1px, transparent 1px);
+  background-size: 28px 28px;
+}
+
+.takumi-admin-page :is(header, section, article, details),
+.takumi-admin-page :is(button, input, select, textarea),
+.takumi-admin-page :is(a, span, b)[class] {
+  border-radius: 0 !important;
+  box-shadow: none !important;
+}
+
+.takumi-admin-page > header,
+.takumi-admin-page > section:first-of-type {
+  border-color: var(--takumi-line) !important;
+  background: rgba(255,255,255,.94) !important;
+}
+
+.takumi-admin-page h1,
+.takumi-admin-page h2,
+.takumi-admin-page h3 { color: var(--takumi-ink); }
+.takumi-admin-page h1,
+.takumi-admin-page > header h2 { font-family: Georgia, 'Times New Roman', serif; font-weight: 500; }
+.takumi-admin-page :is(input, select, textarea) { border-color: var(--takumi-line) !important; background: #fff !important; }
+.takumi-admin-page button:not(:disabled) { cursor: pointer; }
+
+@media (max-width: 900px) {
+  .portal-section-view { width: min(100% - 32px, 760px); padding-top: 40px; }
+  .portal-section-head { grid-template-columns: 1fr 180px; }
+  .portal-section-copy { padding: 32px; }
+  .portal-section-summary article { grid-template-columns: 26px 1fr; }
+  .portal-section-summary article b { grid-column: 2; }
+}
+
+@media (max-width: 720px) {
+  .portal:not(.portal-dashboard) > .content { height: auto; min-height: 100dvh; overflow: visible; }
+  .portal:not(.portal-dashboard) > .bottom { display: grid; grid-auto-flow: column; grid-auto-columns: minmax(74px, 1fr); grid-template-columns: none; overflow-x: auto; border-radius: 0; }
+  .portal:not(.portal-dashboard) > .bottom a { min-width: 74px; }
+  .portal-section-view { width: calc(100% - 24px); padding: 24px 0 104px; }
+  .portal-section-head { grid-template-columns: 1fr; min-height: 0; }
+  .portal-section-copy { padding: 28px 22px; }
+  .portal-section-head h1 { font-size: 43px; }
+  .portal-section-mark { min-height: 115px; border-top: 1px solid var(--takumi-line); border-left: 0; }
+  .portal-section-mark small { top: 12px; }
+  .portal-section-mark b { font-size: 104px; }
+  .portal-section-summary { grid-template-columns: 1fr; }
+  .portal-section-summary article { grid-template-columns: 34px 1fr auto; min-height: 72px; padding: 14px 18px; border-right: 0; border-bottom: 1px solid var(--takumi-line); }
+  .portal-section-summary article:last-child { border-bottom: 0; }
+  .portal-section-summary article b { grid-column: auto; }
+  .portal-material-card { grid-template-columns: 70px minmax(0, 1fr); }
+  .portal-material-copy { padding: 20px 18px; }
+  .portal-material-copy h3 { font-size: 21px; }
+  .portal-material-state { grid-column: 1 / -1; grid-template-columns: 1fr auto; justify-items: start; padding: 11px 18px; border-top: 1px solid var(--takumi-line); border-left: 0; }
+  .portal-material-state b { justify-self: end; font-size: 20px; }
+  .portal-empty-certificate { min-height: 320px; padding: 34px 24px 150px; }
+  .portal-empty-certificate > b { right: 12%; bottom: -25px; font-size: 150px; }
+  .portal-ledger-head { align-items: flex-start; padding: 22px; }
+  .portal-ledger > article { grid-template-columns: 28px 1fr auto; gap: 10px; padding: 14px 16px; }
+  .portal-ledger time { display: none; }
+  .portal-ledger > article > strong { display: grid; justify-items: end; gap: 2px; font-size: 24px; }
+  .learning-shell { padding: 24px 12px 96px; }
+  .learning-header { min-height: 310px; padding: 30px 22px 150px; }
+  .learning-header::after { right: 8%; font-size: 150px; }
+  .learning-shell .panel { padding: 22px 18px; }
+  .tm-material-page { padding: 14px 12px 92px; }
+  .takumi-premium-page,
+  .takumi-admin-page { padding: 22px 12px 96px !important; }
+  .takumi-premium-page > section:first-of-type { min-height: 330px; padding: 30px 22px 150px !important; }
+  .takumi-premium-page > section:first-of-type::after { right: 8%; font-size: 150px; }
+}

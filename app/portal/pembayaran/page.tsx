@@ -21,7 +21,7 @@ export default async function PaymentPage() {
   levels.sort((a, b) => a.code === 'N4' ? -1 : b.code === 'N4' ? 1 : a.code.localeCompare(b.code))
 
   return (
-    <main className={styles.shell}>
+    <main className={`takumi-premium-page ${styles.shell}`}>
       <div className={styles.topbar}>
         <Link href="/portal/dashboard">← Dashboard</Link>
       </div>
