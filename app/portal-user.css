@@ -228,7 +228,11 @@
   --dashboard-blue: #64bee9;
   --dashboard-blue-soft: #eaf7fd;
   --dashboard-pink: #e78dac;
+  height: 100vh;
+  height: 100dvh;
+  min-height: 0;
   grid-template-columns: 268px minmax(0, 1fr);
+  overflow: hidden;
   background:
     linear-gradient(rgba(100, 190, 233, 0.04) 1px, transparent 1px),
     linear-gradient(90deg, rgba(100, 190, 233, 0.04) 1px, transparent 1px),
@@ -239,6 +243,8 @@
 
 .portal-dashboard .side {
   width: 268px;
+  height: 100vh;
+  height: 100dvh;
   padding: 32px 26px 26px;
   border-color: var(--dashboard-line);
   background: linear-gradient(165deg, #f1faff 0%, #fff 55%, #fff4f8 100%);
@@ -359,8 +365,13 @@
 .portal-dashboard .content {
   grid-column: 2;
   max-width: 1420px;
+  height: 100vh;
+  height: 100dvh;
   padding: calc(60px + env(safe-area-inset-top)) clamp(30px, 4vw, 64px) 90px;
-  overflow: visible;
+  overflow-x: hidden;
+  overflow-y: auto;
+  overscroll-behavior-y: contain;
+  scroll-behavior: auto;
 }
 
 .dashboard-view {
