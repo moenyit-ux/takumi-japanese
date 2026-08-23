@@ -12,12 +12,13 @@
 .tm-vocab-compact-status.learned{border-color:#a8dfb0;background:#edfaef;color:#2f7340}
 .tm-vocab-compact-status.review{border-color:#ead38b;background:#fff8da;color:#735d18}
 .tm-vocab-compact-chevron{width:28px;height:28px;border-radius:50%;display:grid;place-items:center;color:#4c78a3;font-size:22px;font-weight:900;background:#eef6ff}
+.tm-vocab-compact-chevron svg{display:block;width:14px;height:14px}
 
 .tm-vocab-expanded-card{position:relative}
 .tm-vocab-expanded-topbar{display:flex;justify-content:flex-end;margin:-4px 0 10px}
 .tm-vocab-expanded-topbar button{border:1px solid #cfe2f5;background:#f7fbff;color:#356b93;border-radius:999px;padding:7px 11px;display:inline-flex;align-items:center;gap:6px;font-size:12px;font-weight:900;cursor:pointer}
 .tm-vocab-expanded-topbar button:hover{background:#edf6ff;border-color:#9fc7ef}
-.tm-vocab-expanded-topbar button span{font-size:15px;line-height:1}
+.tm-vocab-expanded-topbar button span{width:16px;height:16px;display:grid;place-items:center;font-size:15px;line-height:0}
 
 /* Vocabulary chapters keep long lists manageable. */
 .tm-vocab-chapter-list{display:grid;gap:14px}
@@ -33,6 +34,7 @@
 .tm-vocab-chapter-stats>span.learned{background:#edfaef;border-color:#b8e5bf;color:#2f7340}
 .tm-vocab-chapter-stats>span.review{background:#fff8da;border-color:#ead38b;color:#735d18}
 .tm-vocab-chapter-stats>i{font-style:normal;width:30px;height:30px;border-radius:50%;display:grid;place-items:center;background:#e8f2ff;color:#3e6f9f;font-size:20px;font-weight:900;transition:transform .2s ease}
+.tm-vocab-chapter-stats>i svg{display:block;width:15px;height:15px}
 .tm-vocab-chapter[open]>.tm-vocab-chapter-summary{border-bottom:1px solid #d8e7f5}
 .tm-vocab-chapter[open]>.tm-vocab-chapter-summary .tm-vocab-chapter-stats>i{transform:rotate(180deg)}
 .tm-vocab-chapter-items{display:grid;gap:9px;padding:11px;background:#fafdff}

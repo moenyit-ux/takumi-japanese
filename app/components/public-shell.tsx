@@ -1,5 +1,6 @@
 import Link from 'next/link'
 import styles from './public-shell.module.css'
+import ChevronIcon from './chevron-icon'
 
 export function PublicBrand() {
   return (
@@ -23,7 +24,7 @@ export function PublicHeader() {
       <nav className={styles.nav} aria-label="Navigasi utama">
         <details className={styles.courseMenu}>
           <summary>
-            Kursus <span aria-hidden="true">⌄</span>
+            Kursus <span aria-hidden="true"><ChevronIcon /></span>
           </summary>
           <div className={styles.courseDropdown} aria-label="Level kursus">
             <Link href="/#kursus-dasar"><strong>Dasar</strong><small>Fondasi</small></Link>
@@ -36,7 +37,7 @@ export function PublicHeader() {
         </details>
         <details className={styles.courseMenu}>
           <summary>
-            Belajar mandiri <span aria-hidden="true">⌄</span>
+            Belajar mandiri <span aria-hidden="true"><ChevronIcon /></span>
           </summary>
           <div className={styles.courseDropdown} aria-label="Level belajar mandiri">
             <span className={styles.courseSoon}><strong>Dasar</strong><small>Segera</small></span>
@@ -49,7 +50,7 @@ export function PublicHeader() {
         </details>
         <details className={styles.courseMenu}>
           <summary>
-            SSW <span aria-hidden="true">⌄</span>
+            SSW <span aria-hidden="true"><ChevronIcon /></span>
           </summary>
           <div className={styles.courseDropdown} aria-label="Program SSW">
             <span className={styles.courseSoon}>
@@ -60,7 +61,7 @@ export function PublicHeader() {
         </details>
         <details className={styles.courseMenu}>
           <summary>
-            Cerita Takumi <span aria-hidden="true">⌄</span>
+            Cerita Takumi <span aria-hidden="true"><ChevronIcon /></span>
           </summary>
           <div className={styles.courseDropdown} aria-label="Tentang Takumi">
             <Link href="/profil/visi-misi">

@@ -2,6 +2,7 @@
 
 import { useRouter } from 'next/navigation'
 import { useState } from 'react'
+import ChevronIcon from '../../../components/chevron-icon'
 import styles from '../admin.module.css'
 import userStyles from './admin-users.module.css'
 
@@ -108,7 +109,7 @@ export default function UsersClient({ users }: { users: AdminUser[] }) {
                 </div>
                 <div className={userStyles.summaryAside}>
                   <span className={styles.roleBadge}>{roleLabel[user.role] || user.role}</span>
-                  <span className={userStyles.chevron} aria-hidden="true">{isExpanded ? '▲' : '▼'}</span>
+                  <span className={userStyles.chevron} aria-hidden="true"><ChevronIcon direction={isExpanded ? 'up' : 'down'} /></span>
                 </div>
               </button>
 

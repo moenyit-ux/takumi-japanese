@@ -2,6 +2,7 @@
 
 import { useMemo, useState } from 'react'
 import { useRouter } from 'next/navigation'
+import ChevronIcon from '../../../../components/chevron-icon'
 import jlpt from '../jlpt.module.css'
 
 type SectionKind = 'multiple_choice' | 'reading' | 'listening'
@@ -227,7 +228,7 @@ function QuestionCard({ quizId, question, defaultPosition, defaultKind, allQuest
           <small>{question ? `${section.jp} · SOAL ${displayPosition}` : `TAMBAH SOAL · ${section.jp}`}</small>
           <b>{title}</b>
         </div>
-        <span className={jlpt.chevron}>⌄</span>
+        <span className={jlpt.chevron}><ChevronIcon /></span>
       </summary>
 
       <div className={jlpt.questionBody}>

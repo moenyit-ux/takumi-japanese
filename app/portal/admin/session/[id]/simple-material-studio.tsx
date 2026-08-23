@@ -2,6 +2,7 @@
 
 import { useMemo, useState } from 'react'
 import { useRouter } from 'next/navigation'
+import ChevronIcon from '../../../../components/chevron-icon'
 import admin from '../../admin.module.css'
 import styles from './structured-material-studio.module.css'
 
@@ -317,7 +318,7 @@ function MaterialCard({ sessionId, block, defaultPosition, initialKind }: { sess
       <summary>
         <span className={styles.kindBadge}>{kindLabel[kind]}</span>
         <div><b>{block?.title || title || autoTitle || `Tambah ${kindLabel[kind]}`}</b><small>{block ? 'Klik untuk edit' : 'Form baru'}</small></div>
-        <span className={styles.chevron}>⌄</span>
+        <span className={styles.chevron}><ChevronIcon /></span>
       </summary>
       <div className={styles.cardBody}>
         {needsManualTitle && <label className={`${admin.label} ${admin.full}`}>Judul materi<input className={admin.input} value={title} onChange={(e) => setTitle(e.target.value)} placeholder={kind === 'reading' ? 'Contoh: Jadwal kereta' : 'Contoh: Percakapan di tempat kerja'} /></label>}

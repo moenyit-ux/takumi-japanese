@@ -3,6 +3,7 @@ import BlockLearningStatusControl, { type BlockLearningStatus } from './block-le
 import CollapsibleVocabularyCard from './collapsible-vocabulary-card'
 import CollapsibleGrammarCard from './collapsible-grammar-card'
 import CollapsibleLessonCard from './collapsible-lesson-card'
+import ChevronIcon from '../../../components/chevron-icon'
 
 export type ContentBlock = {
   id: string
@@ -482,7 +483,7 @@ export default function MaterialView({ blocks, bookmarkedIds, learningStatuses =
                 <div className="tm-vocab-chapter-stats">
                   {learnedCount > 0 && <span className="learned">✓ {learnedCount} dipelajari</span>}
                   {reviewCount > 0 && <span className="review">↻ {reviewCount} ulang</span>}
-                  <i>⌄</i>
+                  <i><ChevronIcon /></i>
                 </div>
               </summary>
               <div className="tm-vocab-chapter-items">

@@ -2,6 +2,7 @@
 
 import { useMemo, useState } from 'react'
 import { useRouter } from 'next/navigation'
+import ChevronIcon from '../../../../components/chevron-icon'
 import admin from '../../admin.module.css'
 import styles from './material-workflow-studio.module.css'
 
@@ -409,7 +410,7 @@ function MaterialEditor({ sessionId, kind, block, defaultPosition, role }: { ses
   return <details className={styles.itemCard} open={!block}>
     <summary>
       <div className={styles.itemTitle}><span className={`${styles.statusDot} ${styles[status]}`} /><div><b>{block?.title || info.newLabel}</b><small>{block ? `${chapterLabel}${statusLabel}` : 'Penambahan materi baru'}</small></div></div>
-      <span className={styles.chevron}>⌄</span>
+      <span className={styles.chevron}><ChevronIcon /></span>
     </summary>
     <div className={styles.itemBody}>
       {block?.review_note && <div className={styles.revisionNote}><b>Catatan revisi</b><span>{block.review_note}</span></div>}
@@ -499,7 +500,7 @@ export default function MaterialWorkflowStudio({ sessionId, levelCode, role, kin
                 <summary>
                   <div><small>BAB {String(chapter).padStart(2, '0')}</small><b>Bab {chapter}{chapterTitle ? ` · ${chapterTitle}` : ''}</b></div>
                   <span>{chapterBlocks.length} {chapterItemLabel}</span>
-                  <i>⌄</i>
+                  <i><ChevronIcon /></i>
                 </summary>
                 <div className={styles.chapterBody}>
                   {chapterBlocks.map((block) => <MaterialEditor key={block.id} sessionId={sessionId} kind={kind} block={block} defaultPosition={block.position} role={role} />)}

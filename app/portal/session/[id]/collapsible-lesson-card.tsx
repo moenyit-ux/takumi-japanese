@@ -2,6 +2,7 @@
 
 import type { ReactNode } from 'react'
 import { useState } from 'react'
+import ChevronIcon from '../../../components/chevron-icon'
 import MaterialBookmark from './material-bookmark'
 import BlockLearningStatusControl, { type BlockLearningStatus } from './block-learning-status-control'
 
@@ -57,7 +58,7 @@ export default function CollapsibleLessonCard({
             <i aria-hidden="true">{current.icon}</i>
             <span>{current.label}</span>
           </span>
-          <span className="tm-vocab-compact-chevron" aria-hidden="true">⌄</span>
+          <span className="tm-vocab-compact-chevron" aria-hidden="true"><ChevronIcon /></span>
         </button>
       </article>
     )
@@ -67,7 +68,7 @@ export default function CollapsibleLessonCard({
     <article className="tm-material-card tm-vocab-expanded-card" data-block-id={blockId} id={anchorId}>
       <div className="tm-vocab-expanded-topbar">
         <button type="button" onClick={() => setExpanded(false)} aria-expanded="true">
-          <span aria-hidden="true">⌃</span>
+          <span aria-hidden="true"><ChevronIcon direction="up" /></span>
           Ringkas {kindLabel}
         </button>
       </div>

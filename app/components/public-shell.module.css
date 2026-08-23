@@ -114,8 +114,13 @@
 }
 
 .courseMenu summary > span {
+  width: 14px;
+  height: 14px;
+  display: grid;
+  place-items: center;
   color: var(--vermillion, #e78dac);
   font-size: 14px;
+  line-height: 0;
   transition: transform 180ms ease;
 }
 
