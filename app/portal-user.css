@@ -359,11 +359,14 @@
 .portal-dashboard .content {
   grid-column: 2;
   max-width: 1420px;
-  padding: 52px clamp(30px, 4vw, 64px) 90px;
+  padding: calc(60px + env(safe-area-inset-top)) clamp(30px, 4vw, 64px) 90px;
+  overflow: visible;
 }
 
 .dashboard-view {
   width: 100%;
+  padding-top: 4px;
+  overflow: visible;
 }
 
 .dashboard-head {
@@ -372,6 +375,8 @@
   justify-content: space-between;
   gap: 32px;
   margin-bottom: 34px;
+  padding-top: 4px;
+  overflow: visible;
 }
 
 .dashboard-kicker,
@@ -380,21 +385,28 @@
   color: var(--dashboard-pink);
   font-size: 9px;
   font-weight: 900;
+  line-height: 1.6;
   letter-spacing: 0.2em;
 }
 
 .dashboard-head h1 {
-  margin: 14px 0 12px;
+  margin: 10px 0 8px;
+  padding: 0.1em 0 0.14em;
   font-family: "Yu Mincho", "Hiragino Mincho ProN", Georgia, serif;
   font-size: clamp(40px, 4.8vw, 66px);
   font-weight: 500;
-  line-height: 1.01;
-  letter-spacing: -0.055em;
+  line-height: 1.12;
+  letter-spacing: -0.045em;
+  overflow: visible;
 }
 
 .dashboard-head h1 em {
+  max-width: 100%;
+  display: inline-block;
   color: var(--dashboard-pink);
   font-style: normal;
+  overflow-wrap: anywhere;
+  word-break: break-word;
 }
 
 .dashboard-head p {
@@ -819,7 +831,7 @@
   }
 
   .portal-dashboard .content {
-    padding: 34px 20px 112px;
+    padding: calc(42px + env(safe-area-inset-top)) 20px 112px;
   }
 
   .portal-dashboard .bottom {
@@ -926,6 +938,7 @@
 
   .dashboard-head h1 {
     font-size: 37px;
+    line-height: 1.14;
   }
 
   .dashboard-resume-copy {
