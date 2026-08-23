@@ -5,6 +5,8 @@ type StudyKind = 'vocabulary' | 'kanji' | 'grammar' | 'reading' | 'listening' | 
 type Props = {
   backHref: string
   active: StudyKind
+  title?: string
+  meta?: string
   progressPercent?: number | null
   learningStatus?: string | null
   anchors?: Partial<Record<Exclude<StudyKind, 'quiz'>, string>>
@@ -12,24 +14,46 @@ type Props = {
   compact?: boolean
 }
 
-const navItems: Array<{ key: StudyKind; label: string; icon: string }> = [
-  { key: 'vocabulary', label: 'Kosakata', icon: '▤' },
-  { key: 'kanji', label: 'Kanji', icon: '字' },
-  { key: 'grammar', label: 'Bunpou', icon: '▧' },
-  { key: 'reading', label: 'Dokkai', icon: '▥' },
-  { key: 'listening', label: 'Choukai', icon: '◉' },
-  { key: 'quiz', label: 'Kuis', icon: '◌' },
+const navItems: Array<{ key: StudyKind; label: string; mark: string }> = [
+  { key: 'vocabulary', label: 'Kosakata', mark: '語' },
+  { key: 'kanji', label: 'Kanji', mark: '漢' },
+  { key: 'grammar', label: 'Bunpou', mark: '文' },
+  { key: 'reading', label: 'Dokkai', mark: '読' },
+  { key: 'listening', label: 'Choukai', mark: '聴' },
+  { key: 'quiz', label: 'Kuis', mark: '問' },
 ]
 
-export default function TakumiStudyHeader({ backHref, active, progressPercent = 0, learningStatus = 'Belum dipelajari', anchors = {}, quizHref, compact = false }: Props) {
+export default function TakumiStudyHeader({ backHref, active, title = 'Ruang belajar Takumi', meta = 'Materi bahasa Jepang', progressPercent = 0, learningStatus = 'Belum dipelajari', anchors = {}, quizHref, compact = false }: Props) {
   const safePercent = Math.min(100, Math.max(0, Math.round(progressPercent || 0)))
 
   return (
     <header className={`tm-study-header${compact ? ' tm-study-header-compact' : ''}`}>
-      <div className="tm-brand-row">
-        <Link className="tm-back" href={backHref} aria-label="Kembali">←</Link>
-        <Link className="tm-wordmark" href="/portal/dashboard"><b>Takumi</b> <span>Japanese</span></Link>
-        <Link className="tm-header-bookmark" href="/portal/bookmark" aria-label="Buka bookmark">♡</Link>
+      <div className="tm-study-hero">
+        <div className="tm-brand-row">
+          <Link className="tm-back" href={backHref} aria-label="Kembali"><span aria-hidden="true">←</span></Link>
+          <Link className="tm-wordmark" href="/portal/dashboard"><b>Takumi</b><span>Japanese</span></Link>
+          <Link className="tm-header-bookmark" href="/portal/bookmark" aria-label="Buka bookmark"><span aria-hidden="true">♡</span></Link>
+        </div>
+
+        <div className="tm-study-hero-content">
+          <div className="tm-study-heading">
+            <small>TAKUMI · RUANG BELAJAR</small>
+            <h1>{title}</h1>
+            <p>{meta}</p>
+          </div>
+
+          {!compact && (
+            <div className="tm-session-progress">
+              <div className="tm-session-progress-head"><span>Progres materi</span><b>{safePercent}%</b></div>
+              <div className="tm-session-track"><i style={{ width: `${safePercent}%` }} /></div>
+              <div className="tm-progress-legend" aria-label={`Status belajar: ${learningStatus}`}>
+                <span><i className={learningStatus === 'Sudah dipelajari' ? 'done' : 'todo'} />Sudah dipelajari</span>
+                <span><i className={learningStatus === 'Perlu dipelajari lagi' || learningStatus === 'Ingin dipelajari lagi' ? 'current' : 'todo'} />Pelajari lagi</span>
+                <span><i className={learningStatus === 'Belum dipelajari' ? 'current' : 'todo'} />Belum dipelajari</span>
+              </div>
+            </div>
+          )}
+        </div>
       </div>
 
       <nav className="tm-study-nav" aria-label="Navigasi materi">
@@ -39,34 +63,10 @@ export default function TakumiStudyHeader({ backHref, active, progressPercent = 
           else href = anchors[item.key] || null
           const className = `tm-study-tab${active === item.key ? ' active' : ''}${!href ? ' disabled' : ''}`
           return href
-            ? <Link className={className} href={href} key={item.key}><i>{item.icon}</i><span>{item.label}</span></Link>
-            : <span className={className} key={item.key}><i>{item.icon}</i><span>{item.label}</span></span>
+            ? <Link className={className} href={href} key={item.key}><i>{item.mark}</i><span>{item.label}</span></Link>
+            : <span className={className} key={item.key}><i>{item.mark}</i><span>{item.label}</span></span>
         })}
       </nav>
-
-      {!compact && (
-        <div className="tm-progress-characters">
-          <div className="tm-mascot tm-mascot-boy">
-            <img src="/mascots/takumi-kun.webp" alt="Takumi kun" width="160" height="153" />
-            <span>Takumi kun</span>
-          </div>
-
-          <div className="tm-session-progress">
-            <b>Progres materi {safePercent}%</b>
-            <div className="tm-session-track"><i style={{ width: `${safePercent}%` }} /></div>
-            <div className="tm-progress-legend" aria-label={`Status belajar: ${learningStatus}`}>
-              <span><i className={learningStatus === 'Sudah dipelajari' ? 'done' : 'todo'} />Sudah dipelajari</span>
-              <span><i className={learningStatus === 'Perlu dipelajari lagi' ? 'current' : 'todo'} />Perlu dipelajari lagi</span>
-              <span><i className={learningStatus === 'Belum dipelajari' ? 'current' : 'todo'} />Belum dipelajari</span>
-            </div>
-          </div>
-
-          <div className="tm-mascot tm-mascot-girl">
-            <img src="/mascots/hana-chan.webp" alt="Hana chan" width="160" height="153" />
-            <span>Hana chan</span>
-          </div>
-        </div>
-      )}
     </header>
   )
 }

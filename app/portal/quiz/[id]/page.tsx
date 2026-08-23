@@ -100,6 +100,8 @@ export default async function QuizPage({ params }: { params: Promise<{ id: strin
       <TakumiStudyHeader
         backHref={backHref}
         active="quiz"
+        title={quiz.title}
+        meta={`${levelCode} · Latihan materi`}
         progressPercent={progress?.read_percent || 0}
         learningStatus={getLearningStatus(progress?.status)}
         quizHref={`/portal/quiz/${quiz.id}`}

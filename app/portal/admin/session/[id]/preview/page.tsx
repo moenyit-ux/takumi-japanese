@@ -132,6 +132,8 @@ export default async function AdminSessionPreviewPage({
       <TakumiStudyHeader
         backHref={`/portal/admin/session/${editor.session.id}`}
         active={active}
+        title={editor.session.title}
+        meta={`${editor.session.level_code} · Bab ${editor.session.session_no} · Preview materi`}
         progressPercent={0}
         learningStatus="Belum dipelajari"
         anchors={anchors}
