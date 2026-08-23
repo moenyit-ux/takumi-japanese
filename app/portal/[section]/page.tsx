@@ -92,7 +92,7 @@ function Shell({ section, children, isAdmin, userName }: { section: string; chil
   const nav = isAdmin ? [...baseNav, ['admin', 'Admin', '▦']] : baseNav
 
   return (
-    <div className="portal">
+    <div className={`portal portal-${section}`}>
       <aside className="side">
         <div className="brand"><span>匠</span><div><b>Takumi</b><small>Japanese</small></div></div>
         <div className="side-user"><small>MASUK SEBAGAI</small><b>{userName}</b></div>
@@ -133,40 +133,106 @@ function Dashboard({ data }: { data: PortalData }) {
     return status !== 'learned' && material.content_status === 'published' && access
   })
   const nextProgress = nextMaterial ? progressByMaterial.get(nextMaterial.id) : undefined
+  const nextLevel = nextMaterial ? data.levels.find((level) => level.id === nextMaterial.level_id) : undefined
+  const overallPercent = materials.length === 0 ? 0 : Math.min(100, Math.round((learned.length / materials.length) * 100))
+  const summaries = [
+    { number: '01', label: 'Sudah dipelajari', value: learned.length, note: 'Materi selesai' },
+    { number: '02', label: 'Pelajari lagi', value: review.length, note: 'Masuk daftar ulasan' },
+    { number: '03', label: 'Belum dimulai', value: notStarted.length, note: 'Siap untuk dipelajari' },
+  ]
 
   return (
-    <>
-      <div className="head"><div><div className="eyebrow">DASHBOARD</div><h1>Selamat datang, {data.userName}</h1><p>Belajar sesuai ritme Anda. Tidak ada target jumlah sesi; tandai setiap materi sesuai kondisi belajar Anda.</p></div></div>
-
-      <section className="resume">
+    <div className="dashboard-view">
+      <header className="dashboard-head">
         <div>
-          <div className="eyebrow">LANJUTKAN BELAJAR</div>
-          {nextMaterial ? <><h2>{nextMaterial.title}</h2><p>Progres membaca {nextProgress?.read_percent || 0}% · {getLearningStatus(nextProgress)}</p><Link className="btn primary" href={`/portal/session/${nextMaterial.id}`}>Lanjutkan materi →</Link></> : <><h2>Belum ada materi yang perlu dilanjutkan</h2><p>Materi baru akan muncul di sini setelah dipublikasikan.</p><Link className="btn primary" href="/portal/materi">Lihat materi →</Link></>}
+          <div className="dashboard-kicker">RUANG BELAJAR TAKUMI</div>
+          <h1>Selamat datang kembali,<br /><em>{data.userName}.</em></h1>
+          <p>Belajar sesuai ritmemu, dengan arah yang tetap jelas.</p>
         </div>
-        <div>匠</div>
+        <Link className="dashboard-head-link" href="/portal/materi">Lihat semua materi <span aria-hidden="true">↗</span></Link>
+      </header>
+
+      <section className="dashboard-resume">
+        <div className="dashboard-resume-copy">
+          <div className="dashboard-resume-label">
+            <span>LANJUTKAN BELAJAR</span>
+            <small>{nextLevel?.code || 'TAKUMI'} · {nextMaterial ? `MATERI ${String(nextMaterial.session_no).padStart(2, '0')}` : 'MATERI'}</small>
+          </div>
+          {nextMaterial ? (
+            <>
+              <h2>{nextMaterial.title}</h2>
+              <div className="dashboard-resume-meta">
+                <div><span>Progres baca</span><b>{nextProgress?.read_percent || 0}%</b></div>
+                <div><span>Status</span><b>{getLearningStatus(nextProgress)}</b></div>
+              </div>
+              <Link className="dashboard-primary-action" href={`/portal/session/${nextMaterial.id}`}>Lanjutkan materi <span aria-hidden="true">→</span></Link>
+            </>
+          ) : (
+            <>
+              <h2>Belum ada materi yang perlu dilanjutkan.</h2>
+              <p className="dashboard-empty-copy">Materi baru akan muncul di sini setelah dipublikasikan.</p>
+              <Link className="dashboard-primary-action" href="/portal/materi">Lihat materi <span aria-hidden="true">→</span></Link>
+            </>
+          )}
+        </div>
+        <div className="dashboard-resume-mark" aria-hidden="true">
+          <small>CONTINUE</small>
+          <span>続</span>
+          <b>{overallPercent}%</b>
+        </div>
       </section>
 
-      <div className="stats">
-        <article><span>Sudah dipelajari</span><b>{learned.length}</b></article>
-        <article><span>Perlu dipelajari lagi</span><b>{review.length}</b></article>
-        <article><span>Belum dipelajari</span><b>{notStarted.length}</b></article>
-      </div>
+      <section className="dashboard-summaries" aria-label="Ringkasan progres belajar">
+        {summaries.map((summary) => (
+          <article key={summary.number}>
+            <small>{summary.number}</small>
+            <div><span>{summary.label}</span><p>{summary.note}</p></div>
+            <b>{summary.value}</b>
+          </article>
+        ))}
+      </section>
 
-      <div className="twocol">
-        <section>
-          <h2>Program Anda</h2>
-          {data.levels.map((level) => {
-            const levelMaterials = materials.filter((item) => item.level_id === level.id)
-            const learnedForLevel = levelMaterials.filter((item) => progressByMaterial.get(item.id)?.learning_status === 'learned').length
-            const percent = levelMaterials.length === 0 ? 0 : Math.min(100, Math.round((learnedForLevel / levelMaterials.length) * 100))
-            const freeCount = levelMaterials.filter((item) => item.access_tier === 'free').length
-            const premium = hasActiveAccess(data.entitlements, level.id)
-            return <div className="course" key={level.id}><b>{level.code}</b><div><h3>{level.name}</h3><p>{levelMaterials.length} materi tersedia · {freeCount} gratis · {premium ? 'Premium aktif' : 'Freemium'}</p><div className="bar"><i style={{ width: `${percent}%` }} /></div></div><strong>{percent}%</strong></div>
-          })}
+      <div className="dashboard-columns">
+        <section className="dashboard-programs">
+          <div className="dashboard-section-heading">
+            <div><small>PROGRAM BELAJAR</small><h2>Jalur Anda</h2></div>
+            <span>{overallPercent}% selesai</span>
+          </div>
+          <div className="dashboard-program-list">
+            {data.levels.map((level, index) => {
+              const levelMaterials = materials.filter((item) => item.level_id === level.id)
+              const learnedForLevel = levelMaterials.filter((item) => progressByMaterial.get(item.id)?.learning_status === 'learned').length
+              const percent = levelMaterials.length === 0 ? 0 : Math.min(100, Math.round((learnedForLevel / levelMaterials.length) * 100))
+              const freeCount = levelMaterials.filter((item) => item.access_tier === 'free').length
+              const premium = hasActiveAccess(data.entitlements, level.id)
+              return (
+                <Link className="dashboard-program" href={`/portal/materi?level=${level.code}`} key={level.id}>
+                  <small>{String(index + 1).padStart(2, '0')}</small>
+                  <b>{level.code}</b>
+                  <div className="dashboard-program-copy">
+                    <h3>{level.name}</h3>
+                    <p>{levelMaterials.length} materi · {freeCount} gratis · {premium ? 'Premium aktif' : 'Freemium'}</p>
+                    <div className="dashboard-progress" aria-label={`Progres ${percent}%`}><i style={{ width: `${percent}%` }} /></div>
+                  </div>
+                  <strong>{percent}% <span aria-hidden="true">→</span></strong>
+                </Link>
+              )
+            })}
+          </div>
         </section>
-        <section className="panel"><h2>Standar latihan</h2><div className="row"><b>Latihan materi</b><span>≥70</span></div><div className="row"><b>Evaluasi berkala</b><span>≥75</span></div><div className="row"><b>Simulasi JLPT</b><span>≥75</span></div></section>
+
+        <aside className="dashboard-standard">
+          <div className="dashboard-section-heading"><div><small>STANDAR TAKUMI</small><h2>Patokan latihan</h2></div></div>
+          <p>Gunakan nilai berikut sebagai penanda kesiapan sebelum melanjutkan.</p>
+          <div className="dashboard-standard-list">
+            <div><span>01</span><b>Latihan materi</b><strong>≥70</strong></div>
+            <div><span>02</span><b>Evaluasi berkala</b><strong>≥75</strong></div>
+            <div><span>03</span><b>Simulasi JLPT</b><strong>≥75</strong></div>
+          </div>
+          <small className="dashboard-standard-note">焦らず、止まらず。<br />Tidak perlu terburu-buru, jangan berhenti.</small>
+        </aside>
       </div>
-    </>
+    </div>
   )
 }
 
