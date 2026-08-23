@@ -147,7 +147,7 @@ export default async function SessionPage({
         backHref={`/portal/materi?level=${levelCode}`}
         active={active}
         title={session.title}
-        meta={`${levelCode} · Bab ${session.session_no} · ${session.estimated_minutes} menit`}
+        meta={`Semua bab · ${session.estimated_minutes} menit`}
         progressPercent={initialReadPercent}
         learningStatus={overallStatus}
         anchors={anchors}

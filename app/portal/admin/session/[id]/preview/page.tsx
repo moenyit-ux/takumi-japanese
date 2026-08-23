@@ -133,7 +133,7 @@ export default async function AdminSessionPreviewPage({
         backHref={`/portal/admin/session/${editor.session.id}`}
         active={active}
         title={editor.session.title}
-        meta={`${editor.session.level_code} · Bab ${editor.session.session_no} · Preview materi`}
+        meta={`${editor.session.level_code} · Semua bab · Preview materi`}
         progressPercent={0}
         learningStatus="Belum dipelajari"
         anchors={anchors}

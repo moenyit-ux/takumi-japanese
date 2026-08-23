@@ -24,8 +24,15 @@ const navItems: Array<{ key: StudyKind; label: string; mark: string }> = [
   { key: 'quiz', label: 'Kuis', mark: '問' },
 ]
 
+function formatStudyTitle(title: string) {
+  const legacySession = /^Sesi\s+(N\d+)\s+\d+$/i.exec(title.trim())
+  if (!legacySession) return title
+  return `Materi ${legacySession[1].toUpperCase()}`
+}
+
 export default function TakumiStudyHeader({ backHref, active, title = 'Ruang belajar Takumi', meta = 'Materi bahasa Jepang', progressPercent = 0, learningStatus = 'Belum dipelajari', anchors = {}, quizHref, compact = false }: Props) {
   const safePercent = Math.min(100, Math.max(0, Math.round(progressPercent || 0)))
+  const displayTitle = formatStudyTitle(title)
 
   return (
     <header className={`tm-study-header${compact ? ' tm-study-header-compact' : ''}`}>
@@ -39,7 +46,7 @@ export default function TakumiStudyHeader({ backHref, active, title = 'Ruang bel
         <div className="tm-study-hero-content">
           <div className="tm-study-heading">
             <small>TAKUMI · RUANG BELAJAR</small>
-            <h1>{title}</h1>
+            <h1>{displayTitle}</h1>
             <p>{meta}</p>
           </div>
 
