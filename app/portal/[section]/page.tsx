@@ -1,6 +1,7 @@
 import Link from 'next/link'
 import { redirect } from 'next/navigation'
 import { createClient } from '../../../lib/supabase/server'
+import DashboardScrollReset from '../../components/dashboard-scroll-reset'
 
 type Level = {
   id: string
@@ -143,6 +144,7 @@ function Dashboard({ data }: { data: PortalData }) {
 
   return (
     <div className="dashboard-view">
+      <DashboardScrollReset />
       <header className="dashboard-head">
         <div>
           <div className="dashboard-kicker">RUANG BELAJAR TAKUMI</div>
