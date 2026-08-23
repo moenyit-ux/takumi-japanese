@@ -1,4 +1,5 @@
 import Link from 'next/link'
+import PortalNavIcon from './portal-nav-icon'
 
 type StudyKind = 'vocabulary' | 'kanji' | 'grammar' | 'reading' | 'listening' | 'quiz'
 
@@ -32,7 +33,7 @@ export default function TakumiStudyHeader({ backHref, active, title = 'Ruang bel
         <div className="tm-brand-row">
           <Link className="tm-back" href={backHref} aria-label="Kembali"><span aria-hidden="true">←</span></Link>
           <Link className="tm-wordmark" href="/portal/dashboard"><b>Takumi</b><span>Japanese</span></Link>
-          <Link className="tm-header-bookmark" href="/portal/bookmark" aria-label="Buka bookmark"><span aria-hidden="true">♡</span></Link>
+          <Link className="tm-header-bookmark" href="/portal/bookmark" aria-label="Buka halaman bookmark"><PortalNavIcon name="bookmark" /></Link>
         </div>
 
         <div className="tm-study-hero-content">

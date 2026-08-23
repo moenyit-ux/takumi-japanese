@@ -518,6 +518,12 @@
   font-size: 21px;
 }
 
+.tm-header-bookmark svg {
+  display: block;
+  width: 18px;
+  height: 18px;
+}
+
 .tm-wordmark {
   display: flex;
   align-items: center;
