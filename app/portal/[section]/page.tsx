@@ -145,6 +145,7 @@ function Dashboard({ data }: { data: PortalData }) {
   return (
     <div className="dashboard-view">
       <DashboardScrollReset />
+      <div className="dashboard-top-space" aria-hidden="true" />
       <header className="dashboard-head">
         <div>
           <div className="dashboard-kicker">RUANG BELAJAR TAKUMI</div>
