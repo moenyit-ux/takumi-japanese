@@ -383,3 +383,32 @@
   .takumi-admin-editor > :is([class*='__editorHeader '], [class$='__editorHeader'])::after { right: 10%; font-size: 140px; }
   .takumi-admin-editor :is([class*='__reviewPanel '], [class$='__reviewPanel']) { position: static; }
 }
+
+/* The shared material preview header is not an admin certificate masthead. */
+.takumi-admin-page > .tm-study-header {
+  display: grid !important;
+  grid-template-columns: minmax(0, 1fr) !important;
+  grid-template-rows: auto auto !important;
+  min-height: 0 !important;
+  overflow: visible !important;
+  border: 0 !important;
+  background: transparent !important;
+}
+
+.takumi-admin-page > .tm-study-header > .tm-study-hero {
+  display: block !important;
+  min-width: 0;
+  padding: 22px 26px 28px !important;
+}
+
+@media (max-width: 820px) {
+  .takumi-admin-page > .tm-study-header > .tm-study-hero {
+    padding: 18px 20px 22px !important;
+  }
+}
+
+@media (max-width: 560px) {
+  .takumi-admin-page > .tm-study-header > .tm-study-hero {
+    padding: 14px 15px 18px !important;
+  }
+}
