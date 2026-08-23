@@ -33,16 +33,16 @@
 .storyCard,
 .timelineGrid article,
 .valuesSection article {
-  border: 1px solid #cfe8f3;
+  border: 1px solid var(--line);
   background: #fff;
-  box-shadow: 0 12px 30px rgba(37, 84, 110, 0.06);
+  box-shadow: none;
 }
 
 .identityCard {
   position: sticky;
   top: 96px;
   overflow: hidden;
-  border-radius: 24px;
+  border-radius: 0;
 }
 
 .photoPlaceholder {
@@ -51,8 +51,9 @@
   place-items: center;
   align-content: center;
   gap: 12px;
-  background: linear-gradient(155deg, #dceff7, #f7fcfe);
-  color: var(--deep);
+  border-bottom: 1px solid #c8e6f2;
+  background: linear-gradient(145deg, #effaff, #fdeff4);
+  color: var(--ink);
 }
 
 .photoPlaceholder span {
@@ -60,10 +61,12 @@
   height: 92px;
   display: grid;
   place-items: center;
-  border-radius: 24px;
-  background: var(--deep);
-  color: #fff;
-  font-size: 46px;
+  border: 1px solid #8ccce5;
+  border-radius: 0;
+  background: rgba(255, 255, 255, 0.64);
+  color: var(--ink);
+  font-family: "Yu Mincho", Georgia, serif;
+  font-size: 27px;
   font-weight: 900;
 }
 
@@ -101,14 +104,15 @@
 .storyCard {
   min-width: 0;
   padding: 32px;
-  border-radius: 24px;
+  border-radius: 0;
 }
 
 .storyCard > h2 {
   max-width: 680px;
   margin: 8px 0 26px;
+  padding-bottom: 0.14em;
   font-size: clamp(28px, 4vw, 40px);
-  line-height: 1.15;
+  line-height: 1.2;
   letter-spacing: -0.035em;
 }
 
@@ -126,8 +130,8 @@
 .founderStatement {
   margin-top: 28px;
   padding: 22px;
-  border: 1px solid #bfe2f1;
-  border-radius: 18px;
+  border: 1px solid var(--line);
+  border-radius: 0;
   background: var(--soft);
 }
 
@@ -170,7 +174,7 @@
 .timelineGrid article {
   min-width: 0;
   padding: 18px;
-  border-radius: 18px;
+  border-radius: 0;
 }
 
 .timelineGrid strong {
@@ -196,8 +200,8 @@
 
 .valuesSection article {
   padding: 26px;
-  border-radius: 22px;
-  background: linear-gradient(155deg, #fff, #f7fcfe);
+  border-radius: 0;
+  background: #fff;
 }
 
 .valuesSection small {

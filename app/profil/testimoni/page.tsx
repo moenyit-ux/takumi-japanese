@@ -1,17 +1,6 @@
 import Link from 'next/link'
 import styles from './testimoni.module.css'
-
-function Brand() {
-  return (
-    <div className="brand">
-      <span>匠</span>
-      <div>
-        <b>Takumi</b>
-        <small>Japanese</small>
-      </div>
-    </div>
-  )
-}
+import { PublicFooter, PublicHeader } from '../../components/public-shell'
 
 type Testimonial = {
   name: string
@@ -89,17 +78,8 @@ const testimonials: Testimonial[] = [
 
 export default function TestimonialsPage() {
   return (
-    <main>
-      <header>
-        <Link href="/" aria-label="Kembali ke beranda"><Brand /></Link>
-        <nav>
-          <Link href="/profil/visi-misi">Visi &amp; Misi</Link>
-          <Link href="/profil/profil-pendiri">Profil Pendiri</Link>
-          <Link href="/profil/pengajar">Pengajar</Link>
-          <Link href="/profil/testimoni">Testimoni</Link>
-        </nav>
-        <Link className="btn ghost" href="/">Beranda</Link>
-      </header>
+    <main className="publicPage">
+      <PublicHeader />
 
       <section className={styles.hero}>
         <div className="eyebrow">PROFIL TAKUMI</div>
@@ -125,20 +105,17 @@ export default function TestimonialsPage() {
         </div>
 
         <div className={styles.testimonialGrid}>
-          {testimonials.map((testimonial) => (
+          {testimonials.map((testimonial, index) => (
             <article className={styles.testimonialCard} key={`${testimonial.name}-${testimonial.level}`}>
-              <div className={styles.photoArea} aria-label={`Area foto ${testimonial.name}`}>
-                <span>{testimonial.initials}</span>
-                <small>Foto siswa</small>
+              <div className={styles.cardMeta}>
+                <span>{String(index + 1).padStart(2, '0')}</span>
+                <span className={styles.levelBadge}>{testimonial.level}</span>
               </div>
-
               <div className={styles.cardBody}>
                 <blockquote>“{testimonial.quote}”</blockquote>
                 <div className={styles.studentRow}>
-                  <div>
-                    <strong>{testimonial.name} <span>/ {testimonial.program}</span></strong>
-                  </div>
-                  <span className={styles.levelBadge}>{testimonial.level}</span>
+                  <span className={styles.initials} aria-hidden="true">{testimonial.initials}</span>
+                  <strong>{testimonial.name}<small>{testimonial.program}</small></strong>
                 </div>
               </div>
             </article>
@@ -164,7 +141,7 @@ export default function TestimonialsPage() {
         </section>
       </section>
 
-      <footer><Brand /><p>Takumi Japanese · 人生は一生の勉強</p></footer>
+      <PublicFooter />
     </main>
   )
 }

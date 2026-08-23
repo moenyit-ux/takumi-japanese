@@ -1,17 +1,6 @@
 import Link from 'next/link'
 import styles from './pengajar.module.css'
-
-function Brand() {
-  return (
-    <div className="brand">
-      <span>匠</span>
-      <div>
-        <b>Takumi</b>
-        <small>Japanese</small>
-      </div>
-    </div>
-  )
-}
+import { PublicFooter, PublicHeader } from '../../components/public-shell'
 
 const teachers = [
   {
@@ -19,28 +8,21 @@ const teachers = [
     role: 'Pendiri / JLPT N1',
     initials: 'WI',
     level: 'JLPT N1',
+    focus: 'Strategi belajar · JLPT · Pengalaman hidup dan kerja di Jepang',
   },
   {
     name: 'Agus Dwi Priambodo',
     role: 'Pengajar / JLPT N3',
     initials: 'ADP',
     level: 'JLPT N3',
+    focus: 'Materi dasar · Latihan terarah · Pendampingan siswa',
   },
 ]
 
 export default function TeachersPage() {
   return (
-    <main>
-      <header>
-        <Link href="/" aria-label="Kembali ke beranda"><Brand /></Link>
-        <nav>
-          <Link href="/profil/visi-misi">Visi &amp; Misi</Link>
-          <Link href="/profil/profil-pendiri">Profil Pendiri</Link>
-          <Link href="/profil/pengajar">Pengajar</Link>
-          <Link href="/profil/testimoni">Testimoni</Link>
-        </nav>
-        <Link className="btn ghost" href="/">Beranda</Link>
-      </header>
+    <main className="publicPage">
+      <PublicHeader />
 
       <section className={styles.hero}>
         <div className="eyebrow">PROFIL TAKUMI</div>
@@ -57,25 +39,22 @@ export default function TeachersPage() {
         <div className={styles.teacherGrid}>
           {teachers.map((teacher) => (
             <article className={styles.teacherCard} key={teacher.name}>
-              <div className={styles.photoFrame}>
-                <div className={styles.photoPlaceholder} aria-label={`Area foto ${teacher.name}`}>
-                  <span>{teacher.initials}</span>
-                  <small>Foto pengajar</small>
-                </div>
-                <div className={styles.levelBadge}>{teacher.level}</div>
+              <div className={styles.profileMark} aria-hidden="true">
+                <span>{teacher.initials}</span>
+                <strong>講師</strong>
               </div>
               <div className={styles.teacherInfo}>
+                <div className={styles.levelBadge}>{teacher.level}</div>
                 <h2>{teacher.name}</h2>
                 <p>{teacher.role}</p>
+                <small>{teacher.focus}</small>
               </div>
             </article>
           ))}
         </div>
-
-        <p className={styles.photoNote}>Foto asli pengajar dapat dipasang di area ini tanpa mengubah struktur halaman.</p>
       </section>
 
-      <footer><Brand /><p>Takumi Japanese · 人生は一生の勉強</p></footer>
+      <PublicFooter />
     </main>
   )
 }

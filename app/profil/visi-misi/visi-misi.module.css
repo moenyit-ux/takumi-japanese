@@ -29,10 +29,10 @@
 .visionCard,
 .missionCard,
 .valuesSection {
-  border: 1px solid #cfe8f3;
-  border-radius: 24px;
-  background: #fff;
-  box-shadow: 0 14px 34px rgba(37, 84, 110, 0.06);
+  border: 1px solid var(--line);
+  border-radius: 0;
+  background: rgba(255,255,255,.2);
+  box-shadow: none;
 }
 
 .visionCard {
@@ -40,7 +40,7 @@
   grid-template-columns: auto minmax(0, 1fr);
   gap: 24px;
   padding: 32px;
-  background: linear-gradient(145deg, #ffffff, #f3fbfe);
+  background: rgba(255,255,255,.28);
 }
 
 .sectionNumber {
@@ -49,8 +49,8 @@
   display: grid;
   place-items: center;
   flex: 0 0 54px;
-  border-radius: 16px;
-  background: var(--deep);
+  border-radius: 0;
+  background: #63bee1;
   color: #fff;
   font-size: 15px;
   font-weight: 900;
@@ -76,8 +76,8 @@
   margin: 24px 0 0;
   padding: 22px 24px;
   border-left: 4px solid var(--deep);
-  border-radius: 0 16px 16px 0;
-  background: rgba(239, 249, 253, 0.85);
+  border-radius: 0;
+  background: transparent;
   color: var(--ink);
   font-size: clamp(18px, 2.2vw, 23px);
   line-height: 1.65;
@@ -110,9 +110,9 @@
   gap: 15px;
   align-items: start;
   padding: 18px 20px;
-  border: 1px solid #d8edf6;
-  border-radius: 16px;
-  background: #fbfeff;
+  border: 1px solid var(--line);
+  border-radius: 0;
+  background: transparent;
 }
 
 .missionList li > span {
@@ -120,7 +120,7 @@
   height: 42px;
   display: grid;
   place-items: center;
-  border-radius: 12px;
+  border-radius: 0;
   background: var(--soft);
   color: var(--deep);
   font-size: 13px;
@@ -143,9 +143,9 @@
 
 .valuesGrid article {
   padding: 22px;
-  border: 1px solid #d8edf6;
-  border-radius: 17px;
-  background: linear-gradient(145deg, #fff, #f8fcfe);
+  border: 1px solid var(--line);
+  border-radius: 0;
+  background: transparent;
 }
 
 .valuesGrid h3 {

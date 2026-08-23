@@ -1,17 +1,5 @@
-import Link from 'next/link'
 import styles from './visi-misi.module.css'
-
-function Brand() {
-  return (
-    <div className="brand">
-      <span>匠</span>
-      <div>
-        <b>Takumi</b>
-        <small>Japanese</small>
-      </div>
-    </div>
-  )
-}
+import { PublicFooter, PublicHeader } from '../../components/public-shell'
 
 const missions = [
   'Membuka akses pendidikan bahasa Jepang bagi seluruh anak muda Indonesia, dengan biaya terjangkau namun kualitas pengajaran tetap unggul.',
@@ -30,17 +18,8 @@ const values = [
 
 export default function VisionMissionPage() {
   return (
-    <main>
-      <header>
-        <Link href="/" aria-label="Kembali ke beranda"><Brand /></Link>
-        <nav>
-          <Link href="/profil/visi-misi">Visi &amp; Misi</Link>
-          <Link href="/profil/profil-pendiri">Profil Pendiri</Link>
-          <Link href="/profil/pengajar">Pengajar</Link>
-          <Link href="/profil/testimoni">Testimoni</Link>
-        </nav>
-        <Link className="btn ghost" href="/">Beranda</Link>
-      </header>
+    <main className="publicPage">
+      <PublicHeader />
 
       <section className={styles.hero}>
         <div className="eyebrow">PROFIL TAKUMI</div>
@@ -95,7 +74,7 @@ export default function VisionMissionPage() {
         </section>
       </section>
 
-      <footer><Brand /><p>Takumi Japanese · 人生は一生の勉強</p></footer>
+      <PublicFooter />
     </main>
   )
 }

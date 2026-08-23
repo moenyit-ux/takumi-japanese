@@ -1,240 +1,120 @@
 import Link from 'next/link'
+import { PublicFooter, PublicHeader } from './components/public-shell'
+import styles from './home.module.css'
 
-function Brand() {
-  return (
-    <div className="brand">
-      <span>匠</span>
-      <div>
-        <b>Takumi</b>
-        <small>Japanese</small>
-      </div>
-    </div>
-  )
-}
+const classroomPrograms = [
+  {
+    level: 'D', label: 'Kelas Dasar', title: 'Mulai dari fondasi',
+    description: 'Pelafalan, hiragana, katakana, percakapan sehari-hari, dan pola kalimat dasar untuk pemula yang benar-benar mulai dari nol.',
+    curriculum: ['あ・ア huruf Jepang', '±300 kosakata', '30 kanji dasar'],
+    duration: '3 bulan', meetings: '24 pertemuan', pace: '8× / bulan', price: 'Rp250.000', slug: 'dasar',
+  },
+  {
+    level: 'N5', label: 'Kursus JLPT N5', title: 'Kuatkan level pemula',
+    description: 'Program terarah untuk memahami kemampuan dasar JLPT dan membangun kebiasaan belajar yang konsisten.',
+    curriculum: ['750 kosakata', '120 kanji', '75 tata bahasa'],
+    duration: '6 bulan', meetings: '48 pertemuan', pace: '8× / bulan', price: 'Rp350.000', slug: 'n5',
+  },
+  {
+    level: 'N4', label: 'Kursus JLPT N4', title: 'Bangun pondasi yang kuat',
+    description: 'Pendampingan langsung untuk menguasai materi N4 melalui penjelasan, latihan, dan evaluasi yang terukur.',
+    curriculum: ['1.000 kosakata', '200 kanji', '100 tata bahasa'],
+    duration: '9 bulan', meetings: '72 pertemuan', pace: '8× / bulan', price: 'Rp450.000', slug: 'n4',
+  },
+  {
+    level: 'N3', label: 'Kursus JLPT N3', title: 'Lanjut ke level menengah',
+    description: 'Perkuat kemampuan N3 melalui pembelajaran langsung, latihan intensif, dan evaluasi bersama pengajar.',
+    curriculum: ['2.000 kosakata', '350 kanji', '130 tata bahasa'],
+    duration: '12 bulan', meetings: '96 pertemuan', pace: '8× / bulan', price: 'Rp550.000', slug: 'n3',
+  },
+]
+
+const selfStudyPrograms = [
+  {
+    level: 'N4', price: 'Rp299.000', summary: '1.000 kosakata · 200 kanji', grammar: '100 tata bahasa',
+    details: ['25 latihan membaca', '25 latihan mendengarkan', '5 simulasi JLPT', 'Kuis, bookmark, dan statistik belajar'],
+  },
+  {
+    level: 'N3', price: 'Rp399.000', summary: '2.000 kosakata · 350 kanji', grammar: '130 tata bahasa',
+    details: ['25 latihan membaca', '25 latihan mendengarkan', '5 simulasi JLPT', 'Kuis, bookmark, dan statistik belajar'],
+  },
+]
 
 export default function Home() {
   return (
-    <main>
-      <header>
-        <Brand />
-        <nav>
-          <details className="profileNav">
-            <summary>
-              <span>Profil</span>
-              <i aria-hidden="true">⌄</i>
-            </summary>
-            <div className="profileDropdown">
-              <Link href="/profil/visi-misi">Visi &amp; Misi</Link>
-              <Link href="/profil/profil-pendiri">Profil Pendiri</Link>
-              <Link href="/profil/pengajar">Pengajar</Link>
-              <Link href="/profil/testimoni">Testimoni</Link>
-            </div>
-          </details>
-          <details className="courseNav">
-            <summary>
-              <span>Kursus</span>
-              <i aria-hidden="true">⌄</i>
-            </summary>
-            <div className="courseDropdown">
-              <a href="#kursus-dasar">Dasar</a>
-              <a href="#kursus-n5">N5</a>
-              <a href="#kursus-n4">N4</a>
-              <a href="#kursus-n3">N3</a>
-              <a href="#kursus">N2</a>
-              <a href="#kursus">N1</a>
-            </div>
-          </details>
-          <details className="selfStudyNav">
-            <summary>
-              <span>Belajar mandiri</span>
-              <i aria-hidden="true">⌄</i>
-            </summary>
-            <div className="selfStudyDropdown">
-              <div className="comingSoonItem"><span>Dasar</span><small>Segera hadir</small></div>
-              <div className="comingSoonItem"><span>N5</span><small>Segera hadir</small></div>
-              <a href="#belajar-mandiri-n4">N4</a>
-              <a href="#belajar-mandiri-n3">N3</a>
-              <div className="comingSoonItem"><span>N2</span><small>Segera hadir</small></div>
-              <div className="comingSoonItem"><span>N1</span><small>Segera hadir</small></div>
-            </div>
-          </details>
-        </nav>
-        <Link className="btn ghost" href="/login">Masuk</Link>
-      </header>
+    <main className={styles.homepage}>
+      <PublicHeader />
 
-      <section className="hero heroSingle">
-        <div>
-          <div className="eyebrow">BELAJAR BAHASA JEPANG • SIAP JLPT • RAIH TARGETMU</div>
-          <h1>Naik level bahasa Jepang, <em>selangkah demi selangkah.</em></h1>
-          <p>Pilih belajar langsung melalui kursus tatap muka atau belajar mandiri melalui website premium Takumi sesuai ritme dan kebutuhanmu.</p>
-          <div className="actions">
-            <Link className="btn primary" href="/login">Mulai gratis →</Link>
-          </div>
-          <div className="trust">
-            <span>✓ Kursus tatap muka bertahap</span>
-            <span>✓ Website premium untuk belajar mandiri</span>
+      <section className={styles.hero}>
+        <div className={styles.heroCopy}>
+          <div className={styles.kicker}>INDONESIA × JEPANG · SEJAK 2024</div>
+          <h1>Bahasa Jepang untuk hidup yang <em>sedang kamu bangun.</em></h1>
+          <p className={styles.heroLead}>Belajar dengan arah yang jelas—dibangun dari pengalaman nyata bekerja, mengajar, dan menata karier di Jepang. Tersedia kelas langsung dan belajar mandiri untuk JLPT N4–N3.</p>
+          <div className={styles.heroActions}>
+            <Link className={styles.primaryAction} href="#kursus">Lihat program <span aria-hidden="true">→</span></Link>
+            <Link className={styles.secondaryAction} href="/login">Coba 15% materi gratis</Link>
           </div>
         </div>
       </section>
 
-      <section id="kursus" className="band publicCourses">
-        <div className="courseSectionInner">
-          <div className="publicSectionHeading">
-            <div className="eyebrow">KURSUS TATAP MUKA</div>
-            <h2>Belajar langsung bersama pengajar.</h2>
-            <p>Informasi materi, ritme program reguler, durasi, dan biaya ditampilkan langsung pada setiap kelas agar pilihan belajarmu lebih jelas. Setiap peserta kursus tatap muka juga mendapatkan akses Website Premium Takumi tanpa biaya tambahan.</p>
-          </div>
+      <section id="kursus" className={styles.programs}>
+        <div className={styles.sectionHeading}>
+          <div><div className={styles.sectionLabel}>KURSUS TATAP MUKA</div><h2>Belajar langsung.<br />Tumbuh bersama.</h2></div>
+          <p>Program reguler dengan ritme konsisten dan pendampingan pengajar. Setiap siswa kursus mendapat akses Website Premium Takumi tanpa biaya tambahan.</p>
+        </div>
 
-          <div className="coursePublicGrid coursePublicGridFour">
-            <article className="coursePublicCard" id="kursus-dasar">
-              <div className="coursePublicHead"><b>D</b><div><small>KELAS DASAR</small><h3>Mulai dari fondasi</h3></div></div>
-              <div className="coursePublicStats">
-                <span><b>あ・ア</b> huruf Hiragana &amp; huruf Katakana</span>
-                <span><b>±300</b> kosakata dasar</span>
-                <span><b>30</b> huruf kanji dasar</span>
+        <div className={styles.programGrid}>
+          {classroomPrograms.map((program, index) => (
+            <article className={styles.programCard} id={`kursus-${program.slug}`} key={program.level}>
+              <div className={styles.programNumber}>{String(index + 1).padStart(2, '0')}</div>
+              <div className={styles.programHead}>
+                <small>{program.label}</small>
+                <div className={styles.levelOrnament}><span className={styles.level}>{program.level}</span></div>
+                <h3>{program.title}</h3>
               </div>
-              <p>Mulai dari nol dengan pelafalan, salam, angka dan waktu, percakapan sehari-hari, serta pola kalimat dasar sebagai bekal sebelum masuk JLPT N5.</p>
-              <div className="courseProgramInfo">
-                <div className="courseProgramLabel">PROGRAM REGULER</div>
-                <div className="courseProgramFacts">
-                  <span><b>3 bulan</b><small>24 pertemuan</small></span>
-                  <span><b>8× / bulan</b><small>80 menit / pertemuan</small></span>
-                </div>
-                <div className="courseTuition">
-                  <div><small>Biaya kelas</small><strong>Rp250.000 <span>/bulan</span></strong></div>
-                  <p>Termasuk akses Website Premium Takumi tanpa biaya tambahan. Pembayaran seluruh program sekaligus di awal mendapat potongan harga.</p>
-                </div>
-                <div className="courseConsultActions">
-                  <Link className="btn primary" href="/portal/support?kelas=dasar&program=reguler">Konsultasi kelas reguler</Link>
-                  <Link className="btn ghost" href="/portal/support?kelas=dasar&program=akselerasi">Konsultasi kelas akselerasi</Link>
-                </div>
+              <p className={styles.programDescription}>{program.description}</p>
+              <ul className={styles.curriculum}>{program.curriculum.map((item) => <li key={item}>{item}</li>)}</ul>
+              <dl className={styles.programFacts}>
+                <div><dt>Durasi</dt><dd>{program.duration}<small>{program.meetings}</small></dd></div>
+                <div><dt>Ritme</dt><dd>{program.pace}<small>80 menit / pertemuan</small></dd></div>
+              </dl>
+              <div className={styles.programPrice}><span>Biaya kelas</span><strong>{program.price}<small>/ bulan</small></strong></div>
+              <div className={styles.programActions}>
+                <Link href={`/portal/support?kelas=${program.slug}&program=reguler`}>Konsultasi reguler <span aria-hidden="true">→</span></Link>
+                <Link href={`/portal/support?kelas=${program.slug}&program=akselerasi`}>Jalur akselerasi <span aria-hidden="true">→</span></Link>
               </div>
             </article>
+          ))}
+        </div>
 
-            <article className="coursePublicCard" id="kursus-n5">
-              <div className="coursePublicHead"><b>N5</b><div><small>KURSUS JLPT N5</small><h3>Mulai level pemula</h3></div></div>
-              <div className="coursePublicStats">
-                <span><b>750</b> kosakata</span>
-                <span><b>120</b> huruf kanji</span>
-                <span><b>75</b> tata bahasa</span>
-              </div>
-              <p>Kelas N5 untuk membangun kemampuan dasar JLPT dengan ritme belajar yang terarah dan cukup waktu untuk mengulang materi.</p>
-              <div className="courseProgramInfo">
-                <div className="courseProgramLabel">PROGRAM REGULER</div>
-                <div className="courseProgramFacts">
-                  <span><b>6 bulan</b><small>48 pertemuan</small></span>
-                  <span><b>8× / bulan</b><small>80 menit / pertemuan</small></span>
-                </div>
-                <div className="courseTuition">
-                  <div><small>Biaya kelas</small><strong>Rp350.000 <span>/bulan</span></strong></div>
-                  <p>Termasuk akses Website Premium Takumi tanpa biaya tambahan. Pembayaran seluruh program sekaligus di awal mendapat potongan harga.</p>
-                </div>
-                <div className="courseConsultActions">
-                  <Link className="btn primary" href="/portal/support?kelas=n5&program=reguler">Konsultasi kelas reguler</Link>
-                  <Link className="btn ghost" href="/portal/support?kelas=n5&program=akselerasi">Konsultasi kelas akselerasi</Link>
-                </div>
-              </div>
-            </article>
-
-            <article className="coursePublicCard" id="kursus-n4">
-              <div className="coursePublicHead"><b>N4</b><div><small>KURSUS JLPT N4</small><h3>Bangun pondasi yang kuat</h3></div></div>
-              <div className="coursePublicStats">
-                <span><b>1.000</b> kosakata</span>
-                <span><b>200</b> huruf kanji</span>
-                <span><b>100</b> tata bahasa</span>
-              </div>
-              <p>Kelas tatap muka untuk siswa yang ingin mempelajari materi N4 secara terarah dengan pendampingan pengajar.</p>
-              <div className="courseProgramInfo">
-                <div className="courseProgramLabel">PROGRAM REGULER</div>
-                <div className="courseProgramFacts">
-                  <span><b>9 bulan</b><small>72 pertemuan</small></span>
-                  <span><b>8× / bulan</b><small>80 menit / pertemuan</small></span>
-                </div>
-                <div className="courseTuition">
-                  <div><small>Biaya kelas</small><strong>Rp450.000 <span>/bulan</span></strong></div>
-                  <p>Termasuk akses Website Premium Takumi tanpa biaya tambahan. Pembayaran seluruh program sekaligus di awal mendapat potongan harga.</p>
-                </div>
-                <div className="courseConsultActions">
-                  <Link className="btn primary" href="/portal/support?kelas=n4&program=reguler">Konsultasi kelas reguler</Link>
-                  <Link className="btn ghost" href="/portal/support?kelas=n4&program=akselerasi">Konsultasi kelas akselerasi</Link>
-                </div>
-              </div>
-            </article>
-
-            <article className="coursePublicCard" id="kursus-n3">
-              <div className="coursePublicHead"><b>N3</b><div><small>KURSUS JLPT N3</small><h3>Lanjut ke level menengah</h3></div></div>
-              <div className="coursePublicStats">
-                <span><b>2.000</b> kosakata</span>
-                <span><b>350</b> huruf kanji</span>
-                <span><b>130</b> tata bahasa</span>
-              </div>
-              <p>Kelas tatap muka untuk siswa yang ingin memperkuat kemampuan N3 melalui pembelajaran langsung, latihan, dan evaluasi bersama pengajar.</p>
-              <div className="courseProgramInfo">
-                <div className="courseProgramLabel">PROGRAM REGULER</div>
-                <div className="courseProgramFacts">
-                  <span><b>12 bulan</b><small>96 pertemuan</small></span>
-                  <span><b>8× / bulan</b><small>80 menit / pertemuan</small></span>
-                </div>
-                <div className="courseTuition">
-                  <div><small>Biaya kelas</small><strong>Rp550.000 <span>/bulan</span></strong></div>
-                  <p>Termasuk akses Website Premium Takumi tanpa biaya tambahan. Pembayaran seluruh program sekaligus di awal mendapat potongan harga.</p>
-                </div>
-                <div className="courseConsultActions">
-                  <Link className="btn primary" href="/portal/support?kelas=n3&program=reguler">Konsultasi kelas reguler</Link>
-                  <Link className="btn ghost" href="/portal/support?kelas=n3&program=akselerasi">Konsultasi kelas akselerasi</Link>
-                </div>
-              </div>
-            </article>
-          </div>
-
-          <div className="courseOptionNote">
-            <div><small>KELAS AKSELERASI</small><strong>Butuh jalur belajar lebih cepat?</strong></div>
-            <p>Kelas akselerasi tersedia melalui konsultasi. Durasi dan ritme ditentukan berdasarkan kemampuan awal, waktu belajar mandiri, frekuensi pertemuan, dan target JLPT siswa.</p>
-          </div>
+        <div className={styles.accelerationNote}>
+          <span>急</span>
+          <div><small>KELAS AKSELERASI</small><strong>Punya target yang lebih dekat?</strong></div>
+          <p>Kelas akselerasi ditujukan untuk siswa dengan tenggat JLPT, studi, atau kebutuhan kerja yang lebih dekat. Setelah konsultasi awal, pengajar menyusun fokus materi, jumlah pertemuan, ritme latihan, dan evaluasi berdasarkan kemampuan awal, waktu belajar yang tersedia, serta target tanggal siswa.</p>
         </div>
       </section>
 
-      <section id="belajar-mandiri" className="section">
-        <div className="price">
-          <div className="eyebrow">BELAJAR MANDIRI • WEBSITE PREMIUM</div>
-          <h2>Belajar sesuai ritmemu sendiri.</h2>
-          <p className="priceLead">Saat ini tersedia level N4 dan N3. Ke depannya Belajar Mandiri Takumi juga akan tersedia untuk Dasar, N5, N2, dan N1. Akses satu level dengan sekali bayar tanpa biaya bulanan.</p>
+      <section id="belajar-mandiri" className={styles.selfStudy}>
+        <div className={styles.selfStudyIntro}>
+          <div className={styles.sectionLabel}>WEBSITE PREMIUM</div>
+          <h2>Belajar mandiri,<br />tanpa berjalan sendiri.</h2>
+          <p>Pelajari materi sesuai ritmemu, simpan bagian yang ingin diulang, dan pantau progres dari satu tempat.</p>
+          <div className={styles.selfStudyNote}><span>15%</span> materi bisa dicoba sebelum membeli.</div>
+        </div>
 
-          <div className="priceGrid">
-            <article className="priceCard" id="belajar-mandiri-n4">
-              <div className="priceCardHead">
-                <span>N4</span>
-                <div>
-                  <h3>Belajar Mandiri N4</h3>
-                  <p>1.000 kosakata · 200 huruf kanji · 100 tata bahasa</p>
-                </div>
-              </div>
-              <div className="priceAmount">Rp299.000</div>
-              <div className="priceOnce">Sekali bayar</div>
-              <p className="priceDesc">Termasuk 25 latihan membaca, 25 latihan mendengarkan, 5 simulasi ujian JLPT, latihan dan kuis yang terus diperbarui, bookmark, serta statistik belajar.</p>
-              <Link className="btn primary full" href="/login">Mulai belajar N4</Link>
+        <div className={styles.planList}>
+          {selfStudyPrograms.map((program) => (
+            <article className={styles.plan} key={program.level} id={`belajar-mandiri-${program.level.toLowerCase()}`}>
+              <div className={styles.planTop}><span className={styles.planLevel}>{program.level}</span><div><small>SEKALI BAYAR</small><strong>{program.price}</strong></div></div>
+              <p>{program.summary}<span>{program.grammar}</span></p>
+              <ul>{program.details.map((detail) => <li key={detail}>{detail}</li>)}</ul>
+              <Link href="/login">Mulai belajar {program.level} <span aria-hidden="true">→</span></Link>
             </article>
-
-            <article className="priceCard" id="belajar-mandiri-n3">
-              <div className="priceCardHead">
-                <span>N3</span>
-                <div>
-                  <h3>Belajar Mandiri N3</h3>
-                  <p>2.000 kosakata · 350 huruf kanji · 130 tata bahasa</p>
-                </div>
-              </div>
-              <div className="priceAmount">Rp399.000</div>
-              <div className="priceOnce">Sekali bayar</div>
-              <p className="priceDesc">Termasuk 25 latihan membaca, 25 latihan mendengarkan, 5 simulasi ujian JLPT, latihan dan kuis yang terus diperbarui, bookmark, serta statistik belajar.</p>
-              <Link className="btn primary full" href="/login">Mulai belajar N3</Link>
-            </article>
-          </div>
-
-          <p className="priceNote">15% materi dapat dicoba gratis sebelum membeli.</p>
+          ))}
         </div>
       </section>
 
-      <footer><Brand /><p>Takumi Japanese · 人生は一生の勉強</p></footer>
+      <PublicFooter />
     </main>
   )
 }

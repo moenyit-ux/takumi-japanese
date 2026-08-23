@@ -1,0 +1,4 @@
+.publicPage{--bg:#fbfdff;--ink:#173f59;--muted:#627b8b;--line:#d8eaf2;--blue:#63bee1;--soft:#eaf7fc;--deep:#286f93;--white:#fff;background:var(--bg);color:var(--ink);font-family:Avenir,"Avenir Next","Hiragino Kaku Gothic ProN","Yu Gothic",sans-serif}
+.publicPage .eyebrow{color:#e78dac;font-size:9px;letter-spacing:.2em}
+.publicPage :where(h1,h2){font-family:"Hiragino Mincho ProN","Yu Mincho",Georgia,serif;font-weight:500}
+.publicPage :where(a:focus-visible){outline:2px solid #e78dac;outline-offset:4px}
