@@ -483,7 +483,7 @@
   border: 1px solid var(--takumi-line);
   background-color: #fbfdfe;
   background-image:
-    linear-gradient(90deg, rgba(251, 253, 254, .72), rgba(251, 253, 254, .9) 38%, rgba(251, 253, 254, .68)),
+    linear-gradient(90deg, rgba(251, 253, 254, .32), rgba(251, 253, 254, .58) 38%, rgba(251, 253, 254, .28)),
     url('/backgrounds/takumi-study-washi.jpg');
   background-position: center;
   background-size: cover;
@@ -494,7 +494,7 @@
   position: absolute;
   inset: 0;
   pointer-events: none;
-  background: linear-gradient(180deg, rgba(255,255,255,.08), rgba(255,255,255,.42));
+  background: linear-gradient(180deg, rgba(255,255,255,.01), rgba(255,255,255,.1));
 }
 
 .tm-brand-row,
