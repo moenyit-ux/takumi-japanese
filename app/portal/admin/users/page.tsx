@@ -17,7 +17,7 @@ export default async function AdminUsersPage() {
   const users = (data || []) as AdminUser[]
 
   return (
-    <main className={`takumi-admin-page ${styles.adminShell}`}>
+    <main className={`takumi-admin-page takumi-admin-users ${styles.adminShell}`}>
       <div className={styles.topbar}>
         <Link href="/portal/admin">← Panel Admin</Link>
         <div className={styles.roleBadge}>SUPER ADMIN</div>

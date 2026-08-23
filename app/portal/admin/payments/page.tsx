@@ -49,7 +49,7 @@ export default async function AdminPaymentsPage() {
   const verified = payments.filter((payment) => payment.status === 'verified').length
 
   return (
-    <main className={`takumi-admin-page ${styles.shell}`}>
+    <main className={`takumi-admin-page takumi-admin-payments ${styles.shell}`}>
       <div className={styles.topbar}>
         <Link href="/portal/admin">← Content Studio</Link>
         <span>SUPER ADMIN · PEMBAYARAN</span>

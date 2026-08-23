@@ -119,9 +119,9 @@ export default function QuizTabPortal({ sessionId, quizId, questions }: Props) {
         onClick={() => setQuizActive(true)}
         aria-label="Isi kuis sesi"
         style={quizActive ? {
-          borderColor: '#64bee9',
-          background: '#eaf7fd',
-          boxShadow: 'inset 0 0 0 1px #64bee9',
+          borderColor: '#61b7dc',
+          background: '#e9f7fc',
+          boxShadow: 'inset 0 -2px 0 #61b7dc',
         } : undefined}
       >
         <b>{questions.length}</b>
@@ -140,8 +140,8 @@ export default function QuizTabPortal({ sessionId, quizId, questions }: Props) {
           alignItems: 'center',
           padding: '14px 16px',
           marginBottom: 12,
-          border: '1px solid #d9eaf2',
-          borderRadius: 15,
+          border: '1px solid #b9deef',
+          borderRadius: 0,
           background: '#fff',
         }}>
           <div>

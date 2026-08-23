@@ -163,7 +163,7 @@ function TwoExampleFields({ body, setBody }: { body: RecordValue; setBody: (body
           const reading = field(item, 'example_reading') || field(item, 'reading') || field(item, 'furigana')
           const translation = field(item, 'example_translation') || field(item, 'translation') || field(item, 'indonesian')
           return (
-            <div className={admin.full} key={index} style={{ padding: 14, border: '1px solid #d9eaf2', borderRadius: 14, background: '#f9fcfe' }}>
+            <div className={admin.full} key={index} style={{ padding: 14, border: '1px solid #b9deef', borderRadius: 0, background: '#fbfdfe' }}>
               <div style={{ fontWeight: 800, marginBottom: 10 }}>Contoh {index + 1}</div>
               <div className={admin.formGrid}>
                 <label className={`${admin.label} ${admin.full}`}>Kalimat Jepang

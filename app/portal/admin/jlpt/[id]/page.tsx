@@ -65,7 +65,7 @@ export default async function SimulationPackagePage({ params }: { params: Promis
   const locked = editor.quiz.attempt_count > 0
 
   return (
-    <main className={`takumi-admin-page ${styles.editorShell}`}>
+    <main className={`takumi-admin-page takumi-admin-editor ${styles.editorShell}`}>
       <div className={styles.editorTop}>
         <Link href={`/portal/admin/jlpt?level=${editor.level.code}`}>← Kembali ke daftar paket {editor.level.code}</Link>
         <span className={styles.roleBadge}>{editor.role === 'super_admin' ? 'SUPER ADMIN' : 'CONTENT ADMIN'}</span>

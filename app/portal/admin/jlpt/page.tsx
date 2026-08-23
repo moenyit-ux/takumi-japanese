@@ -53,7 +53,7 @@ export default async function JlptAdminPage({ searchParams }: { searchParams: Pr
   const editor = data as PackageData
 
   return (
-    <main className={`takumi-admin-page ${styles.adminShell}`}>
+    <main className={`takumi-admin-page takumi-admin-jlpt ${styles.adminShell}`}>
       <div className={styles.topbar}>
         <Link href={`/portal/admin?level=${editor.level.code}`}>← Kembali ke kategori {editor.level.code}</Link>
         <span className={styles.roleBadge}>SIMULASI JLPT</span>
@@ -105,7 +105,7 @@ export default async function JlptAdminPage({ searchParams }: { searchParams: Pr
               </div>
 
               {item.review_status === 'needs_revision' && item.review_note && (
-                <div style={{ padding: '10px 12px', borderRadius: 12, background: '#fff7ef', color: '#8b5729', fontSize: 11, lineHeight: 1.55 }}><b>Catatan revisi:</b> {item.review_note}</div>
+                <div style={{ padding: '10px 12px', borderRadius: 0, borderLeft: '3px solid #ef8fb2', background: '#fff7ef', color: '#8b5729', fontSize: 11, lineHeight: 1.55 }}><b>Catatan revisi:</b> {item.review_note}</div>
               )}
 
               <div className={jlpt.packageMeta}>

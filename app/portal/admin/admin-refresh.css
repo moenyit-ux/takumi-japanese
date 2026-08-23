@@ -1,0 +1,388 @@
+/* Dedicated operations workspace for Takumi administrators. */
+.takumi-admin-page {
+  --admin-ink: #153f5a;
+  --admin-muted: #687f8f;
+  --admin-line: #b9deef;
+  --admin-blue: #61b7dc;
+  --admin-blue-pale: #e9f7fc;
+  --admin-pink: #ef8fb2;
+  --admin-pink-pale: #fff5f9;
+  --admin-paper: #fbfdfe;
+  --admin-danger: #a84d48;
+  width: 100%;
+  max-width: none !important;
+  min-height: 100dvh;
+  margin: 0 !important;
+  padding: 38px max(28px, calc((100vw - 1240px) / 2)) 110px !important;
+  color: var(--admin-ink) !important;
+  background-color: var(--admin-paper);
+  background-image:
+    linear-gradient(rgba(131, 190, 218, .08) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(131, 190, 218, .08) 1px, transparent 1px);
+  background-size: 28px 28px;
+}
+
+/* Navigation bar */
+.takumi-admin-page > :is([class*='__topbar '], [class$='__topbar'], [class*='__editorTop '], [class$='__editorTop']) {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 20px;
+  min-height: 54px;
+  margin: 0 0 20px;
+  padding: 0 0 14px;
+  border-bottom: 1px solid var(--admin-line);
+  color: var(--admin-muted);
+}
+
+.takumi-admin-page > :is([class*='__topbar '], [class$='__topbar'], [class*='__editorTop '], [class$='__editorTop']) a {
+  color: var(--admin-ink);
+  font-size: 12px;
+  font-weight: 850;
+  text-decoration: none;
+}
+
+.takumi-admin-page :is([class*='__topbarButton '], [class$='__topbarButton']) {
+  min-height: 38px;
+  padding: 9px 13px !important;
+  border: 1px solid var(--admin-line) !important;
+  background: rgba(255,255,255,.86) !important;
+  color: var(--admin-muted) !important;
+  font-size: 10px !important;
+  letter-spacing: .04em;
+}
+
+.takumi-admin-page :is([class*='__topbarButton '], [class$='__topbarButton']):hover {
+  border-color: var(--admin-blue) !important;
+  background: var(--admin-blue-pale) !important;
+  color: var(--admin-ink) !important;
+  transform: none !important;
+}
+
+.takumi-admin-page :is([class*='__roleBadge '], [class$='__roleBadge']) {
+  padding: 9px 12px !important;
+  border: 1px solid var(--admin-line) !important;
+  border-radius: 0 !important;
+  background: var(--admin-pink-pale) !important;
+  color: var(--admin-pink) !important;
+  font-size: 9px !important;
+  font-weight: 900;
+  letter-spacing: .12em;
+}
+
+/* Certificate-style page masthead */
+.takumi-admin-page > :is(header, [class*='__hero '], [class$='__hero']) {
+  position: relative;
+  display: grid !important;
+  grid-template-columns: minmax(0, 1fr) 210px !important;
+  align-items: stretch !important;
+  gap: 0 !important;
+  min-height: 260px !important;
+  margin: 0 0 0 !important;
+  padding: 0 !important;
+  overflow: hidden;
+  border: 1px solid var(--admin-line) !important;
+  border-radius: 0 !important;
+  background: rgba(255,255,255,.94) !important;
+  box-shadow: none !important;
+}
+
+.takumi-admin-page > :is(header, [class*='__hero '], [class$='__hero']) > :first-child {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  min-width: 0;
+  padding: 38px 42px;
+}
+
+.takumi-admin-page > :is(header, [class*='__hero '], [class$='__hero']) h1 {
+  max-width: 820px;
+  margin: 11px 0 10px;
+  color: var(--admin-ink) !important;
+  font-family: Georgia, 'Times New Roman', serif;
+  font-size: clamp(38px, 5vw, 62px) !important;
+  font-weight: 500 !important;
+  letter-spacing: -.045em !important;
+  line-height: 1 !important;
+}
+
+.takumi-admin-page > :is(header, [class*='__hero '], [class$='__hero']) p {
+  max-width: 760px;
+  margin: 0;
+  color: var(--admin-muted) !important;
+  font-size: 13px;
+  line-height: 1.7;
+}
+
+.takumi-admin-page :is([class*='__eyebrow '], [class$='__eyebrow']) {
+  color: var(--admin-pink) !important;
+  font-size: 9px !important;
+  font-weight: 900;
+  letter-spacing: .18em !important;
+}
+
+.takumi-admin-page > :is(header, [class*='__hero '], [class$='__hero']) :is([class*='__heroMark '], [class$='__heroMark']) {
+  align-self: stretch;
+  width: auto !important;
+  height: auto !important;
+  display: grid !important;
+  place-items: center;
+  border-left: 1px solid var(--admin-line);
+  border-radius: 0 !important;
+  background: var(--admin-pink-pale) !important;
+  color: #dbeff7 !important;
+  font-family: 'Yu Mincho', 'Hiragino Mincho ProN', serif;
+  font-size: 118px !important;
+  font-weight: 500 !important;
+}
+
+/* Summary numbers become one continuous register. */
+.takumi-admin-page :is([class*='__stats '], [class$='__stats'], [class*='__statsGrid '], [class$='__statsGrid'], [class*='__accessGrid '], [class$='__accessGrid']) {
+  display: grid !important;
+  grid-template-columns: repeat(4, minmax(0, 1fr)) !important;
+  gap: 0 !important;
+  margin: 0 0 28px !important;
+  border: 1px solid var(--admin-line);
+  border-top: 0;
+  background: rgba(255,255,255,.9);
+}
+
+.takumi-admin-page :is([class*='__stats '], [class$='__stats'], [class*='__statsGrid '], [class$='__statsGrid'], [class*='__accessGrid '], [class$='__accessGrid']) > :is(article, div) {
+  min-width: 0;
+  min-height: 92px;
+  display: grid;
+  align-content: center;
+  padding: 18px 22px !important;
+  border: 0 !important;
+  border-right: 1px solid var(--admin-line) !important;
+  border-radius: 0 !important;
+  background: transparent !important;
+  box-shadow: none !important;
+}
+
+.takumi-admin-page :is([class*='__stats '], [class$='__stats'], [class*='__statsGrid '], [class$='__statsGrid'], [class*='__accessGrid '], [class$='__accessGrid']) > :is(article, div):last-child { border-right: 0 !important; }
+.takumi-admin-page :is([class*='__stats '], [class$='__stats'], [class*='__statsGrid '], [class$='__statsGrid']) span { color: var(--admin-muted) !important; font-size: 10px !important; font-weight: 800; letter-spacing: .04em; }
+.takumi-admin-page :is([class*='__stats '], [class$='__stats'], [class*='__statsGrid '], [class$='__statsGrid']) b { margin-top: 5px; color: var(--admin-ink) !important; font-family: Georgia, 'Times New Roman', serif; font-size: 31px !important; font-weight: 500; }
+
+/* Section headings, filters and tabs */
+.takumi-admin-page :is([class*='__categoryHeader '], [class$='__categoryHeader'], [class*='__sectionHead '], [class$='__sectionHead'], [class*='__sectionHeader '], [class$='__sectionHeader'], [class*='__header '], [class$='__header']) {
+  margin: 34px 0 16px;
+}
+
+.takumi-admin-page :is([class*='__categoryHeader '], [class$='__categoryHeader'], [class*='__sectionHead '], [class$='__sectionHead'], [class*='__sectionHeader '], [class$='__sectionHeader']) h2 {
+  margin: 6px 0 3px;
+  color: var(--admin-ink);
+  font-family: Georgia, 'Times New Roman', serif;
+  font-size: 30px;
+  font-weight: 500;
+}
+
+.takumi-admin-page :is([class*='__tabs '], [class$='__tabs'], [class*='__levelTabs '], [class$='__levelTabs'], [class*='__sectionTabs '], [class$='__sectionTabs'], [class*='__workflowTabs '], [class$='__workflowTabs']) {
+  display: flex;
+  gap: 0 !important;
+}
+
+.takumi-admin-page :is([class*='__tabs '], [class$='__tabs'], [class*='__levelTabs '], [class$='__levelTabs'], [class*='__sectionTabs '], [class$='__sectionTabs'], [class*='__workflowTabs '], [class$='__workflowTabs']) :is(a, button) {
+  min-height: 40px;
+  padding: 9px 15px !important;
+  border: 1px solid var(--admin-line) !important;
+  border-right: 0 !important;
+  border-radius: 0 !important;
+  background: #fff !important;
+  color: var(--admin-muted) !important;
+  box-shadow: none !important;
+  font-size: 10px;
+  font-weight: 900;
+  letter-spacing: .06em;
+}
+
+.takumi-admin-page :is([class*='__tabs '], [class$='__tabs'], [class*='__levelTabs '], [class$='__levelTabs'], [class*='__sectionTabs '], [class$='__sectionTabs'], [class*='__workflowTabs '], [class$='__workflowTabs']) :is(a, button):last-child { border-right: 1px solid var(--admin-line) !important; }
+.takumi-admin-page :is([class*='__activeTab '], [class$='__activeTab'], [class*='__active '], [class$='__active']) { background: var(--admin-blue) !important; color: #fff !important; }
+
+/* Overview categories */
+.takumi-admin-overview :is([class*='__categoryGrid '], [class$='__categoryGrid']) {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 0 !important;
+  border-top: 1px solid var(--admin-line);
+  border-left: 1px solid var(--admin-line);
+}
+
+.takumi-admin-overview :is([class*='__categoryCard '], [class$='__categoryCard']) {
+  min-height: 176px !important;
+  margin: 0;
+  padding: 24px !important;
+  border: 0 !important;
+  border-right: 1px solid var(--admin-line) !important;
+  border-bottom: 1px solid var(--admin-line) !important;
+  border-radius: 0 !important;
+  background: rgba(255,255,255,.94) !important;
+  box-shadow: none !important;
+}
+
+.takumi-admin-overview :is([class*='__categoryCard '], [class$='__categoryCard']):hover { background: var(--admin-blue-pale) !important; }
+.takumi-admin-overview :is([class*='__categoryMark '], [class$='__categoryMark']) { border: 1px solid var(--admin-line); border-radius: 0 !important; background: #fff !important; color: var(--admin-ink) !important; font-family: 'Yu Mincho', serif; font-size: 28px !important; }
+.takumi-admin-overview :is([class*='__categoryBody '], [class$='__categoryBody']) h3 { font-family: Georgia, 'Times New Roman', serif; font-size: 23px !important; font-weight: 600; }
+.takumi-admin-overview :is([class*='__categoryBody '], [class$='__categoryBody']) > small { color: var(--admin-pink) !important; }
+
+/* Shared buttons and forms */
+.takumi-admin-page :is(input, select, textarea) {
+  min-height: 43px;
+  border: 1px solid var(--admin-line) !important;
+  border-radius: 0 !important;
+  background: #fff !important;
+  color: var(--admin-ink) !important;
+  box-shadow: none !important;
+}
+
+.takumi-admin-page textarea { min-height: 112px; }
+.takumi-admin-page :is(input, select, textarea):focus { outline: 2px solid rgba(97,183,220,.25) !important; outline-offset: 1px; }
+
+.takumi-admin-page :is([class*='__primary '], [class$='__primary'], [class*='__editButton '], [class$='__editButton'], [class*='__save '], [class$='__save'], [class*='__packageAction '], [class$='__packageAction']) :is(a, button),
+.takumi-admin-page :is(a, button)[class*='__primary'],
+.takumi-admin-page :is(a, button)[class*='__editButton'],
+.takumi-admin-page :is(a, button)[class*='__save'] {
+  border-radius: 0 !important;
+  background: var(--admin-blue) !important;
+  color: #fff !important;
+  box-shadow: none !important;
+}
+
+.takumi-admin-page :is([class*='__secondary '], [class$='__secondary']) { border: 1px solid var(--admin-line) !important; border-radius: 0 !important; background: #fff !important; color: var(--admin-ink) !important; }
+.takumi-admin-page :is([class*='__danger '], [class$='__danger'], [class*='__dangerButton '], [class$='__dangerButton']) { border-radius: 0 !important; background: #fff3f2 !important; color: var(--admin-danger) !important; }
+
+.takumi-admin-page :is([class*='__status '], [class$='__status'], [class*='__ticketBadge '], [class$='__ticketBadge']) {
+  border: 1px solid var(--admin-line);
+  border-radius: 0 !important;
+  font-size: 9px !important;
+  font-weight: 900;
+  letter-spacing: .07em;
+}
+
+.takumi-admin-page :is([class*='__message '], [class$='__message'], [class*='__successMessage '], [class$='__successMessage']) {
+  min-height: 0;
+  padding: 11px 14px !important;
+  border-left: 3px solid var(--admin-blue);
+  border-radius: 0 !important;
+  background: var(--admin-blue-pale) !important;
+  color: var(--admin-ink) !important;
+  font-size: 11px;
+}
+
+.takumi-admin-page :is([class*='__message '], [class$='__message']):empty { display: none; }
+.takumi-admin-page :is([class*='__empty '], [class$='__empty'], [class*='__emptyState '], [class$='__emptyState']) { border: 1px dashed var(--admin-line) !important; border-radius: 0 !important; background: rgba(255,255,255,.72) !important; color: var(--admin-muted) !important; }
+.takumi-admin-page :is([class*='__workflow '], [class$='__workflow']) { gap: 0 !important; padding: 0 !important; border: 1px solid var(--admin-line) !important; border-radius: 0 !important; background: #fff !important; }
+.takumi-admin-page :is([class*='__workflow '], [class$='__workflow']) > div { min-height: 54px; padding: 10px 16px; border-right: 1px solid var(--admin-line); }
+.takumi-admin-page :is([class*='__workflow '], [class$='__workflow']) > i { padding-inline: 8px; }
+
+/* Users and courses: readable operational records */
+.takumi-admin-users :is([class*='__userList '], [class$='__userList']),
+.takumi-admin-courses :is([class*='__list '], [class$='__list']) { gap: 0 !important; border-top: 1px solid var(--admin-line); }
+
+.takumi-admin-users :is([class*='__userCard '], [class$='__userCard']),
+.takumi-admin-courses :is([class*='__card '], [class$='__card']) {
+  margin: 0;
+  border: 1px solid var(--admin-line) !important;
+  border-top: 0 !important;
+  border-radius: 0 !important;
+  background: rgba(255,255,255,.94) !important;
+  box-shadow: none !important;
+}
+
+.takumi-admin-users :is([class*='__userSummaryButton '], [class$='__userSummaryButton']) { min-height: 116px; background: transparent !important; }
+.takumi-admin-users :is([class*='__userSummaryButton '], [class$='__userSummaryButton']):hover { background: var(--admin-blue-pale) !important; }
+.takumi-admin-users :is([class*='__userDetails '], [class$='__userDetails']) { border-top-color: var(--admin-line) !important; background: #fff; }
+.takumi-admin-users :is([class*='__deviceRow '], [class$='__deviceRow'], [class*='__premiumBox '], [class$='__premiumBox']) { border-color: var(--admin-line) !important; border-radius: 0 !important; background: var(--admin-paper) !important; }
+
+.takumi-admin-courses :is([class*='__manager '], [class$='__manager']) { margin-top: 26px; }
+.takumi-admin-courses :is([class*='__toolbar '], [class$='__toolbar']) { padding: 24px 26px !important; border: 1px solid var(--admin-line) !important; border-radius: 0 !important; background: var(--admin-pink-pale) !important; }
+.takumi-admin-courses :is([class*='__toolbar '], [class$='__toolbar']) h2 { font-family: Georgia, 'Times New Roman', serif; font-size: 27px; font-weight: 500; }
+.takumi-admin-courses :is([class*='__identity '], [class$='__identity']) { margin: -1px -1px 0; padding: 20px 22px !important; border-bottom: 1px solid var(--admin-line); background: var(--admin-blue-pale) !important; }
+.takumi-admin-courses :is([class*='__form '], [class$='__form']) { padding: 20px 22px; border-top: 1px solid var(--admin-line); }
+.takumi-admin-courses :is([class*='__enrollment '], [class$='__enrollment']) { border-color: var(--admin-line) !important; border-radius: 0 !important; }
+
+/* Payments, support and JLPT packages */
+.takumi-admin-payments :is([class*='__grid '], [class$='__grid']) { gap: 18px !important; }
+.takumi-admin-payments :is([class*='__panel '], [class$='__panel']),
+.takumi-admin-support :is([class*='__infoCard '], [class$='__infoCard']),
+.takumi-admin-support :is([class*='__ticketCard '], [class$='__ticketCard']),
+.takumi-admin-support :is([class*='__card '], [class$='__card']) {
+  border: 1px solid var(--admin-line) !important;
+  border-radius: 0 !important;
+  background: rgba(255,255,255,.94) !important;
+  box-shadow: none !important;
+}
+
+.takumi-admin-payments :is([class*='__paymentCard '], [class$='__paymentCard']),
+.takumi-admin-payments :is([class*='__methodBox '], [class$='__methodBox']) { border-color: var(--admin-line) !important; border-radius: 0 !important; background: var(--admin-paper) !important; }
+
+.takumi-admin-support :is([class*='__ticketList '], [class$='__ticketList']) { gap: 0 !important; }
+.takumi-admin-support :is([class*='__ticketCard '], [class$='__ticketCard']) + :is([class*='__ticketCard '], [class$='__ticketCard']) { border-top: 0 !important; }
+.takumi-admin-support :is([class*='__threadWrap '], [class$='__threadWrap']),
+.takumi-admin-support :is([class*='__replyArea '], [class$='__replyArea']) { border-color: var(--admin-line) !important; border-radius: 0 !important; background: var(--admin-paper) !important; }
+
+.takumi-admin-jlpt :is([class*='__packageGrid '], [class$='__packageGrid']) { gap: 0 !important; border-top: 1px solid var(--admin-line); border-left: 1px solid var(--admin-line); }
+.takumi-admin-jlpt :is([class*='__packageCard '], [class$='__packageCard']) { border: 0 !important; border-right: 1px solid var(--admin-line) !important; border-bottom: 1px solid var(--admin-line) !important; border-radius: 0 !important; background: rgba(255,255,255,.95) !important; box-shadow: none !important; }
+.takumi-admin-jlpt :is([class*='__packageNo '], [class$='__packageNo']) { border: 1px solid var(--admin-line); border-radius: 0 !important; background: var(--admin-blue-pale) !important; color: var(--admin-ink) !important; font-family: Georgia, 'Times New Roman', serif; }
+.takumi-admin-jlpt :is([class*='__packageTitle '], [class$='__packageTitle']) h3 { font-family: Georgia, 'Times New Roman', serif; font-size: 22px; font-weight: 600; }
+
+/* Material/JLPT editor workspace */
+.takumi-admin-editor > :is([class*='__editorHeader '], [class$='__editorHeader']) {
+  position: relative;
+  min-height: 190px !important;
+  padding: 36px 38% 36px 38px !important;
+  overflow: hidden;
+  border: 1px solid var(--admin-line) !important;
+  border-radius: 0 !important;
+  background: rgba(255,255,255,.95) !important;
+}
+
+.takumi-admin-editor > :is([class*='__editorHeader '], [class$='__editorHeader'])::after {
+  content: '編';
+  position: absolute;
+  right: 8%;
+  bottom: -45px;
+  color: #dceff7;
+  font-family: 'Yu Mincho', serif;
+  font-size: 170px;
+  font-weight: 500;
+  line-height: 1;
+}
+
+.takumi-admin-editor > :is([class*='__editorHeader '], [class$='__editorHeader']) h1 { position: relative; z-index: 1; font-family: Georgia, 'Times New Roman', serif; font-size: 42px !important; font-weight: 500; }
+.takumi-admin-editor > :is([class*='__editorHeader '], [class$='__editorHeader']) p { position: relative; z-index: 1; }
+.takumi-admin-editor > :is([class*='__editorHeader '], [class$='__editorHeader']) > :first-child { padding: 0 !important; }
+.takumi-admin-editor :is([class*='__workspace '], [class$='__workspace'], [class*='__studio '], [class$='__studio']) { margin-top: 20px; border: 1px solid var(--admin-line) !important; border-radius: 0 !important; background: rgba(255,255,255,.95) !important; }
+.takumi-admin-editor :is([class*='__panel '], [class$='__panel'], [class*='__itemCard '], [class$='__itemCard'], [class*='__materialCard '], [class$='__materialCard'], [class*='__questionCard '], [class$='__questionCard'], [class*='__chapterGroup '], [class$='__chapterGroup'], [class*='__nestedCard '], [class$='__nestedCard']) { border-color: var(--admin-line) !important; border-radius: 0 !important; box-shadow: none !important; }
+.takumi-admin-editor :is([class*='__chapterGroup '], [class$='__chapterGroup'], [class*='__itemCard '], [class$='__itemCard'], [class*='__materialCard '], [class$='__materialCard']) { background: #fff !important; }
+.takumi-admin-editor :is([class*='__reviewPanel '], [class$='__reviewPanel']) { position: sticky; top: 18px; border-color: var(--admin-line) !important; border-radius: 0 !important; background: var(--admin-pink-pale) !important; }
+.takumi-admin-editor details { border-color: var(--admin-line) !important; border-radius: 0 !important; box-shadow: none !important; }
+
+.takumi-admin-preview { background-color: var(--admin-paper) !important; }
+
+@media (max-width: 980px) {
+  .takumi-admin-page { padding-inline: 18px !important; }
+  .takumi-admin-page > :is(header, [class*='__hero '], [class$='__hero']) { grid-template-columns: minmax(0, 1fr) 150px !important; }
+  .takumi-admin-page > :is(header, [class*='__hero '], [class$='__hero']) :is([class*='__heroMark '], [class$='__heroMark']) { display: grid !important; font-size: 92px !important; }
+  .takumi-admin-page :is([class*='__stats '], [class$='__stats'], [class*='__statsGrid '], [class$='__statsGrid'], [class*='__accessGrid '], [class$='__accessGrid']) { grid-template-columns: repeat(2, minmax(0, 1fr)) !important; border-top: 1px solid var(--admin-line); }
+  .takumi-admin-page :is([class*='__stats '], [class$='__stats'], [class*='__statsGrid '], [class$='__statsGrid'], [class*='__accessGrid '], [class$='__accessGrid']) > :is(article, div):nth-child(2) { border-right: 0 !important; }
+  .takumi-admin-page :is([class*='__stats '], [class$='__stats'], [class*='__statsGrid '], [class$='__statsGrid'], [class*='__accessGrid '], [class$='__accessGrid']) > :is(article, div):nth-child(-n+2) { border-bottom: 1px solid var(--admin-line) !important; }
+  .takumi-admin-overview :is([class*='__categoryGrid '], [class$='__categoryGrid']) { grid-template-columns: 1fr; }
+}
+
+@media (max-width: 680px) {
+  .takumi-admin-page { padding: 18px 12px 100px !important; }
+  .takumi-admin-page > :is([class*='__topbar '], [class$='__topbar'], [class*='__editorTop '], [class$='__editorTop']) { align-items: flex-start; flex-direction: column; min-height: 0; }
+  .takumi-admin-page > :is(header, [class*='__hero '], [class$='__hero']) { grid-template-columns: 1fr !important; min-height: 0 !important; }
+  .takumi-admin-page > :is(header, [class*='__hero '], [class$='__hero']) > :first-child { padding: 28px 22px; }
+  .takumi-admin-page > :is(header, [class*='__hero '], [class$='__hero']) h1 { font-size: 39px !important; }
+  .takumi-admin-page > :is(header, [class*='__hero '], [class$='__hero']) :is([class*='__heroMark '], [class$='__heroMark']) { min-height: 105px; border-top: 1px solid var(--admin-line); border-left: 0; font-size: 82px !important; }
+  .takumi-admin-page :is([class*='__stats '], [class$='__stats'], [class*='__statsGrid '], [class$='__statsGrid'], [class*='__accessGrid '], [class$='__accessGrid']) > :is(article, div) { min-height: 76px; padding: 14px 16px !important; }
+  .takumi-admin-page :is([class*='__categoryHeader '], [class$='__categoryHeader'], [class*='__sectionHead '], [class$='__sectionHead'], [class*='__sectionHeader '], [class$='__sectionHeader']) { align-items: flex-start; flex-direction: column; }
+  .takumi-admin-overview :is([class*='__categoryCard '], [class$='__categoryCard']) { grid-template-columns: 48px minmax(0, 1fr) !important; padding: 18px !important; }
+  .takumi-admin-overview :is([class*='__categoryAction '], [class$='__categoryAction']) { grid-column: 2; justify-self: stretch; }
+  .takumi-admin-courses :is([class*='__toolbar '], [class$='__toolbar']) { padding: 20px 18px !important; }
+  .takumi-admin-editor > :is([class*='__editorHeader '], [class$='__editorHeader']) { min-height: 300px !important; padding: 28px 22px 140px !important; }
+  .takumi-admin-editor > :is([class*='__editorHeader '], [class$='__editorHeader'])::after { right: 10%; font-size: 140px; }
+  .takumi-admin-editor :is([class*='__reviewPanel '], [class$='__reviewPanel']) { position: static; }
+}

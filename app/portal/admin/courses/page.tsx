@@ -18,7 +18,7 @@ export default async function AdminCoursesPage() {
   const activeCourses = users.flatMap((item) => item.course_enrollments || []).filter((item) => item.status === 'active')
 
   return (
-    <main className={`takumi-admin-page ${styles.adminShell}`}>
+    <main className={`takumi-admin-page takumi-admin-courses ${styles.adminShell}`}>
       <div className={styles.topbar}>
         <Link href="/portal/admin">← Panel Admin</Link>
         <div className={styles.roleBadge}>SUPER ADMIN</div>
