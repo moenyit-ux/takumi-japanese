@@ -33,6 +33,9 @@ function formatStudyTitle(title: string) {
 export default function TakumiStudyHeader({ backHref, active, title = 'Ruang belajar Takumi', meta = 'Materi bahasa Jepang', progressPercent = 0, learningStatus = 'Belum dipelajari', anchors = {}, quizHref, compact = false }: Props) {
   const safePercent = Math.min(100, Math.max(0, Math.round(progressPercent || 0)))
   const displayTitle = formatStudyTitle(title)
+  const isLearned = learningStatus === 'Sudah dipelajari'
+  const isReview = learningStatus === 'Perlu dipelajari lagi' || learningStatus === 'Ingin dipelajari lagi'
+  const isNotStarted = learningStatus === 'Belum dipelajari'
 
   return (
     <header className={`tm-study-header${compact ? ' tm-study-header-compact' : ''}`}>
@@ -55,9 +58,9 @@ export default function TakumiStudyHeader({ backHref, active, title = 'Ruang bel
               <div className="tm-session-progress-head"><span>Progres materi</span><b>{safePercent}%</b></div>
               <div className="tm-session-track"><i style={{ width: `${safePercent}%` }} /></div>
               <div className="tm-progress-legend" aria-label={`Status belajar: ${learningStatus}`}>
-                <span><i className={learningStatus === 'Sudah dipelajari' ? 'done' : 'todo'} />Sudah dipelajari</span>
-                <span><i className={learningStatus === 'Perlu dipelajari lagi' || learningStatus === 'Ingin dipelajari lagi' ? 'current' : 'todo'} />Pelajari lagi</span>
-                <span><i className={learningStatus === 'Belum dipelajari' ? 'current' : 'todo'} />Belum dipelajari</span>
+                <span aria-current={isLearned ? 'true' : undefined}><i className="tm-legend-learned" />Sudah dipelajari</span>
+                <span aria-current={isReview ? 'true' : undefined}><i className="tm-legend-review" />Pelajari lagi</span>
+                <span aria-current={isNotStarted ? 'true' : undefined}><i className="tm-legend-not-started" />Belum dipelajari</span>
               </div>
             </div>
           )}

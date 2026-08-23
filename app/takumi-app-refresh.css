@@ -528,7 +528,12 @@
   display: flex;
   align-items: center;
   justify-content: flex-start;
+  width: fit-content;
+  margin-left: -6px;
+  padding: 4px 8px 5px 6px;
   gap: 7px;
+  background: linear-gradient(90deg, rgba(255, 255, 255, .94), rgba(255, 255, 255, .72));
+  box-shadow: 0 0 18px rgba(255, 255, 255, .72);
   color: var(--takumi-ink);
   font-family: Inter, ui-sans-serif, system-ui, sans-serif;
   font-size: 16px;
@@ -543,10 +548,11 @@
 }
 
 .tm-wordmark span {
-  color: var(--takumi-muted);
+  color: #3f647a;
   font-size: 9px;
   font-weight: 900;
   letter-spacing: .18em;
+  text-shadow: 0 1px 0 rgba(255, 255, 255, .96);
   text-transform: uppercase;
 }
 
@@ -558,11 +564,20 @@
   margin-top: 42px;
 }
 
+.tm-study-heading {
+  width: fit-content;
+  max-width: 100%;
+  margin: -10px -14px -12px;
+  padding: 10px 14px 12px;
+  background: linear-gradient(90deg, rgba(255, 255, 255, .92), rgba(255, 255, 255, .72) 72%, rgba(255, 255, 255, .08));
+}
+
 .tm-study-heading small {
-  color: var(--takumi-pink);
+  color: #b84f78;
   font-size: 9px;
   font-weight: 900;
   letter-spacing: .2em;
+  text-shadow: 0 1px 0 rgba(255, 255, 255, .98);
 }
 
 .tm-study-heading h1 {
@@ -574,20 +589,22 @@
   font-weight: 500;
   letter-spacing: -.04em;
   line-height: .98;
+  text-shadow: 0 1px 0 #fff, 0 0 16px rgba(255, 255, 255, .84);
 }
 
 .tm-study-heading p {
   margin: 0;
-  color: var(--takumi-muted);
+  color: #456a80;
   font-size: 12px;
-  font-weight: 700;
+  font-weight: 800;
+  text-shadow: 0 1px 0 rgba(255, 255, 255, .98);
 }
 
 .tm-session-progress {
   align-self: end;
   padding: 17px 18px;
   border-color: rgba(159, 207, 226, .9);
-  background: rgba(255, 255, 255, .88);
+  background: rgba(255, 255, 255, .94);
   text-align: left;
 }
 
@@ -627,13 +644,35 @@
 .tm-progress-legend {
   justify-content: flex-start;
   gap: 12px;
-  color: var(--takumi-muted);
+  color: #47687c;
   font-size: 9px;
+  font-weight: 800;
 }
 
 .tm-progress-legend i {
   width: 7px;
   height: 7px;
+}
+
+.tm-progress-legend .tm-legend-learned {
+  background: #5a9b84;
+}
+
+.tm-progress-legend .tm-legend-review {
+  background: #d96f96;
+}
+
+.tm-progress-legend .tm-legend-not-started {
+  background: #4d9fc5;
+}
+
+.tm-progress-legend span[aria-current='true'] {
+  color: var(--takumi-ink);
+  font-weight: 900;
+}
+
+.tm-progress-legend span[aria-current='true'] i {
+  box-shadow: 0 0 0 2px #fff, 0 0 0 3px rgba(21, 63, 90, .48);
 }
 
 .tm-study-nav {
