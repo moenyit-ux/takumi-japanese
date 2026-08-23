@@ -16,10 +16,7 @@
   padding: 38px max(28px, calc((100vw - 1240px) / 2)) 110px !important;
   color: var(--admin-ink) !important;
   background-color: var(--admin-paper);
-  background-image:
-    linear-gradient(rgba(131, 190, 218, .08) 1px, transparent 1px),
-    linear-gradient(90deg, rgba(131, 190, 218, .08) 1px, transparent 1px);
-  background-size: 28px 28px;
+  background-image: none;
 }
 
 /* Navigation bar */
