@@ -4,6 +4,7 @@ import { useMemo, useState } from 'react'
 import { useRouter } from 'next/navigation'
 import ChevronIcon from '../../../../components/chevron-icon'
 import jlpt from '../jlpt.module.css'
+import RichTextInput from '../../rich-text-input'
 
 type SectionKind = 'multiple_choice' | 'reading' | 'listening'
 
@@ -264,7 +265,7 @@ function QuestionCard({ quizId, question, defaultPosition, defaultKind, allQuest
 
         <div className={jlpt.questionGrid}>
           <label className={`${jlpt.field} ${jlpt.full}`}>Pertanyaan
-            <textarea className={jlpt.textarea} value={prompt} disabled={locked} onChange={(event) => setPrompt(event.target.value)} placeholder="Tuliskan pertanyaan seperti pada format JLPT." />
+            <RichTextInput className={jlpt.textarea} value={prompt} disabled={locked} onChange={setPrompt} placeholder="Tuliskan pertanyaan seperti pada format JLPT." />
           </label>
 
           {(kind === 'reading' || passage) && (
@@ -289,7 +290,7 @@ function QuestionCard({ quizId, question, defaultPosition, defaultKind, allQuest
           {options.map((option, index) => (
             <div className={jlpt.optionRow} key={index}>
               <span className={jlpt.optionLabel}>{String.fromCharCode(65 + index)}</span>
-              <input className={jlpt.input} value={option.option_text} disabled={locked} onChange={(event) => updateOption(index, event.target.value)} placeholder={`Pilihan ${String.fromCharCode(65 + index)}`} />
+              <RichTextInput multiline={false} className={jlpt.input} value={option.option_text} disabled={locked} onChange={(value) => updateOption(index, value)} placeholder={`Pilihan ${String.fromCharCode(65 + index)}`} />
               <label className={jlpt.correctChoice}>
                 <input type="radio" name={`correct-${question?.id || `new-${defaultKind}`}`} checked={option.is_correct} disabled={locked} onChange={() => setCorrect(index)} /> Benar
               </label>

@@ -3,6 +3,7 @@
 import Link from 'next/link'
 import { useRouter } from 'next/navigation'
 import { useEffect, useRef, useState } from 'react'
+import FormattedText from '@/app/components/formatted-text'
 
 type Option = {
   id: string
@@ -220,9 +221,9 @@ export default function QuizForm({ quizId, sessionId, title, passScore, timeLimi
             <article className={`tm-review-item ${item.is_correct ? 'correct' : 'wrong'}`} key={item.id}>
               <div>
                 <b>Soal {item.position} · {kindLabel[item.kind] || item.kind}</b>
-                <p>{item.prompt}</p>
+                <p><FormattedText text={item.prompt} /></p>
                 {!item.is_correct && <div className="tm-review-answer">Jawaban kamu: {item.selected_option_text || 'Tidak dijawab'}<br />Jawaban benar: <b>{item.correct_option_text || '—'}</b></div>}
-                {item.explanation_text && <p>{item.explanation_text}</p>}
+                {item.explanation_text && <p><FormattedText text={item.explanation_text} /></p>}
               </div>
               <span>{item.is_correct ? '✓' : '✕'}</span>
             </article>
@@ -281,13 +282,13 @@ export default function QuizForm({ quizId, sessionId, title, passScore, timeLimi
         <div className="tm-question-topline"><small>Pertanyaan {current.position}/{questions.length}</small><span className="tm-question-kind">{kindLabel[current.kind] || current.kind}</span></div>
         {current.passage && <div className="tm-passage">{current.passage}</div>}
         {current.audio_url && <div className="tm-audio-panel"><audio controls preload="none" src={current.audio_url}>Browser Anda tidak mendukung audio.</audio></div>}
-        <h2>{current.prompt}</h2>
+        <h2><FormattedText text={current.prompt} /></h2>
         <div className="tm-answer-list">
           {current.options.map((option) => (
             <label className={answers[current.id] === option.id ? 'selected' : ''} key={option.id}>
               <input type="radio" name={current.id} value={option.id} checked={answers[current.id] === option.id} onChange={() => choose(current.id, option.id)} />
               <span className="tm-answer-letter">{option.label || String.fromCharCode(64 + option.position)}</span>
-              <b>{option.option_text}</b>
+              <b><FormattedText text={option.option_text} /></b>
             </label>
           ))}
         </div>

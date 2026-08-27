@@ -3,6 +3,7 @@
 import Link from 'next/link'
 import { useRouter } from 'next/navigation'
 import { useEffect, useRef, useState } from 'react'
+import FormattedText from '@/app/components/formatted-text'
 
 type Option = { id: string; question_id: string; position: number; label: string | null; option_text: string }
 type Question = { id: string; position: number; kind: string; prompt: string; passage: string | null; audio_url: string | null; points: number; options: Option[] }
@@ -268,12 +269,12 @@ export default function SimulationForm({ quizId, title, passScore, timeLimitMinu
           <div className="question-number">{String(question.position).padStart(2, '0')}</div>
           {question.passage && <div className="reading-passage">{question.passage}</div>}
           {question.audio_url && <audio controls preload="none" src={question.audio_url}>Browser Anda tidak mendukung audio.</audio>}
-          <h2>{question.prompt}</h2>
+          <h2><FormattedText text={question.prompt} /></h2>
           <div className="option-list">
             {question.options.map((option) => (
               <label className={answers[question.id] === option.id ? 'selected' : ''} key={option.id}>
                 <input type="radio" name={question.id} value={option.id} checked={answers[question.id] === option.id} disabled={!state || busy} onChange={() => choose(question.id, option.id)} />
-                <span>{option.label || String(option.position)}</span><b>{option.option_text}</b>
+                <span>{option.label || String(option.position)}</span><b><FormattedText text={option.option_text} /></b>
               </label>
             ))}
           </div>

@@ -3,6 +3,7 @@
 import { useRouter } from 'next/navigation'
 import { useState } from 'react'
 import styles from '../../../admin.module.css'
+import RichTextInput from '../../../rich-text-input'
 
 type Option = {
   id?: string
@@ -215,7 +216,7 @@ function QuestionCard({ sessionId, quizId, question, defaultPosition }: { sessio
         </label>
 
         <label className={`${styles.label} ${styles.full}`}>Pertanyaan
-          <textarea className={styles.textarea} value={prompt} onChange={(event) => setPrompt(event.target.value)} placeholder="Tuliskan pertanyaan kuis." />
+          <RichTextInput className={styles.textarea} value={prompt} onChange={setPrompt} placeholder="Tuliskan pertanyaan kuis." />
         </label>
 
         {(kind === 'reading' || passage) && <label className={`${styles.label} ${styles.full}`}>Bacaan / konteks
@@ -236,7 +237,7 @@ function QuestionCard({ sessionId, quizId, question, defaultPosition }: { sessio
         {options.map((option, index) => (
           <div key={index} style={{ display: 'grid', gridTemplateColumns: '44px 1fr auto', gap: 10, alignItems: 'center' }}>
             <b>{String.fromCharCode(65 + index)}</b>
-            <input className={styles.input} value={option.option_text} onChange={(event) => updateOption(index, { option_text: event.target.value })} placeholder={`Pilihan ${String.fromCharCode(65 + index)}`} />
+            <RichTextInput multiline={false} className={styles.input} value={option.option_text} onChange={(value) => updateOption(index, { option_text: value })} placeholder={`Pilihan ${String.fromCharCode(65 + index)}`} />
             <label style={{ display: 'flex', alignItems: 'center', gap: 6, fontSize: 12, fontWeight: 700 }}>
               <input type="radio" name={`correct-${question?.id || 'new'}`} checked={option.is_correct} onChange={() => setCorrect(index)} /> Benar
             </label>
