@@ -37,7 +37,7 @@ export default async function QuizPage({ params }: { params: Promise<{ id: strin
 
   const { data: quiz, error: quizError } = await supabase
     .from('quizzes')
-    .select('id, level_id, session_id, title, pass_score, time_limit_minutes, kind')
+    .select('id, level_id, session_id, title, pass_score, time_limit_minutes, kind, group_no')
     .eq('id', id)
     .eq('published', true)
     .maybeSingle()
@@ -83,17 +83,23 @@ export default async function QuizPage({ params }: { params: Promise<{ id: strin
     options: options.filter((option) => option.question_id === question.id),
   }))
 
-  const [levelResult, progressResult] = await Promise.all([
+  const [levelResult, progressResult, siblingResult] = await Promise.all([
     supabase.from('levels').select('code').eq('id', quiz.level_id).maybeSingle(),
     quiz.session_id
       ? supabase.from('session_progress').select('read_percent, status').eq('session_id', quiz.session_id).maybeSingle()
       : Promise.resolve({ data: null, error: null }),
+    quiz.session_id && quiz.kind === 'session'
+      ? supabase.from('quizzes').select('id, group_no').eq('session_id', quiz.session_id).eq('kind', 'session').eq('published', true).order('group_no').order('created_at')
+      : Promise.resolve({ data: [] as Array<{ id: string; group_no: number | null }>, error: null }),
   ])
 
   const levelCode = levelResult.data?.code || 'N4'
   const progress = progressResult.data
+  const siblings = siblingResult.data || []
+  const currentIndex = siblings.findIndex((item) => item.id === quiz.id)
+  const nextQuiz = currentIndex >= 0 ? siblings[currentIndex + 1] : null
   const backHref = quiz.session_id ? `/portal/session/${quiz.session_id}` : `/portal/materi?level=${levelCode}`
-  const nextHref = `/portal/materi?level=${levelCode}`
+  const nextHref = nextQuiz ? `/portal/quiz/${nextQuiz.id}` : (quiz.session_id ? `/portal/session/${quiz.session_id}` : `/portal/materi?level=${levelCode}`)
 
   return (
     <main className="tm-material-page">
@@ -101,7 +107,7 @@ export default async function QuizPage({ params }: { params: Promise<{ id: strin
         backHref={backHref}
         active="quiz"
         title={quiz.title}
-        meta={`${levelCode} · Latihan materi`}
+        meta={`${levelCode} · ${quiz.kind === 'session' ? `Kuis ${quiz.group_no || Math.max(1, currentIndex + 1)}` : 'Simulasi JLPT'}`}
         progressPercent={progress?.read_percent || 0}
         learningStatus={getLearningStatus(progress?.status)}
         quizHref={`/portal/quiz/${quiz.id}`}

@@ -1,9 +1,12 @@
 'use client'
 
 import { useRouter } from 'next/navigation'
-import { useState } from 'react'
-import styles from '../../../admin.module.css'
+import { useEffect, useState } from 'react'
+import baseStyles from '../../../admin.module.css'
+import quizStyles from './quiz-groups.module.css'
 import RichTextInput from '../../../rich-text-input'
+
+const styles = { ...baseStyles, ...quizStyles }
 
 type Option = {
   id?: string
@@ -26,10 +29,20 @@ type Question = {
   options: Option[]
 }
 
+type QuizGroup = {
+  id: string
+  group_no: number
+  title: string
+  pass_score: number
+  time_limit_minutes: number | null
+  published: boolean
+  questions: Question[]
+}
+
 type Props = {
   sessionId: string
-  quizId: string
-  questions: Question[]
+  role: string
+  quizzes: QuizGroup[]
 }
 
 const questionKinds = [
@@ -44,8 +57,9 @@ async function callAdmin(payload: Record<string, unknown>) {
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify(payload),
   })
-  const data = await response.json().catch(() => ({})) as { error?: string }
+  const data = await response.json().catch(() => ({})) as { data?: unknown; error?: string }
   if (!response.ok || data.error) throw new Error(data.error || 'Perubahan gagal disimpan.')
+  return data.data
 }
 
 async function uploadAudio(sessionId: string, file: File) {
@@ -193,6 +207,12 @@ function QuestionCard({ sessionId, quizId, question, defaultPosition }: { sessio
   }
 
   return (
+    <details className={styles.quizQuestion} open={question ? undefined : true}>
+      <summary className={styles.quizQuestionSummary}>
+        <span>{question ? `SOAL ${String(question.position).padStart(2, '0')}` : 'TAMBAH SOAL'}</span>
+        <b>{question?.prompt || 'Buat soal baru'}</b>
+        <i>{question ? 'Buka editor' : 'Isi soal'}</i>
+      </summary>
     <section className={styles.panel}>
       <div className={styles.cardHead}>
         <div>
@@ -259,16 +279,128 @@ function QuestionCard({ sessionId, quizId, question, defaultPosition }: { sessio
       </div>
       <div className={styles.message}>{message}</div>
     </section>
+    </details>
   )
 }
 
-export default function QuizEditor({ sessionId, quizId, questions }: Props) {
+export default function QuizEditor({ sessionId, role, quizzes }: Props) {
+  const router = useRouter()
+  const [activeQuizId, setActiveQuizId] = useState(quizzes[0]?.id || '')
+  const [busy, setBusy] = useState(false)
+  const [message, setMessage] = useState('')
+
+  useEffect(() => {
+    if (!quizzes.some((quiz) => quiz.id === activeQuizId)) {
+      setActiveQuizId(quizzes[0]?.id || '')
+    }
+  }, [activeQuizId, quizzes])
+
+  const activeQuiz = quizzes.find((quiz) => quiz.id === activeQuizId) || quizzes[0]
+
+  async function createGroup() {
+    setBusy(true)
+    setMessage('Membuat kelompok kuis baru...')
+    try {
+      const result = await callAdmin({ action: 'create_quiz_group', sessionId }) as { id?: string } | null
+      if (result?.id) setActiveQuizId(result.id)
+      setMessage('Kelompok kuis baru berhasil dibuat.')
+      router.refresh()
+    } catch (error) {
+      setMessage(error instanceof Error ? error.message : 'Kelompok kuis gagal dibuat.')
+    } finally {
+      setBusy(false)
+    }
+  }
+
+  async function deleteGroup() {
+    if (!activeQuiz || !window.confirm(`Hapus Kuis ${activeQuiz.group_no} beserta semua soalnya?`)) return
+    setBusy(true)
+    setMessage('Menghapus kelompok kuis...')
+    try {
+      await callAdmin({ action: 'delete_quiz_group', sessionId, quizId: activeQuiz.id })
+      setActiveQuizId(quizzes.find((quiz) => quiz.id !== activeQuiz.id)?.id || '')
+      setMessage('Kelompok kuis berhasil dihapus.')
+      router.refresh()
+    } catch (error) {
+      setMessage(error instanceof Error ? error.message : 'Kelompok kuis gagal dihapus.')
+    } finally {
+      setBusy(false)
+    }
+  }
+
+  async function setPublished(published: boolean) {
+    if (!activeQuiz) return
+    setBusy(true)
+    setMessage(published ? 'Menerbitkan kelompok kuis...' : 'Menarik kelompok kuis...')
+    try {
+      await callAdmin({ action: 'set_quiz_group_published', sessionId, quizId: activeQuiz.id, published })
+      setMessage(published ? 'Kelompok kuis sudah diterbitkan.' : 'Kelompok kuis kembali menjadi draft.')
+      router.refresh()
+    } catch (error) {
+      setMessage(error instanceof Error ? error.message : 'Status kelompok kuis gagal diubah.')
+    } finally {
+      setBusy(false)
+    }
+  }
+
   return (
     <div className={styles.stack}>
-      {questions.map((question) => (
-        <QuestionCard key={question.id} sessionId={sessionId} quizId={quizId} question={question} defaultPosition={question.position} />
-      ))}
-      <QuestionCard sessionId={sessionId} quizId={quizId} defaultPosition={questions.length + 1} />
+      <section className={`${styles.panel} ${styles.quizGroupsPanel}`}>
+        <div className={styles.quizGroupsHead}>
+          <div>
+            <div className={styles.eyebrow}>KELOMPOK KUIS</div>
+            <h2>Pilih kuis yang ingin diisi</h2>
+            <p className={styles.note}>Setiap kelompok menyimpan daftar soal dan hasil pengerjaannya secara terpisah.</p>
+          </div>
+          <button className={styles.primary} type="button" disabled={busy} onClick={createGroup}>+ Kuis baru</button>
+        </div>
+
+        <div className={styles.quizGroupTabs} role="tablist" aria-label="Kelompok kuis">
+          {quizzes.map((quiz) => (
+            <button
+              className={quiz.id === activeQuiz?.id ? styles.quizGroupActive : ''}
+              type="button"
+              role="tab"
+              aria-selected={quiz.id === activeQuiz?.id}
+              onClick={() => setActiveQuizId(quiz.id)}
+              key={quiz.id}
+            >
+              <small>KUIS</small>
+              <b>{String(quiz.group_no).padStart(2, '0')}</b>
+              <span>{quiz.questions.length} soal</span>
+              <i>{quiz.published ? 'Terbit' : 'Draft'}</i>
+            </button>
+          ))}
+        </div>
+        {message && <div className={styles.message}>{message}</div>}
+      </section>
+
+      {activeQuiz ? (
+        <>
+          <section className={`${styles.panel} ${styles.quizGroupToolbar}`}>
+            <div>
+              <div className={styles.eyebrow}>KUIS {String(activeQuiz.group_no).padStart(2, '0')}</div>
+              <h2>{activeQuiz.title}</h2>
+              <p className={styles.note}>{activeQuiz.questions.length} soal · Nilai lulus ≥ {activeQuiz.pass_score} · {activeQuiz.published ? 'Sudah diterbitkan' : 'Masih draft'}</p>
+            </div>
+            <div className={styles.actions}>
+              {role === 'super_admin' && (
+                <button className={styles.secondary} type="button" disabled={busy} onClick={() => void setPublished(!activeQuiz.published)}>
+                  {activeQuiz.published ? 'Jadikan draft' : 'Terbitkan kuis'}
+                </button>
+              )}
+              {quizzes.length > 1 && <button className={styles.danger} type="button" disabled={busy} onClick={deleteGroup}>Hapus kelompok</button>}
+            </div>
+          </section>
+
+          {activeQuiz.questions.map((question) => (
+            <QuestionCard key={question.id} sessionId={sessionId} quizId={activeQuiz.id} question={question} defaultPosition={question.position} />
+          ))}
+          <QuestionCard sessionId={sessionId} quizId={activeQuiz.id} defaultPosition={activeQuiz.questions.length + 1} />
+        </>
+      ) : (
+        <section className={styles.empty}>Belum ada kelompok kuis. Tekan “+ Kuis baru” untuk memulai.</section>
+      )}
     </div>
   )
 }

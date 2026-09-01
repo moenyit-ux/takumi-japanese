@@ -45,6 +45,8 @@ function errorMessage(message: string) {
     duplicate_vocabulary_number_in_chapter: 'Nomor materi tersebut sudah digunakan di bab ini. Pilih nomor lain.',
     duplicate_kanji_number_in_chapter: 'Nomor kanji tersebut sudah digunakan di bab ini. Pilih nomor lain.',
     invalid_chapter_number: 'Nomor bab tidak valid. Masukkan angka 1 atau lebih.',
+    quiz_group_not_found: 'Kelompok kuis tidak ditemukan.',
+    quiz_group_has_attempt_history: 'Kelompok kuis ini sudah memiliki riwayat siswa sehingga tidak dapat dihapus.',
   }
   return map[message] || message.replaceAll('_', ' ')
 }
@@ -66,6 +68,15 @@ export async function POST(request: Request) {
     const levelId = text(body.levelId)
     if (!levelId) return NextResponse.json({ error: 'Level belajar belum dipilih.' }, { status: 400 })
     result = await supabase.rpc('admin_create_material', { p_level_id: levelId })
+  } else if (action === 'create_quiz_group') {
+    result = await supabase.rpc('admin_create_quiz_group', { p_session_id: sessionId })
+  } else if (action === 'delete_quiz_group') {
+    result = await supabase.rpc('admin_delete_quiz_group', { p_quiz_id: quizId })
+  } else if (action === 'set_quiz_group_published') {
+    result = await supabase.rpc('admin_set_quiz_group_published', {
+      p_quiz_id: quizId,
+      p_published: Boolean(body.published),
+    })
   } else if (action === 'save_session') {
     result = await supabase.rpc('admin_save_session', {
       p_session_id: sessionId,
@@ -160,6 +171,7 @@ export async function POST(request: Request) {
   if (quizId) revalidatePath(`/portal/admin/jlpt/${quizId}`)
   if (sessionId) {
     revalidatePath(`/portal/admin/session/${sessionId}`)
+    revalidatePath(`/portal/admin/session/${sessionId}/quiz`)
     revalidatePath(`/portal/session/${sessionId}`)
   }
   revalidatePath('/portal/materi')
