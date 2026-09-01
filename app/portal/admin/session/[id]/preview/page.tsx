@@ -61,8 +61,13 @@ type EditorData = {
   }
 }
 
+type QuizGroup = NonNullable<EditorData['quiz']> & {
+  group_no: number
+}
+
 type SearchParams = {
   section?: string | string[]
+  quiz?: string | string[]
 }
 
 export default async function AdminSessionPreviewPage({
@@ -75,6 +80,7 @@ export default async function AdminSessionPreviewPage({
   const { id } = await params
   const query = await searchParams
   const requestedSection = Array.isArray(query.section) ? query.section[0] : query.section
+  const requestedQuizId = Array.isArray(query.quiz) ? query.quiz[0] : query.quiz
 
   const supabase = await createClient()
   const { data: { user } } = await supabase.auth.getUser()
@@ -83,19 +89,28 @@ export default async function AdminSessionPreviewPage({
   const { data: profile } = await supabase.from('profiles').select('role').eq('id', user.id).maybeSingle()
   if (profile?.role !== 'content_admin' && profile?.role !== 'super_admin') redirect('/portal/dashboard')
 
-  const { data, error } = await supabase.rpc('admin_get_session_editor', { p_session_id: id })
-  if (error || !data) notFound()
-  const editor = data as EditorData
+  const [editorResult, quizGroupsResult] = await Promise.all([
+    supabase.rpc('admin_get_session_editor', { p_session_id: id }),
+    supabase.rpc('admin_get_quiz_groups', { p_session_id: id }),
+  ])
+  if (editorResult.error || !editorResult.data || quizGroupsResult.error) notFound()
+  const editor = editorResult.data as EditorData
+  const rawQuizGroups = (quizGroupsResult.data || []) as QuizGroup[]
 
   const blocks = await Promise.all((editor.blocks || []).map(async (block) => ({
     ...block,
     audio_url: await resolveLearningAsset(supabase, block.audio_url),
     image_url: await resolveLearningAsset(supabase, block.image_url),
   })))
-  const questions = await Promise.all((editor.quiz?.questions || []).map(async (question) => ({
-    ...question,
-    audio_url: await resolveLearningAsset(supabase, question.audio_url),
+  const quizGroups = await Promise.all(rawQuizGroups.map(async (quiz) => ({
+    ...quiz,
+    questions: await Promise.all((quiz.questions || []).map(async (question) => ({
+      ...question,
+      audio_url: await resolveLearningAsset(supabase, question.audio_url),
+    }))),
   })))
+  const activeQuiz = quizGroups.find((quiz) => quiz.id === requestedQuizId) || quizGroups[0]
+  const questions = activeQuiz?.questions || []
 
   const firstStructured = materialKinds.find((kind) => blocks.some((block) => block.kind === kind)) || 'vocabulary'
   let carryKind: MaterialKind = firstStructured
@@ -105,7 +120,7 @@ export default async function AdminSessionPreviewPage({
   })
   const availableKinds = materialKinds.filter((kind) => categorizedBlocks.some((entry) => entry.pageKind === kind))
   const firstAvailable = availableKinds[0] || firstStructured
-  const active: StudyKind = requestedSection === 'quiz' && questions.length > 0
+  const active: StudyKind = requestedSection === 'quiz' && quizGroups.length > 0
     ? 'quiz'
     : isMaterialKind(requestedSection) && availableKinds.includes(requestedSection)
       ? requestedSection
@@ -116,7 +131,7 @@ export default async function AdminSessionPreviewPage({
   availableKinds.forEach((kind) => {
     anchors[kind] = `${previewBase}?section=${kind}`
   })
-  const quizHref = questions.length > 0 ? `${previewBase}?section=quiz` : null
+  const quizHref = quizGroups.length > 0 ? `${previewBase}?section=quiz&quiz=${activeQuiz?.id || quizGroups[0].id}` : null
 
   const visibleBlocks = active === 'quiz'
     ? []
@@ -150,11 +165,34 @@ export default async function AdminSessionPreviewPage({
       {active === 'quiz' ? (
         <section className={`panel ${styles.quizPreview}`}>
           <div className={styles.quizHead}>
-            <div><div className="eyebrow">PREVIEW LATIHAN MATERI</div><h2>{editor.quiz?.title || 'Latihan materi'}</h2></div>
-            <span>{questions.length} soal · Lulus ≥ {editor.quiz?.pass_score ?? 70}</span>
+            <div><div className="eyebrow">PREVIEW LATIHAN MATERI</div><h2>Pilih kelompok kuis</h2></div>
+            <span>{quizGroups.length} kelompok · {quizGroups.reduce((total, quiz) => total + quiz.questions.length, 0)} soal</span>
           </div>
 
-          {questions.length === 0 ? <div className={styles.empty}>Belum ada soal pada latihan materi.</div> : questions.map((question) => {
+          <nav className={styles.quizGroups} aria-label="Pilih kelompok kuis">
+            {quizGroups.map((quiz) => (
+              <Link
+                className={quiz.id === activeQuiz?.id ? styles.quizGroupActive : ''}
+                href={`${previewBase}?section=quiz&quiz=${quiz.id}`}
+                aria-current={quiz.id === activeQuiz?.id ? 'page' : undefined}
+                key={quiz.id}
+              >
+                <small>KUIS</small>
+                <b>{String(quiz.group_no).padStart(2, '0')}</b>
+                <span>{quiz.questions.length} soal</span>
+                <i>{quiz.published ? 'Terbit' : 'Draft'}</i>
+              </Link>
+            ))}
+          </nav>
+
+          {activeQuiz && (
+            <div className={styles.activeQuizHead}>
+              <div><small>KUIS {String(activeQuiz.group_no).padStart(2, '0')}</small><h3>{activeQuiz.title}</h3></div>
+              <span>{questions.length} soal · Lulus ≥ {activeQuiz.pass_score}</span>
+            </div>
+          )}
+
+          {questions.length === 0 ? <div className={styles.empty}>Belum ada soal pada kelompok kuis ini.</div> : questions.map((question) => {
             const correct = question.options.find((option) => option.is_correct)
             return (
               <article className="question-card" key={question.id}>

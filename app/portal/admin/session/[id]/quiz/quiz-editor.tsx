@@ -352,7 +352,14 @@ export default function QuizEditor({ sessionId, role, quizzes }: Props) {
             <h2>Pilih kuis yang ingin diisi</h2>
             <p className={styles.note}>Setiap kelompok menyimpan daftar soal dan hasil pengerjaannya secara terpisah.</p>
           </div>
-          <button className={styles.primary} type="button" disabled={busy} onClick={createGroup}>+ Kuis baru</button>
+          <button className={`${styles.primary} ${styles.quizCreateButton}`} type="button" disabled={busy} onClick={createGroup}>
+            <span className={styles.quizCreateIcon} aria-hidden="true">＋</span>
+            <span className={styles.quizCreateCopy}>
+              <b>Kuis baru</b>
+              <small>Tambah kelompok</small>
+            </span>
+            <i aria-hidden="true">→</i>
+          </button>
         </div>
 
         <div className={styles.quizGroupTabs} role="tablist" aria-label="Kelompok kuis">
