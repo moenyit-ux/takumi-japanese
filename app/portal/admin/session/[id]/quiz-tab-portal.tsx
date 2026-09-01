@@ -150,7 +150,19 @@ export default function QuizTabPortal({ sessionId, quizId, questions }: Props) {
             <p style={{ margin: 0, color: '#71889a', fontSize: 11, lineHeight: 1.5 }}>Isi dan kelola soal latihan sesi di sini. Saat tab Kuis aktif, isian materi lain disembunyikan.</p>
           </div>
         </div>
-        <QuizEditor sessionId={sessionId} quizId={quizId} questions={questions} />
+        <QuizEditor
+          sessionId={sessionId}
+          role="content_admin"
+          quizzes={[{
+            id: quizId,
+            group_no: 1,
+            title: 'Kuis 1',
+            pass_score: 70,
+            time_limit_minutes: null,
+            published: false,
+            questions,
+          }]}
+        />
       </div>,
       slot,
     )}

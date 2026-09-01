@@ -5,6 +5,7 @@ import QuizEditor from './quiz-editor'
 import styles from '../../../admin.module.css'
 
 type EditorData = {
+  role: string
   session: {
     id: string
     level_code: string
@@ -39,6 +40,10 @@ type EditorData = {
   } | null
 }
 
+type QuizGroup = NonNullable<EditorData['quiz']> & {
+  group_no: number
+}
+
 export default async function QuizOnlyPage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = await params
   const supabase = await createClient()
@@ -48,10 +53,14 @@ export default async function QuizOnlyPage({ params }: { params: Promise<{ id: s
   const { data: profile } = await supabase.from('profiles').select('role').eq('id', user.id).maybeSingle()
   if (profile?.role !== 'content_admin' && profile?.role !== 'super_admin') redirect('/portal/dashboard')
 
-  const { data, error } = await supabase.rpc('admin_get_session_editor', { p_session_id: id })
-  if (error || !data) notFound()
+  const [editorResult, quizGroupsResult] = await Promise.all([
+    supabase.rpc('admin_get_session_editor', { p_session_id: id }),
+    supabase.rpc('admin_get_quiz_groups', { p_session_id: id }),
+  ])
+  if (editorResult.error || !editorResult.data || quizGroupsResult.error) notFound()
 
-  const editorData = data as EditorData
+  const editorData = editorResult.data as EditorData
+  const quizGroups = (quizGroupsResult.data || []) as QuizGroup[]
 
   return (
     <main className={`takumi-admin-page takumi-admin-editor ${styles.editorShell}`}>
@@ -64,17 +73,17 @@ export default async function QuizOnlyPage({ params }: { params: Promise<{ id: s
         <div>
           <div className={styles.eyebrow}>{editorData.session.level_code} · KUIS</div>
           <h1>Kuis {editorData.session.level_code}</h1>
-          <p>{editorData.session.level_name} · {editorData.quiz?.questions.length || 0} soal · Nilai lulus ≥ {editorData.quiz?.pass_score ?? 70}</p>
+          <p>{editorData.session.level_name} · {quizGroups.length} kelompok kuis · {quizGroups.reduce((total, quiz) => total + quiz.questions.length, 0)} soal</p>
         </div>
       </header>
 
-      {!editorData.quiz ? (
+      {quizGroups.length === 0 ? (
         <section className={styles.panel}>
           <h2>Kuis belum tersedia</h2>
           <p className={styles.note}>Struktur kuis untuk level ini belum dibuat.</p>
         </section>
       ) : (
-        <QuizEditor sessionId={editorData.session.id} quizId={editorData.quiz.id} questions={editorData.quiz.questions} />
+        <QuizEditor sessionId={editorData.session.id} role={editorData.role} quizzes={quizGroups} />
       )}
     </main>
   )

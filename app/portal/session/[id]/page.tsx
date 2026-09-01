@@ -58,7 +58,7 @@ export default async function SessionPage({
     supabase.from('entitlements').select('active, starts_at, ends_at').eq('level_id', session.level_id),
     supabase.from('content_blocks').select('id, position, kind, title, body, audio_url, image_url').eq('session_id', session.id).order('position'),
     supabase.from('session_progress').select('read_percent, status, highest_score, last_block_id').eq('session_id', session.id).maybeSingle(),
-    supabase.from('quizzes').select('id, title, pass_score').eq('session_id', session.id).eq('kind', 'session').eq('published', true).maybeSingle(),
+    supabase.from('quizzes').select('id, title, pass_score, group_no').eq('session_id', session.id).eq('kind', 'session').eq('published', true).order('group_no').order('created_at'),
     supabase.from('bookmarks').select('content_block_id').not('content_block_id', 'is', null),
   ])
 
@@ -123,7 +123,8 @@ export default async function SessionPage({
   const initialReadPercent = progress?.read_percent || 0
   const statusList = progressBlocks.map((block) => learningStatuses[block.id] || 'not_started')
   const overallStatus = overallLearningStatusLabel(statusList, progressBlocks.length)
-  const quizHref = quizResult.data ? `/portal/quiz/${quizResult.data.id}` : null
+  const quizGroups = quizResult.data || []
+  const quizHref = quizGroups[0] ? `/portal/quiz/${quizGroups[0].id}` : null
   const bookmarkedIds = new Set((bookmarkResult.data || []).map((item) => item.content_block_id).filter((value): value is string => Boolean(value)))
 
   const active: StudyKind = isStudyKind(requestedSection) && availableKinds.includes(requestedSection)
@@ -177,9 +178,28 @@ export default async function SessionPage({
 
       <ProgressTracker sessionId={session.id} blockIds={progressBlocks.map((block) => block.id)} initialReadPercent={initialReadPercent} />
 
+      {quizGroups.length > 0 && (
+        <section className="tm-quiz-groups" aria-label="Kelompok kuis">
+          <div className="tm-quiz-groups-head">
+            <div><small>LATIHAN MATERI</small><h2>Pilih kelompok kuis</h2></div>
+            <span>{quizGroups.length} kuis tersedia</span>
+          </div>
+          <div className="tm-quiz-group-list">
+            {quizGroups.map((quiz, index) => (
+              <Link href={`/portal/quiz/${quiz.id}`} key={quiz.id}>
+                <small>KUIS</small>
+                <b>{String(quiz.group_no || index + 1).padStart(2, '0')}</b>
+                <div><strong>{quiz.title}</strong><span>Nilai lulus ≥ {quiz.pass_score}</span></div>
+                <i aria-hidden="true">→</i>
+              </Link>
+            ))}
+          </div>
+        </section>
+      )}
+
       <section className="tm-callout" style={{ marginTop: 16 }}>
         <div className="tm-callout-head"><div className="tm-icon-box">✓</div><b>Syarat kelulusan materi</b></div>
-        <p>Status pada setiap materi adalah penilaian pribadi dan dapat diubah kapan saja. Kelulusan teknis tetap dihitung dari seluruh materi yang dibaca dan nilai latihan minimal {quizResult.data?.pass_score ?? 70}. Nilai tertinggi saat ini: <b>{progress?.highest_score ?? '—'}</b>.</p>
+        <p>Status pada setiap materi adalah penilaian pribadi dan dapat diubah kapan saja. Kelulusan teknis tetap dihitung dari seluruh materi yang dibaca dan nilai latihan minimal {quizGroups[0]?.pass_score ?? 70}. Nilai tertinggi saat ini: <b>{progress?.highest_score ?? '—'}</b>.</p>
       </section>
     </main>
   )
