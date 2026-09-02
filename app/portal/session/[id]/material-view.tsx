@@ -1,6 +1,7 @@
 import MaterialBookmark from './material-bookmark'
 import BlockLearningStatusControl, { type BlockLearningStatus } from './block-learning-status-control'
 import CollapsibleVocabularyCard from './collapsible-vocabulary-card'
+import CollapsibleKanjiCard from './collapsible-kanji-card'
 import CollapsibleGrammarCard from './collapsible-grammar-card'
 import CollapsibleLessonCard from './collapsible-lesson-card'
 import ChevronIcon from '../../../components/chevron-icon'
@@ -413,6 +414,35 @@ export default function MaterialView({ blocks, bookmarkedIds, learningStatuses =
     )
   }
 
+  function renderKanjiBlock(block: ContentBlock, anchorId: string) {
+    const body = recordOf(block.body)
+    const kanji = textOf(body, 'kanji', 'character') || block.title || '字'
+    const meaning = textOf(body, 'meaning', 'translation', 'indonesian')
+    const readings = [
+      ...stringsOf(body, 'onyomi', 'on_reading'),
+      ...stringsOf(body, 'kunyomi', 'kun_reading'),
+    ]
+    const summary = meaning || readings.join(' · ') || 'Kanji'
+    const positionLabel = textOf(body, 'count_label') || String(block.position).padStart(2, '0')
+    const initialStatus = learningStatuses[block.id] || 'not_started'
+
+    return (
+      <CollapsibleKanjiCard
+        key={block.id}
+        blockId={block.id}
+        anchorId={anchorId}
+        positionLabel={positionLabel}
+        kanji={kanji}
+        summary={summary}
+        initialStatus={initialStatus}
+        bookmarked={bookmarkedIds.has(block.id)}
+        preview={preview}
+      >
+        <BlockContent block={block} />
+      </CollapsibleKanjiCard>
+    )
+  }
+
   function renderLessonBlock(block: ContentBlock, anchorId: string, kindLabel: 'Dokkai' | 'Choukai') {
     const positionLabel = String(block.position).padStart(2, '0')
     const title = block.title || `${kindLabel} ${positionLabel}`
@@ -491,7 +521,7 @@ export default function MaterialView({ blocks, bookmarkedIds, learningStatuses =
                   ? renderVocabularyBlock(block, `block-${block.id}`)
                   : grammarOnly
                     ? renderGrammarBlock(block, `block-${block.id}`)
-                    : renderMaterialBlock(block, `block-${block.id}`))}
+                    : renderKanjiBlock(block, `block-${block.id}`))}
               </div>
             </details>
           )
@@ -511,7 +541,7 @@ export default function MaterialView({ blocks, bookmarkedIds, learningStatuses =
         if (block.kind === 'grammar') return renderGrammarBlock(block, anchorId)
         if (block.kind === 'reading') return renderLessonBlock(block, anchorId, 'Dokkai')
         if (block.kind === 'listening') return renderLessonBlock(block, anchorId, 'Choukai')
-        if (block.kind === 'kanji') return renderMaterialBlock(block, anchorId)
+        if (block.kind === 'kanji') return renderKanjiBlock(block, anchorId)
 
         return (
           <article className="tm-material-card" data-block-id={block.id} id={anchorId} key={block.id}>
