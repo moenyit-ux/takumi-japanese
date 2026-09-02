@@ -284,7 +284,7 @@
 .portal-empty-certificate > small { color: var(--takumi-pink); font-size: 9px; font-weight: 900; letter-spacing: .18em; }
 .portal-empty-certificate h2 { margin: 13px 0 12px; font-family: Georgia, 'Times New Roman', serif; font-size: clamp(32px, 4vw, 48px); font-weight: 500; line-height: 1.08; }
 .portal-empty-certificate p { color: var(--takumi-muted); line-height: 1.7; }
-.portal-empty-certificate > b { position: absolute; right: 7%; bottom: -25px; color: #e2f2f9; font-family: 'Yu Mincho', serif; font-size: 190px; font-weight: 500; }
+.portal-empty-certificate > b { position: absolute; right: 7%; top: 50%; color: #e2f2f9; font-family: 'Yu Mincho', serif; font-size: 190px; font-weight: 500; line-height: 1.08; transform: translateY(-50%); pointer-events: none; }
 
 .portal-ledger-head {
   display: flex;
@@ -346,11 +346,13 @@
   content: '学';
   position: absolute;
   right: 7%;
-  bottom: -35px;
+  top: 50%;
   color: #e2f2f9;
   font-family: 'Yu Mincho', serif;
   font-size: 190px;
-  line-height: 1;
+  line-height: 1.08;
+  transform: translateY(-50%);
+  pointer-events: none;
 }
 
 .learning-header .eyebrow { color: var(--takumi-pink); }
@@ -846,11 +848,13 @@
   content: '極';
   position: absolute;
   right: 8%;
-  bottom: -42px;
+  top: 50%;
   color: #e2f2f9;
   font-family: 'Yu Mincho', serif;
   font-size: 180px;
-  line-height: 1;
+  line-height: 1.08;
+  transform: translateY(-50%);
+  pointer-events: none;
 }
 
 .takumi-premium-page > section:first-of-type > div { position: relative; z-index: 1; }
@@ -922,7 +926,7 @@
   .portal-material-state { grid-column: 1 / -1; grid-template-columns: 1fr auto; justify-items: start; padding: 11px 18px; border-top: 1px solid var(--takumi-line); border-left: 0; }
   .portal-material-state b { justify-self: end; font-size: 20px; }
   .portal-empty-certificate { min-height: 320px; padding: 34px 24px 150px; }
-  .portal-empty-certificate > b { right: 12%; bottom: -25px; font-size: 150px; }
+  .portal-empty-certificate > b { right: 12%; font-size: 150px; }
   .portal-ledger-head { align-items: flex-start; padding: 22px; }
   .portal-ledger > article { grid-template-columns: 28px 1fr auto; gap: 10px; padding: 14px 16px; }
   .portal-ledger time { display: none; }
