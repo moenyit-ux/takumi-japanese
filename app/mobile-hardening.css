@@ -1,0 +1,499 @@
+/* Mobile hardening layer — loaded last so phone layouts stay readable and non-overlapping. */
+
+@media (max-width: 760px) {
+  html,
+  body {
+    max-width: 100%;
+    overflow-x: hidden;
+  }
+
+  *,
+  *::before,
+  *::after {
+    box-sizing: border-box;
+  }
+
+  img,
+  video,
+  audio,
+  canvas,
+  svg {
+    max-width: 100%;
+  }
+
+  audio,
+  video {
+    width: 100%;
+  }
+
+  :is(.portal, .learning-shell, .tm-material-page, .takumi-admin-page, .takumi-premium-page, .takumi-support-page, .takumi-settings-page, .takumi-device-page) :is(h1, h2, h3, h4, p, span, b, strong, small, label, a, button, td, th) {
+    overflow-wrap: anywhere;
+    word-break: normal;
+  }
+
+  :is(.portal, .learning-shell, .tm-material-page, .takumi-admin-page, .takumi-premium-page, .takumi-support-page, .takumi-settings-page, .takumi-device-page) :is(.row, [class*='grid'], [class*='Grid'], [class*='layout'], [class*='Layout'], [class*='toolbar'], [class*='Toolbar'], [class*='header'], [class*='Header'], [class*='head'], [class*='Head'], [class*='actions'], [class*='Actions']) > * {
+    min-width: 0;
+  }
+
+  /* Portal shell and bottom navigation */
+  .portal {
+    width: 100%;
+    max-width: 100vw;
+  }
+
+  .portal > .content {
+    min-width: 0;
+    max-width: 100vw;
+  }
+
+  .portal > .bottom {
+    left: 0;
+    right: 0;
+    bottom: 0;
+    width: 100%;
+    max-width: 100vw;
+    padding-bottom: env(safe-area-inset-bottom);
+  }
+
+  .portal > .bottom a {
+    min-width: 68px;
+    padding-inline: 8px;
+  }
+
+  .portal > .bottom a small {
+    max-width: 100%;
+    white-space: normal;
+    line-height: 1.15;
+    text-align: center;
+  }
+
+  /* Portal content pages */
+  .portal-section-view {
+    width: calc(100% - 20px) !important;
+    max-width: 100%;
+  }
+
+  .portal-section-copy,
+  .portal-material-copy,
+  .portal-ledger-head,
+  .portal-ledger > article {
+    min-width: 0;
+  }
+
+  .portal-section-head h1 {
+    font-size: clamp(34px, 11vw, 43px) !important;
+    line-height: 1.05;
+  }
+
+  .portal-level-tabs {
+    max-width: 100%;
+    overflow-x: auto;
+    overflow-y: hidden;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  .portal-level-tabs a {
+    flex: 0 0 auto;
+    min-width: 84px;
+  }
+
+  .portal-section-summary article {
+    min-width: 0;
+  }
+
+  .portal-material-card {
+    width: 100%;
+    min-width: 0;
+  }
+
+  .portal-material-copy h3,
+  .portal-material-copy p,
+  .portal-ledger > article > div,
+  .portal-ledger > article > strong {
+    min-width: 0;
+  }
+
+  .portal-ledger-head {
+    flex-wrap: wrap;
+  }
+
+  .portal-ledger-head > * {
+    min-width: 0;
+  }
+
+  /* Learning/material pages */
+  .learning-shell,
+  .tm-material-page,
+  .takumi-premium-page,
+  .takumi-support-page,
+  .takumi-settings-page,
+  .takumi-device-page {
+    width: 100% !important;
+    max-width: 100vw !important;
+  }
+
+  .learning-header h1,
+  .tm-study-heading h1,
+  .tm-quiz-intro-card h1,
+  .tm-result-hero h1 {
+    font-size: clamp(30px, 9vw, 38px) !important;
+    line-height: 1.08 !important;
+  }
+
+  .tm-brand-row,
+  .tm-study-hero-content,
+  .tm-session-progress,
+  .tm-study-heading,
+  .tm-material-card,
+  .tm-reading-box,
+  .tm-callout,
+  .tm-grammar-pattern,
+  .tm-pattern-row,
+  .tm-examples,
+  .tm-example,
+  .tm-passage,
+  .tm-audio-panel,
+  .tm-quiz-intro-card,
+  .tm-quiz-instruction,
+  .tm-question-map,
+  .tm-time-box,
+  .tm-quiz-question-card,
+  .tm-quiz-submitbar,
+  .tm-result-hero,
+  .tm-review-panel,
+  .tm-review-item {
+    min-width: 0;
+    max-width: 100%;
+  }
+
+  .tm-study-nav {
+    scrollbar-width: thin;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  .tm-study-tab {
+    flex: 0 0 112px;
+    min-width: 112px !important;
+    padding-inline: 9px;
+  }
+
+  .tm-session-progress-head,
+  .tm-quiz-instruction,
+  .tm-question-topline,
+  .tm-quiz-submitbar,
+  .tm-material-actions,
+  .tm-result-actions,
+  .tm-question-actions {
+    flex-wrap: wrap;
+  }
+
+  .tm-quiz-layout {
+    grid-template-columns: 1fr !important;
+    gap: 12px !important;
+  }
+
+  .tm-time-box {
+    width: 100%;
+  }
+
+  .tm-question-numbers {
+    grid-template-columns: repeat(auto-fit, minmax(42px, 1fr)) !important;
+  }
+
+  .tm-question-map-legend {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px 12px;
+  }
+
+  .tm-answer-list label,
+  .option-list label {
+    min-width: 0;
+    grid-template-columns: auto minmax(0, 1fr) !important;
+  }
+
+  .tm-answer-list label > b,
+  .option-list label > b {
+    min-width: 0;
+    white-space: normal;
+  }
+
+  .tm-quiz-submitbar > *,
+  .tm-material-actions > *,
+  .tm-result-actions > * {
+    min-width: 0;
+  }
+
+  .tm-quiz-submitbar button,
+  .tm-material-actions button,
+  .tm-material-actions a,
+  .tm-result-actions button,
+  .tm-result-actions a {
+    max-width: 100%;
+    white-space: normal;
+  }
+
+  .tm-quiz-collapsible-summary {
+    grid-template-columns: 42px minmax(0, 1fr) auto !important;
+    align-items: start !important;
+    gap: 10px !important;
+  }
+
+  .tm-quiz-collapsible-copy,
+  .tm-quiz-collapsible-copy small {
+    min-width: 0;
+  }
+
+  .tm-quiz-collapsible-states {
+    grid-column: 2 / -1;
+    justify-self: start;
+    flex-wrap: wrap;
+  }
+
+  .tm-quiz-collapsible-chevron {
+    grid-column: 3;
+    grid-row: 1;
+  }
+
+  /* Admin — force complex desktop workspaces to stack safely on phones. */
+  .takumi-admin-page {
+    width: 100% !important;
+    max-width: 100vw !important;
+    overflow-x: hidden;
+  }
+
+  .takumi-admin-page :is([class*='__workspace '], [class$='__workspace'], [class*='__studio '], [class$='__studio'], [class*='__layout '], [class$='__layout'], [class*='__grid '], [class$='__grid'], [class*='__formGrid '], [class$='__formGrid'], [class*='__questionGrid '], [class$='__questionGrid'], [class*='__setupGrid '], [class$='__setupGrid'], [class*='__columns '], [class$='__columns']) {
+    grid-template-columns: minmax(0, 1fr) !important;
+  }
+
+  .takumi-admin-page :is([class*='__stats '], [class$='__stats'], [class*='__statsGrid '], [class$='__statsGrid'], [class*='__accessGrid '], [class$='__accessGrid']) {
+    grid-template-columns: minmax(0, 1fr) !important;
+  }
+
+  .takumi-admin-page :is([class*='__stats '], [class$='__stats'], [class*='__statsGrid '], [class$='__statsGrid'], [class*='__accessGrid '], [class$='__accessGrid']) > :is(article, div) {
+    border-right: 0 !important;
+    border-bottom: 1px solid var(--admin-line) !important;
+  }
+
+  .takumi-admin-page :is([class*='__stats '], [class$='__stats'], [class*='__statsGrid '], [class$='__statsGrid'], [class*='__accessGrid '], [class$='__accessGrid']) > :is(article, div):last-child {
+    border-bottom: 0 !important;
+  }
+
+  .takumi-admin-page :is([class*='__tabs '], [class$='__tabs'], [class*='__levelTabs '], [class$='__levelTabs'], [class*='__sectionTabs '], [class$='__sectionTabs'], [class*='__workflowTabs '], [class$='__workflowTabs'], [class*='__quizGroupTabs '], [class$='__quizGroupTabs']) {
+    max-width: 100%;
+    overflow-x: auto;
+    overflow-y: hidden;
+    flex-wrap: nowrap !important;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  .takumi-admin-page :is([class*='__tabs '], [class$='__tabs'], [class*='__levelTabs '], [class$='__levelTabs'], [class*='__sectionTabs '], [class$='__sectionTabs'], [class*='__workflowTabs '], [class$='__workflowTabs'], [class*='__quizGroupTabs '], [class$='__quizGroupTabs']) :is(a, button) {
+    flex: 0 0 auto;
+    min-width: max-content;
+  }
+
+  .takumi-admin-page :is([class*='__toolbar '], [class$='__toolbar'], [class*='__cardHead '], [class$='__cardHead'], [class*='__quizGroupsHead '], [class$='__quizGroupsHead'], [class*='__quizGroupToolbar '], [class$='__quizGroupToolbar'], [class*='__sectionHead '], [class$='__sectionHead'], [class*='__sectionHeader '], [class$='__sectionHeader'], [class*='__actions '], [class$='__actions']) {
+    align-items: stretch !important;
+    flex-direction: column !important;
+    gap: 12px !important;
+  }
+
+  .takumi-admin-page :is([class*='__actions '], [class$='__actions']) :is(button, a),
+  .takumi-admin-page :is([class*='__quizCreateButton '], [class$='__quizCreateButton']) {
+    width: 100%;
+    max-width: 100%;
+    justify-content: center;
+    white-space: normal;
+  }
+
+  .takumi-admin-page :is([class*='__optionRow '], [class$='__optionRow']) {
+    display: grid !important;
+    grid-template-columns: 36px minmax(0, 1fr) !important;
+    gap: 8px !important;
+    align-items: start !important;
+  }
+
+  .takumi-admin-page :is([class*='__optionRow '], [class$='__optionRow']) > :last-child {
+    grid-column: 2;
+    justify-self: start;
+  }
+
+  .takumi-admin-page :is(input, select, textarea) {
+    width: 100%;
+    max-width: 100%;
+    min-width: 0;
+  }
+
+  .takumi-admin-page input[type='file'] {
+    font-size: 12px;
+  }
+
+  .takumi-admin-page table {
+    display: block;
+    width: 100%;
+    max-width: 100%;
+    overflow-x: auto;
+    white-space: nowrap;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  .takumi-admin-page details,
+  .takumi-admin-page summary {
+    max-width: 100%;
+    min-width: 0;
+  }
+
+  .takumi-admin-page summary {
+    overflow: hidden;
+  }
+
+  .takumi-admin-page summary > * {
+    min-width: 0;
+  }
+
+  /* Support, payment, settings and utility forms */
+  :is(.takumi-support-page, .takumi-premium-page, .takumi-settings-page, .takumi-device-page, .learning-shell.narrow) :is([class*='grid'], [class*='Grid'], [class*='row'], [class*='Row'], [class*='columns'], [class*='Columns']) {
+    grid-template-columns: minmax(0, 1fr) !important;
+  }
+
+  :is(.takumi-support-page, .takumi-premium-page, .takumi-settings-page, .takumi-device-page, .learning-shell.narrow) :is(input, select, textarea, button) {
+    max-width: 100%;
+  }
+}
+
+@media (max-width: 480px) {
+  .portal-dashboard .content,
+  .portal:not(.portal-dashboard) > .content {
+    padding-left: 12px !important;
+    padding-right: 12px !important;
+  }
+
+  .dashboard-head h1,
+  .portal-section-head h1,
+  .learning-header h1,
+  .tm-study-heading h1,
+  .takumi-admin-page h1 {
+    font-size: clamp(30px, 10vw, 37px) !important;
+  }
+
+  .dashboard-resume-copy,
+  .dashboard-programs,
+  .dashboard-standard,
+  .portal-section-copy,
+  .learning-shell .panel,
+  .tm-quiz-question-card,
+  .tm-result-hero,
+  .tm-review-panel {
+    padding-left: 16px !important;
+    padding-right: 16px !important;
+  }
+
+  .dashboard-summaries article {
+    grid-template-columns: 24px minmax(0, 1fr) auto;
+    gap: 10px;
+    padding: 18px 14px;
+  }
+
+  .dashboard-summaries article > b {
+    font-size: 34px;
+  }
+
+  .dashboard-section-heading {
+    flex-direction: column;
+    gap: 8px;
+  }
+
+  .dashboard-program {
+    grid-template-columns: 40px minmax(0, 1fr) !important;
+  }
+
+  .dashboard-program > strong {
+    grid-column: 2;
+    justify-self: start;
+  }
+
+  .tm-wordmark span {
+    display: none;
+  }
+
+  .tm-study-heading h1 {
+    font-size: 32px !important;
+  }
+
+  .tm-progress-legend {
+    grid-template-columns: 1fr !important;
+  }
+
+  .tm-progress-legend span:last-child {
+    grid-column: auto !important;
+  }
+
+  .tm-quiz-collapsible-summary {
+    grid-template-columns: 38px minmax(0, 1fr) 28px !important;
+  }
+
+  .tm-quiz-collapsible-states {
+    grid-column: 1 / -1;
+    padding-left: 48px;
+  }
+
+  .tm-material-actions,
+  .tm-result-actions,
+  .tm-quiz-submitbar {
+    display: grid !important;
+    grid-template-columns: 1fr !important;
+  }
+
+  .tm-material-actions > *,
+  .tm-result-actions > *,
+  .tm-quiz-submitbar > * {
+    width: 100% !important;
+  }
+
+  .portal-material-card {
+    grid-template-columns: 58px minmax(0, 1fr) !important;
+  }
+
+  .portal-material-index b {
+    font-size: 27px;
+  }
+
+  .portal-material-copy {
+    padding: 16px 14px !important;
+  }
+
+  .portal-material-copy h3 {
+    font-size: 19px;
+  }
+
+  .portal-section-summary article {
+    grid-template-columns: 28px minmax(0, 1fr) auto !important;
+    gap: 8px;
+    padding-inline: 12px !important;
+  }
+
+  .portal-ledger > article {
+    grid-template-columns: 22px minmax(0, 1fr) !important;
+  }
+
+  .portal-ledger > article > strong {
+    grid-column: 2;
+    justify-items: start !important;
+  }
+
+  .takumi-admin-page {
+    padding-inline: 10px !important;
+  }
+
+  .takumi-admin-page > :is(header, [class*='__hero '], [class$='__hero']) > :first-child {
+    padding: 22px 16px !important;
+  }
+
+  .takumi-admin-page :is([class*='__stats '], [class$='__stats'], [class*='__statsGrid '], [class$='__statsGrid'], [class*='__accessGrid '], [class$='__accessGrid']) > :is(article, div) {
+    padding: 13px 14px !important;
+  }
+
+  .takumi-admin-page :is(button, a)[class] {
+    max-width: 100%;
+  }
+}
