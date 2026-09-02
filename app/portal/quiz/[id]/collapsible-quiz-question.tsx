@@ -3,6 +3,7 @@
 import type { ReactNode } from 'react'
 import { useState } from 'react'
 import ChevronIcon from '@/app/components/chevron-icon'
+import FormattedText from '@/app/components/formatted-text'
 
 type Props = {
   position: number
@@ -39,7 +40,7 @@ export default function CollapsibleQuizQuestion({
         <span className="tm-quiz-collapsible-number">{positionLabel}</span>
         <span className="tm-quiz-collapsible-copy">
           <b>Soal {position}</b>
-          <small>{prompt}</small>
+          <small><FormattedText text={prompt} /></small>
         </span>
         <span className="tm-quiz-collapsible-states">
           <span className={preview ? 'preview' : answered ? 'answered' : 'unanswered'}>
