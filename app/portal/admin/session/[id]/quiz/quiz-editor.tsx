@@ -5,6 +5,7 @@ import { useEffect, useState } from 'react'
 import baseStyles from '../../../admin.module.css'
 import quizStyles from './quiz-groups.module.css'
 import RichTextInput from '../../../rich-text-input'
+import FormattedText from '@/app/components/formatted-text'
 
 const styles = { ...baseStyles, ...quizStyles }
 
@@ -210,14 +211,14 @@ function QuestionCard({ sessionId, quizId, question, defaultPosition }: { sessio
     <details className={styles.quizQuestion} open={question ? undefined : true}>
       <summary className={styles.quizQuestionSummary}>
         <span>{question ? `SOAL ${String(question.position).padStart(2, '0')}` : 'TAMBAH SOAL'}</span>
-        <b>{question?.prompt || 'Buat soal baru'}</b>
+        <b>{question ? <FormattedText text={question.prompt} /> : 'Buat soal baru'}</b>
         <i>{question ? 'Buka editor' : 'Isi soal'}</i>
       </summary>
     <section className={styles.panel}>
       <div className={styles.cardHead}>
         <div>
           <div className={styles.eyebrow}>{question ? `SOAL ${String(question.position).padStart(2, '0')}` : 'TAMBAH SOAL'}</div>
-          <h2>{question?.prompt || 'Soal baru'}</h2>
+          <h2>{question ? <FormattedText text={question.prompt} /> : 'Soal baru'}</h2>
         </div>
         {question && <button className={styles.danger} type="button" disabled={busy} onClick={remove}>Hapus soal</button>}
       </div>
