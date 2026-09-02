@@ -59,7 +59,7 @@ export default async function QuizPage({ params }: { params: Promise<{ id: strin
   const ids = questions.map((question) => question.id)
 
   let options: OptionRow[] = []
-  let bookmarkedQuestionIds: string[] = []
+  let uncertainQuestionIds: string[] = []
   if (ids.length > 0) {
     const [optionResult, bookmarkResult] = await Promise.all([
       supabase
@@ -69,13 +69,16 @@ export default async function QuizPage({ params }: { params: Promise<{ id: strin
         .order('position'),
       supabase
         .from('bookmarks')
-        .select('question_id')
+        .select('question_id, category')
         .in('question_id', ids),
     ])
 
     if (optionResult.error) notFound()
     options = (optionResult.data || []) as OptionRow[]
-    bookmarkedQuestionIds = (bookmarkResult.data || []).map((item) => item.question_id).filter((value): value is string => Boolean(value))
+    uncertainQuestionIds = (bookmarkResult.data || [])
+      .filter((item) => item.category === 'uncertain')
+      .map((item) => item.question_id)
+      .filter((value): value is string => Boolean(value))
   }
 
   const prepared = questions.map((question) => ({
@@ -127,6 +130,7 @@ export default async function QuizPage({ params }: { params: Promise<{ id: strin
           passScore={quiz.pass_score}
           timeLimitMinutes={quiz.time_limit_minutes}
           questions={prepared}
+          initialUncertainQuestionIds={uncertainQuestionIds}
         />
       ) : (
         <QuizForm
@@ -136,7 +140,7 @@ export default async function QuizPage({ params }: { params: Promise<{ id: strin
           passScore={quiz.pass_score}
           timeLimitMinutes={quiz.time_limit_minutes}
           questions={prepared}
-          initialBookmarkedQuestionIds={bookmarkedQuestionIds}
+          initialUncertainQuestionIds={uncertainQuestionIds}
           nextHref={nextHref}
         />
       )}
