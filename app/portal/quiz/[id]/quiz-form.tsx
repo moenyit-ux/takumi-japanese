@@ -231,7 +231,7 @@ export default function QuizForm({ quizId, sessionId, title, passScore, timeLimi
               <div>
                 <b>Soal {item.position} · {kindLabel[item.kind] || item.kind}</b>
                 <p><FormattedText text={item.prompt} /></p>
-                {!item.is_correct && <div className="tm-review-answer">Jawaban kamu: {item.selected_option_text || 'Tidak dijawab'}<br />Jawaban benar: <b>{item.correct_option_text || '—'}</b></div>}
+                {!item.is_correct && <div className="tm-review-answer">Jawaban kamu: {item.selected_option_text ? <FormattedText text={item.selected_option_text} /> : 'Tidak dijawab'}<br />Jawaban benar: <b>{item.correct_option_text ? <FormattedText text={item.correct_option_text} /> : '—'}</b></div>}
                 {item.explanation_text && <p><FormattedText text={item.explanation_text} /></p>}
               </div>
               <span>{item.is_correct ? '✓' : '✕'}</span>
@@ -303,7 +303,7 @@ export default function QuizForm({ quizId, sessionId, title, passScore, timeLimi
         >
           <article className="tm-quiz-question-card">
             <div className="tm-question-topline"><small>Pertanyaan {current.position}/{questions.length}</small><span className="tm-question-kind">{kindLabel[current.kind] || current.kind}</span></div>
-            {current.passage && <div className="tm-passage">{current.passage}</div>}
+            {current.passage && <div className="tm-passage"><FormattedText text={current.passage} /></div>}
             {current.audio_url && <div className="tm-audio-panel"><audio controls preload="none" src={current.audio_url}>Browser Anda tidak mendukung audio.</audio></div>}
             <h2><FormattedText text={current.prompt} /></h2>
             <div className="tm-answer-list">
