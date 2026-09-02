@@ -17,6 +17,36 @@ html{scroll-behavior:smooth}
 .tm-result-title h1{margin:0 0 3px;font-size:26px}
 .tm-result-title small{color:var(--tm-muted)}
 
+/* Compact quiz questions: status remains visible while the answer body is minimized. */
+.tm-quiz-collapsible{margin-top:12px;border:1.5px solid var(--tm-line);background:#fff;scroll-margin-top:18px;overflow:hidden}
+.tm-quiz-collapsible-summary{width:100%;min-height:78px;border:0;background:#fff;color:var(--tm-ink);display:grid;grid-template-columns:48px minmax(0,1fr) auto 30px;gap:14px;align-items:center;padding:12px 16px;text-align:left;cursor:pointer;transition:background .16s ease}
+.tm-quiz-collapsible-summary:hover{background:#f8fbff}
+.tm-quiz-collapsible-summary:focus-visible{outline:3px solid rgba(31,124,245,.22);outline-offset:-3px}
+.tm-quiz-collapsible-number{width:42px;height:42px;background:var(--tm-blue);color:#fff;display:grid;place-items:center;font-size:15px;font-weight:900;letter-spacing:.02em}
+.tm-quiz-collapsible-copy{display:grid;gap:3px;min-width:0}
+.tm-quiz-collapsible-copy b{font-size:17px;line-height:1.25}
+.tm-quiz-collapsible-copy small{color:var(--tm-muted);font-size:13px;line-height:1.35;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.tm-quiz-collapsible-states{display:flex;justify-content:flex-end;gap:7px;flex-wrap:wrap}
+.tm-quiz-collapsible-states>span,.tm-question-map-legend span{display:inline-flex;align-items:center;justify-content:center;padding:7px 10px;border:1px solid #d6dee7;background:#f3f6f9;color:#526171;font-size:12px;font-weight:900;white-space:nowrap}
+.tm-quiz-collapsible-states .answered,.tm-question-map-legend .answered{border-color:#a8dfb0;background:#edfaef;color:#2f7340}
+.tm-quiz-collapsible-states .unanswered,.tm-question-map-legend .unanswered{border-color:#d6dee7;background:#f3f6f9;color:#526171}
+.tm-quiz-collapsible-states .uncertain,.tm-question-map-legend .uncertain{border-color:#e7cc70;background:#fff7d8;color:#73590d}
+.tm-quiz-collapsible-states .preview{border-color:#b8d8f5;background:#eef6ff;color:#345f85}
+.tm-quiz-collapsible-chevron{width:28px;height:28px;background:#eef6ff;color:#4c78a3;display:grid;place-items:center}
+.tm-quiz-collapsible-chevron svg{width:15px;height:15px}
+.tm-quiz-collapsible-body{padding:16px;border-top:1px solid var(--tm-line)}
+.tm-quiz-collapsible-body>.tm-quiz-question-card,.tm-quiz-collapsible-body>.question-card{margin:0;border:0;padding:0;background:transparent}
+.tm-question-map-legend{display:flex;gap:7px;flex-wrap:wrap;margin-top:12px}
+.tm-question-map-legend span{padding:5px 8px;font-size:11px}
+.tm-question-numbers .unanswered{background:#f0f2f5;border-color:#888;color:var(--tm-ink)}
+.tm-question-numbers .uncertain{background:#fff1ad;border-color:#d4aa25;color:#6f5610}
+.tm-question-numbers .uncertain.answered{background:linear-gradient(135deg,#c7ff8c 0 50%,#fff1ad 50% 100%);border-color:#8fae37;color:#365326}
+.tm-question-numbers .current{box-shadow:0 0 0 2px rgba(31,124,245,.16)}
+.tm-uncertain-button.saved,.tm-question-actions .tm-uncertain-button.saved{background:#8a6a12;color:#fff}
+.tm-question-actions{display:flex;justify-content:flex-start;margin-top:14px;padding-top:14px;border-top:1px solid var(--tm-line)}
+.tm-question-actions button{min-height:44px;border:1px solid #d7bc5e;background:#fff9df;color:#6d5615;padding:9px 15px;font-weight:900;cursor:pointer}
+.tm-question-actions button:disabled{opacity:.55;cursor:not-allowed}
+
 /* Keep vocabulary hierarchy calm and consistent with the Takumi material design. */
 .tm-word-hero{align-items:flex-start}
 .tm-word-hero .tm-inline-badge{margin-top:7px}
@@ -64,6 +94,11 @@ html{scroll-behavior:smooth}
   .tm-material-actions-status{grid-template-columns:1fr}
   .tm-block-status-wrap{grid-template-columns:1fr}
   .tm-block-status-actions{grid-template-columns:1fr 1fr}
+  .tm-quiz-collapsible-summary{grid-template-columns:42px minmax(0,1fr) 26px;gap:10px;padding:11px 12px}
+  .tm-quiz-collapsible-number{width:38px;height:38px;font-size:14px}
+  .tm-quiz-collapsible-copy b{font-size:16px}
+  .tm-quiz-collapsible-states{grid-column:2/3;justify-content:flex-start}
+  .tm-quiz-collapsible-chevron{grid-column:3;grid-row:1/3;width:24px;height:24px}
 }
 
 @media(max-width:560px){
@@ -74,4 +109,7 @@ html{scroll-behavior:smooth}
   .tm-word-hero .tm-inline-badge{margin-top:3px}
   .tm-block-status-actions{grid-template-columns:1fr}
   .tm-block-status-wrap{padding:10px}
+  .tm-quiz-collapsible-body{padding:13px}
+  .tm-quiz-collapsible-states>span{font-size:11px;padding:6px 8px}
+  .tm-question-actions button{width:100%}
 }

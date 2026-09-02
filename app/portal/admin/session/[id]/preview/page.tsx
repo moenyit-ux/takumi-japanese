@@ -2,6 +2,7 @@ import Link from 'next/link'
 import { notFound, redirect } from 'next/navigation'
 import TakumiStudyHeader from '../../../../../components/takumi-study-header'
 import MaterialView, { type ContentBlock } from '../../../../session/[id]/material-view'
+import CollapsibleQuizQuestion from '../../../../quiz/[id]/collapsible-quiz-question'
 import { createClient } from '../../../../../../lib/supabase/server'
 import { resolveLearningAsset } from '../../../../../../lib/supabase/assets'
 import styles from './preview.module.css'
@@ -195,26 +196,27 @@ export default async function AdminSessionPreviewPage({
           {questions.length === 0 ? <div className={styles.empty}>Belum ada soal pada kelompok kuis ini.</div> : questions.map((question) => {
             const correct = question.options.find((option) => option.is_correct)
             return (
-              <article className="question-card" key={question.id}>
-                <div className="question-number">{String(question.position).padStart(2, '0')}</div>
-                {question.passage && <div className="reading-passage">{question.passage}</div>}
-                {question.audio_url && <audio controls preload="none" src={question.audio_url}>Browser Anda tidak mendukung audio.</audio>}
-                <h2>{question.prompt}</h2>
-                <div className="option-list">
-                  {question.options.map((option) => (
-                    <label className={styles.muted} key={option.id}>
-                      <input type="radio" disabled />
-                      <span>{option.label || String(option.position)}</span>
-                      <b>{option.option_text}</b>
-                    </label>
-                  ))}
-                </div>
-                <details className={styles.answerKey}>
-                  <summary>Kunci & penjelasan admin</summary>
-                  <p>Jawaban benar: <b>{correct?.label || correct?.option_text || 'Belum ditentukan'}</b></p>
-                  {question.explanation_text && <p>{question.explanation_text}</p>}
-                </details>
-              </article>
+              <CollapsibleQuizQuestion position={question.position} prompt={question.prompt} preview key={question.id}>
+                <article className="question-card">
+                  {question.passage && <div className="reading-passage">{question.passage}</div>}
+                  {question.audio_url && <audio controls preload="none" src={question.audio_url}>Browser Anda tidak mendukung audio.</audio>}
+                  <h2>{question.prompt}</h2>
+                  <div className="option-list">
+                    {question.options.map((option) => (
+                      <label className={styles.muted} key={option.id}>
+                        <input type="radio" disabled />
+                        <span>{option.label || String(option.position)}</span>
+                        <b>{option.option_text}</b>
+                      </label>
+                    ))}
+                  </div>
+                  <details className={styles.answerKey}>
+                    <summary>Kunci & penjelasan admin</summary>
+                    <p>Jawaban benar: <b>{correct?.label || correct?.option_text || 'Belum ditentukan'}</b></p>
+                    {question.explanation_text && <p>{question.explanation_text}</p>}
+                  </details>
+                </article>
+              </CollapsibleQuizQuestion>
             )
           })}
         </section>

@@ -4,12 +4,13 @@ import Link from 'next/link'
 import { useRouter } from 'next/navigation'
 import { useEffect, useRef, useState } from 'react'
 import FormattedText from '@/app/components/formatted-text'
+import CollapsibleQuizQuestion from './collapsible-quiz-question'
 
 type Option = { id: string; question_id: string; position: number; label: string | null; option_text: string }
 type Question = { id: string; position: number; kind: string; prompt: string; passage: string | null; audio_url: string | null; points: number; options: Option[] }
 type SimulationState = { attempt_id: string; attempt_no: number; remaining_seconds: number; total_seconds: number; offline_seconds: number; resume_count: number; answers: Record<string, string>; expired: boolean }
 type Result = { attempt_id: string; attempt_no: number; score: number; pass_score: number; passed: boolean; wrong_count: number; question_count: number; time_spent_seconds?: number; offline_seconds?: number; resume_count?: number }
-type Props = { quizId: string; title: string; passScore: number; timeLimitMinutes: number | null; questions: Question[] }
+type Props = { quizId: string; title: string; passScore: number; timeLimitMinutes: number | null; questions: Question[]; initialUncertainQuestionIds?: string[] }
 
 function formatTime(value: number) {
   const total = Math.max(0, Math.floor(value))
@@ -21,7 +22,7 @@ function formatTime(value: number) {
     : `${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')}`
 }
 
-export default function SimulationForm({ quizId, title, passScore, timeLimitMinutes, questions }: Props) {
+export default function SimulationForm({ quizId, title, passScore, timeLimitMinutes, questions, initialUncertainQuestionIds = [] }: Props) {
   const router = useRouter()
   const answersRef = useRef<Record<string, string>>({})
   const stateRef = useRef<SimulationState | null>(null)
@@ -32,6 +33,8 @@ export default function SimulationForm({ quizId, title, passScore, timeLimitMinu
   const baseAtRef = useRef(Date.now())
 
   const [answers, setAnswers] = useState<Record<string, string>>({})
+  const [uncertain, setUncertain] = useState<Record<string, boolean>>(() => Object.fromEntries(initialUncertainQuestionIds.map((id) => [id, true])))
+  const [savingUncertain, setSavingUncertain] = useState<Record<string, boolean>>({})
   const [state, setState] = useState<SimulationState | null>(null)
   const [remaining, setRemaining] = useState<number | null>(null)
   const [connected, setConnected] = useState(false)
@@ -239,6 +242,30 @@ export default function SimulationForm({ quizId, title, passScore, timeLimitMinu
     setCanonicalAnswers({ ...answersRef.current, [questionId]: optionId })
   }
 
+  async function toggleUncertain(questionId: string) {
+    const active = Boolean(uncertain[questionId])
+    setMessage('')
+    setSavingUncertain((value) => ({ ...value, [questionId]: true }))
+    try {
+      const response = await fetch('/api/bookmarks/question', {
+        method: active ? 'DELETE' : 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ questionId, category: 'uncertain' }),
+      })
+      const payload = await response.json().catch(() => null) as { bookmarked?: boolean } | null
+      if (!response.ok || typeof payload?.bookmarked !== 'boolean') {
+        setMessage('Status ragu-ragu belum dapat diperbarui.')
+        return
+      }
+      setUncertain((value) => ({ ...value, [questionId]: payload.bookmarked as boolean }))
+      setMessage(payload.bookmarked ? 'Soal ragu-ragu otomatis masuk ke Bookmark.' : 'Tanda ragu-ragu dihapus dari Bookmark.')
+    } catch {
+      setMessage('Status ragu-ragu belum dapat diperbarui.')
+    } finally {
+      setSavingUncertain((value) => ({ ...value, [questionId]: false }))
+    }
+  }
+
   if (result) {
     return (
       <section className="quiz-result panel">
@@ -264,21 +291,34 @@ export default function SimulationForm({ quizId, title, passScore, timeLimitMinu
         <div><span>Percobaan {state?.attempt_no || '—'}</span>{state && <small>{state.resume_count} pemulihan koneksi</small>}</div>
       </section>
 
-      {questions.map((question) => (
-        <article className="question-card" key={question.id}>
-          <div className="question-number">{String(question.position).padStart(2, '0')}</div>
-          {question.passage && <div className="reading-passage">{question.passage}</div>}
-          {question.audio_url && <audio controls preload="none" src={question.audio_url}>Browser Anda tidak mendukung audio.</audio>}
-          <h2><FormattedText text={question.prompt} /></h2>
-          <div className="option-list">
-            {question.options.map((option) => (
-              <label className={answers[question.id] === option.id ? 'selected' : ''} key={option.id}>
-                <input type="radio" name={question.id} value={option.id} checked={answers[question.id] === option.id} disabled={!state || busy} onChange={() => choose(question.id, option.id)} />
-                <span>{option.label || String(option.position)}</span><b><FormattedText text={option.option_text} /></b>
-              </label>
-            ))}
-          </div>
-        </article>
+      {questions.map((question, index) => (
+        <CollapsibleQuizQuestion
+          key={question.id}
+          position={question.position}
+          prompt={question.prompt}
+          answered={Boolean(answers[question.id])}
+          uncertain={Boolean(uncertain[question.id])}
+          defaultOpen={index === 0}
+        >
+          <article className="question-card">
+            {question.passage && <div className="reading-passage">{question.passage}</div>}
+            {question.audio_url && <audio controls preload="none" src={question.audio_url}>Browser Anda tidak mendukung audio.</audio>}
+            <h2><FormattedText text={question.prompt} /></h2>
+            <div className="option-list">
+              {question.options.map((option) => (
+                <label className={answers[question.id] === option.id ? 'selected' : ''} key={option.id}>
+                  <input type="radio" name={question.id} value={option.id} checked={answers[question.id] === option.id} disabled={!state || busy} onChange={() => choose(question.id, option.id)} />
+                  <span>{option.label || String(option.position)}</span><b><FormattedText text={option.option_text} /></b>
+                </label>
+              ))}
+            </div>
+            <div className="tm-question-actions">
+              <button className={uncertain[question.id] ? 'tm-uncertain-button saved' : 'tm-uncertain-button'} type="button" disabled={savingUncertain[question.id]} onClick={() => void toggleUncertain(question.id)}>
+                {savingUncertain[question.id] ? 'Menyimpan...' : uncertain[question.id] ? '⚑ Ditandai ragu-ragu' : '⚑ Ragu-ragu'}
+              </button>
+            </div>
+          </article>
+        </CollapsibleQuizQuestion>
       ))}
 
       <section className="quiz-submit panel">

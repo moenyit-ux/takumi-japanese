@@ -4,6 +4,7 @@ import Link from 'next/link'
 import { useRouter } from 'next/navigation'
 import { useEffect, useRef, useState } from 'react'
 import FormattedText from '@/app/components/formatted-text'
+import CollapsibleQuizQuestion from './collapsible-quiz-question'
 
 type Option = {
   id: string
@@ -63,7 +64,7 @@ type Props = {
   passScore: number
   timeLimitMinutes: number | null
   questions: Question[]
-  initialBookmarkedQuestionIds?: string[]
+  initialUncertainQuestionIds?: string[]
   nextHref?: string | null
 }
 
@@ -80,7 +81,7 @@ const kindLabel: Record<string, string> = {
   listening: 'Choukai',
 }
 
-export default function QuizForm({ quizId, sessionId, title, passScore, timeLimitMinutes, questions, initialBookmarkedQuestionIds = [], nextHref }: Props) {
+export default function QuizForm({ quizId, sessionId, title, passScore, timeLimitMinutes, questions, initialUncertainQuestionIds = [], nextHref }: Props) {
   const router = useRouter()
   const startedAt = useRef(Date.now())
   const answersRef = useRef<Record<string, string>>({})
@@ -89,7 +90,8 @@ export default function QuizForm({ quizId, sessionId, title, passScore, timeLimi
 
   const [answers, setAnswers] = useState<Record<string, string>>({})
   const [currentIndex, setCurrentIndex] = useState(0)
-  const [bookmarked, setBookmarked] = useState<Record<string, boolean>>(() => Object.fromEntries(initialBookmarkedQuestionIds.map((id) => [id, true])))
+  const [uncertain, setUncertain] = useState<Record<string, boolean>>(() => Object.fromEntries(initialUncertainQuestionIds.map((id) => [id, true])))
+  const [savingUncertain, setSavingUncertain] = useState<Record<string, boolean>>({})
   const [busy, setBusy] = useState(false)
   const [message, setMessage] = useState('')
   const [result, setResult] = useState<Result | null>(null)
@@ -106,24 +108,27 @@ export default function QuizForm({ quizId, sessionId, title, passScore, timeLimi
     setAnswers(next)
   }
 
-  async function toggleBookmark(questionId: string) {
-    const active = Boolean(bookmarked[questionId])
+  async function toggleUncertain(questionId: string) {
+    const active = Boolean(uncertain[questionId])
     setMessage('')
+    setSavingUncertain((value) => ({ ...value, [questionId]: true }))
     try {
       const response = await fetch('/api/bookmarks/question', {
         method: active ? 'DELETE' : 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ questionId }),
+        body: JSON.stringify({ questionId, category: 'uncertain' }),
       })
       const payload = await response.json().catch(() => null) as { bookmarked?: boolean } | null
       if (!response.ok || typeof payload?.bookmarked !== 'boolean') {
-        setMessage('Tanda soal belum dapat diperbarui.')
+        setMessage('Status ragu-ragu belum dapat diperbarui.')
         return
       }
-      setBookmarked((value) => ({ ...value, [questionId]: payload.bookmarked as boolean }))
-      setMessage(payload.bookmarked ? 'Soal ditandai untuk dipelajari lagi.' : 'Tanda soal dihapus.')
+      setUncertain((value) => ({ ...value, [questionId]: payload.bookmarked as boolean }))
+      setMessage(payload.bookmarked ? 'Soal ragu-ragu otomatis masuk ke Bookmark.' : 'Tanda ragu-ragu dihapus dari Bookmark.')
     } catch {
-      setMessage('Tanda soal belum dapat diperbarui.')
+      setMessage('Status ragu-ragu belum dapat diperbarui.')
+    } finally {
+      setSavingUncertain((value) => ({ ...value, [questionId]: false }))
     }
   }
 
@@ -194,6 +199,10 @@ export default function QuizForm({ quizId, sessionId, title, passScore, timeLimi
     const correct = Math.max(0, result.question_count - result.wrong_count)
     const reviewRows = review?.questions || []
     const visibleReview = showAllReview ? reviewRows : reviewRows.filter((item) => !item.is_correct)
+    const bookmarkedQuestionCount = new Set([
+      ...reviewRows.filter((item) => !item.is_correct).map((item) => item.id),
+      ...Object.entries(uncertain).filter(([, active]) => active).map(([questionId]) => questionId),
+    ]).size
 
     return (
       <div className="tm-result-shell">
@@ -211,7 +220,7 @@ export default function QuizForm({ quizId, sessionId, title, passScore, timeLimi
           <article><span>Durasi</span><b>{formatTime(durationSeconds)}</b></article>
           <article><span>Benar</span><b>{correct}</b></article>
           <article><span>Salah</span><b>{result.wrong_count}</b></article>
-          <article><span>Bookmark</span><b>{result.wrong_count}</b></article>
+          <article><span>Bookmark</span><b>{bookmarkedQuestionCount}</b></article>
         </div>
 
         <section className="tm-review-panel">
@@ -250,7 +259,7 @@ export default function QuizForm({ quizId, sessionId, title, passScore, timeLimi
 
       <section className="tm-quiz-instruction">
         <div className="tm-icon-box">☼</div>
-        <div><b>Petunjuk</b><p className="tm-description">Pilih satu jawaban yang paling tepat. Kamu bisa menandai soal untuk dipelajari lagi nanti.</p></div>
+        <div><b>Petunjuk</b><p className="tm-description">Pilih satu jawaban yang paling tepat. Tandai Ragu-ragu agar soal otomatis masuk ke Bookmark.</p></div>
       </section>
 
       <div className="tm-quiz-meta-grid">
@@ -266,36 +275,52 @@ export default function QuizForm({ quizId, sessionId, title, passScore, timeLimi
           <div className="tm-question-numbers">
             {questions.map((question, index) => (
               <a
-                className={`${answers[question.id] ? 'answered' : ''}${index === currentIndex ? ' current' : ''}`}
+                className={`${answers[question.id] ? 'answered' : 'unanswered'}${uncertain[question.id] ? ' uncertain' : ''}${index === currentIndex ? ' current' : ''}`}
                 href="#quiz-question"
                 key={question.id}
                 onClick={() => setCurrentIndex(index)}
-                title={bookmarked[question.id] ? 'Ditandai untuk dipelajari lagi' : undefined}
+                title={`${answers[question.id] ? 'Sudah dijawab' : 'Belum dijawab'}${uncertain[question.id] ? ' · Ragu-ragu' : ''}`}
               >{question.position}</a>
             ))}
+          </div>
+          <div className="tm-question-map-legend" aria-label="Keterangan status soal">
+            <span className="answered">✓ Sudah dijawab</span>
+            <span className="unanswered">○ Belum dijawab</span>
+            <span className="uncertain">⚑ Ragu-ragu</span>
           </div>
         </section>
         <aside className="tm-time-box"><small>Sisa Waktu</small><b>{remaining == null ? '—' : formatTime(remaining)}</b></aside>
       </div>
 
-      <article className="tm-quiz-question-card" id="quiz-question">
-        <div className="tm-question-topline"><small>Pertanyaan {current.position}/{questions.length}</small><span className="tm-question-kind">{kindLabel[current.kind] || current.kind}</span></div>
-        {current.passage && <div className="tm-passage">{current.passage}</div>}
-        {current.audio_url && <div className="tm-audio-panel"><audio controls preload="none" src={current.audio_url}>Browser Anda tidak mendukung audio.</audio></div>}
-        <h2><FormattedText text={current.prompt} /></h2>
-        <div className="tm-answer-list">
-          {current.options.map((option) => (
-            <label className={answers[current.id] === option.id ? 'selected' : ''} key={option.id}>
-              <input type="radio" name={current.id} value={option.id} checked={answers[current.id] === option.id} onChange={() => choose(current.id, option.id)} />
-              <span className="tm-answer-letter">{option.label || String.fromCharCode(64 + option.position)}</span>
-              <b><FormattedText text={option.option_text} /></b>
-            </label>
-          ))}
-        </div>
-      </article>
+      <div id="quiz-question">
+        <CollapsibleQuizQuestion
+          key={current.id}
+          position={current.position}
+          prompt={current.prompt}
+          answered={Boolean(answers[current.id])}
+          uncertain={Boolean(uncertain[current.id])}
+          defaultOpen
+        >
+          <article className="tm-quiz-question-card">
+            <div className="tm-question-topline"><small>Pertanyaan {current.position}/{questions.length}</small><span className="tm-question-kind">{kindLabel[current.kind] || current.kind}</span></div>
+            {current.passage && <div className="tm-passage">{current.passage}</div>}
+            {current.audio_url && <div className="tm-audio-panel"><audio controls preload="none" src={current.audio_url}>Browser Anda tidak mendukung audio.</audio></div>}
+            <h2><FormattedText text={current.prompt} /></h2>
+            <div className="tm-answer-list">
+              {current.options.map((option) => (
+                <label className={answers[current.id] === option.id ? 'selected' : ''} key={option.id}>
+                  <input type="radio" name={current.id} value={option.id} checked={answers[current.id] === option.id} onChange={() => choose(current.id, option.id)} />
+                  <span className="tm-answer-letter">{option.label || String.fromCharCode(64 + option.position)}</span>
+                  <b><FormattedText text={option.option_text} /></b>
+                </label>
+              ))}
+            </div>
+          </article>
+        </CollapsibleQuizQuestion>
+      </div>
 
       <div className="tm-material-actions">
-        <button className={bookmarked[current.id] ? 'saved' : ''} type="button" onClick={() => void toggleBookmark(current.id)}>{bookmarked[current.id] ? '♡ Sudah ditandai' : '♡ Tandai untuk dipelajari lagi'}</button>
+        <button className={uncertain[current.id] ? 'saved tm-uncertain-button' : 'tm-uncertain-button'} type="button" disabled={savingUncertain[current.id]} onClick={() => void toggleUncertain(current.id)}>{savingUncertain[current.id] ? 'Menyimpan...' : uncertain[current.id] ? '⚑ Ditandai ragu-ragu' : '⚑ Ragu-ragu'}</button>
         {currentIndex < questions.length - 1
           ? <button type="button" onClick={() => setCurrentIndex((value) => Math.min(questions.length - 1, value + 1))}>Lanjut ke Berikutnya →</button>
           : <button type="submit">Selesai melihat soal →</button>}
