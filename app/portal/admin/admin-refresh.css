@@ -131,6 +131,7 @@
   font-family: 'Yu Mincho', 'Hiragino Mincho ProN', serif;
   font-size: 118px !important;
   font-weight: 500 !important;
+  line-height: 1.08;
 }
 
 /* Summary numbers become one continuous register. */
@@ -338,12 +339,14 @@
   content: '編';
   position: absolute;
   right: 8%;
-  bottom: -45px;
+  top: 50%;
   color: #dceff7;
   font-family: 'Yu Mincho', serif;
-  font-size: 170px;
+  font-size: 156px;
   font-weight: 500;
-  line-height: 1;
+  line-height: 1.08;
+  transform: translateY(-50%);
+  pointer-events: none;
 }
 
 .takumi-admin-editor > :is([class*='__editorHeader '], [class$='__editorHeader']) h1 { position: relative; z-index: 1; font-family: Georgia, 'Times New Roman', serif; font-size: 42px !important; font-weight: 500; }
