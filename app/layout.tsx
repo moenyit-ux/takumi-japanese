@@ -14,6 +14,7 @@ import './portal-user.css'
 import './public-page.css'
 import './takumi-app-refresh.css'
 import './portal/admin/admin-refresh.css'
+import './mobile-hardening.css'
 
 export const metadata: Metadata = {
   metadataBase: new URL('https://takumi-japanese-rho.vercel.app'),
